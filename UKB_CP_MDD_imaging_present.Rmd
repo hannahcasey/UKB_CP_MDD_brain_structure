@@ -80,13 +80,17 @@ res_comorbidity_brain_structure_female$sample <- "Female"
 res_comorbidity_brain_structure_male <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_comorbidity_structure_assoc_males.csv")
 res_comorbidity_brain_structure_male$sample <- "Male"
 
+res_comorbidity_brain_structure_female_site <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_comorbidity_structure_assoc_females_site.csv",header=T)
+res_comorbidity_brain_structure_female_site$sample <- "Female"
+
+res_comorbidity_brain_structure_male_site <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_comorbidity_structure_assoc_males_site.csv",header=T)
+res_comorbidity_brain_structure_male_site$sample <- "Male"
+
 ## Combine results into single dataframes
 res_CP_MDD_brain_structure <- rbind(res_CP_MDD_brain_structure_all, res_CP_MDD_brain_structure_female, res_CP_MDD_brain_structure_male)
-
 res_CP_MDD_brain_structure_sex_site <- rbind(res_CP_MDD_brain_structure_female_site, res_CP_MDD_brain_structure_male_site)
-
-
 res_comorbidity_brain_structure <- rbind(res_comorbidity_brain_structure_all, res_comorbidity_brain_structure_female, res_comorbidity_brain_structure_male)
+res_comorbidity_brain_structure_sex_site <- rbind(res_comorbidity_brain_structure_female_site, res_comorbidity_brain_structure_male_site)
 
 ## Create new columns to reformat brain phenotypes for plotting
 res_CP_MDD_brain_structure$brain_phenotype_plot <-  gsub("MD", "MD in", res_CP_MDD_brain_structure$brain_phenotype)
@@ -95,9 +99,7 @@ res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("volume", "Volume of", r
 res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("area", "Area of", res_CP_MDD_brain_structure$brain_phenotype_plot)
 res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("thickness", "Thickness of", res_CP_MDD_brain_structure$brain_phenotype_plot)
 res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("sub_cortical_Volume", "Subcortical volume", res_CP_MDD_brain_structure$brain_phenotype_plot)
-res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("_", " ", res_CP_MDD_brain_structure$brain_phenotype_plot)
-res_CP_MDD_brain_structure$brain_structure_type_plot <- gsub("_", " ", res_CP_MDD_brain_structure$brain_structure_type)
-
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("_|[.]", " ", res_CP_MDD_brain_structure$brain_phenotype_plot)
 
 res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot <-  gsub("MD", "MD in", res_CP_MDD_brain_structure_sex_site$brain_phenotype)
 res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot <- gsub("FA", "FA in", res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot)
@@ -105,53 +107,74 @@ res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot <- gsub("volume", "Volu
 res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot <- gsub("area", "Area of", res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot)
 res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot <- gsub("thickness", "Thickness of", res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot)
 res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot <- gsub("sub_cortical_Volume", "Subcortical volume", res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot)
-res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot <- gsub("_", " ", res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot)
-res_CP_MDD_brain_structure_sex_site$brain_structure_type_plot <- gsub("_", " ", res_CP_MDD_brain_structure_sex_site$brain_structure_type)
+res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot <- gsub("_|[.]", " ", res_CP_MDD_brain_structure_sex_site$brain_phenotype_plot)
 
-
-res_comorbidity_brain_structure$brain_phenotype_plot <-  gsub("MD", "MD in", res_comorbidity_brain_structure$X)
+res_comorbidity_brain_structure$brain_phenotype_plot <-  gsub("MD", "MD in", res_comorbidity_brain_structure$brain_phenotype)
 res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("FA", "FA in", res_comorbidity_brain_structure$brain_phenotype_plot)
 res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("volume", "Volume of", res_comorbidity_brain_structure$brain_phenotype_plot)
 res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("area", "Area of", res_comorbidity_brain_structure$brain_phenotype_plot)
 res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("thickness", "Thickness of", res_comorbidity_brain_structure$brain_phenotype_plot)
 res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("sub_cortical_Volume", "Subcortical volume", res_comorbidity_brain_structure$brain_phenotype_plot)
 res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("\\.[1-9]", "", res_comorbidity_brain_structure$brain_phenotype_plot)
-res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("_", " ", res_comorbidity_brain_structure$brain_phenotype_plot)
-res_comorbidity_brain_structure$brain_structure_type_plot <- gsub("_", " ", res_comorbidity_brain_structure$brain_structure_type)
+res_comorbidity_brain_structure$brain_phenotype_plot <-  gsub("_|[.]", " ", res_comorbidity_brain_structure$brain_phenotype_plot)
 
-## Add correct spacing to corical region measurent plot names
 
+res_comorbidity_brain_structure_sex_site$brain_phenotype_plot <-  gsub("MD", "MD in", res_comorbidity_brain_structure_sex_site$brain_phenotype)
+res_comorbidity_brain_structure_sex_site$brain_phenotype_plot <- gsub("FA", "FA in", res_comorbidity_brain_structure_sex_site$brain_phenotype_plot)
+res_comorbidity_brain_structure_sex_site$brain_phenotype_plot <- gsub("volume", "Volume of", res_comorbidity_brain_structure_sex_site$brain_phenotype_plot)
+res_comorbidity_brain_structure_sex_site$brain_phenotype_plot <- gsub("area", "Area of", res_comorbidity_brain_structure_sex_site$brain_phenotype_plot)
+res_comorbidity_brain_structure_sex_site$brain_phenotype_plot <- gsub("thickness", "Thickness of", res_comorbidity_brain_structure_sex_site$brain_phenotype_plot)
+res_comorbidity_brain_structure_sex_site$brain_phenotype_plot <- gsub("sub_cortical_Volume", "Subcortical volume", res_comorbidity_brain_structure_sex_site$brain_phenotype_plot)
+res_comorbidity_brain_structure_sex_site$brain_phenotype_plot <- gsub("\\.[1-9]", "", res_comorbidity_brain_structure_sex_site$brain_phenotype_plot)
+res_comorbidity_brain_structure_sex_site$brain_phenotype_plot <-  gsub("_|[.]", " ", res_comorbidity_brain_structure_sex_site$brain_phenotype_plot)
 
 
 ## Reorder brain phenotype and subgroups for plotting
-res_CP_MDD_brain_structure$brain_structure_type_plot  <- ordered(res_CP_MDD_brain_structure$brain_structure_type_plot , levels = c("Subcortical Volumes", "Cortical Regional Volumes","Cortical Volume Global and Lobal Measures", "Cortical Regional areas", "Cortical area Global and Lobal Measures", "Cortical Regional Thickness","Cortical thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+res_CP_MDD_brain_structure$brain_structure_type  <- ordered(res_CP_MDD_brain_structure$brain_structure_type , levels = c("Subcortical Volumes", "Cortical Regional Volumes","Cortical Volume Global and Lobal Measures", "Cortical Regional Areas", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
 
-res_comorbidity_brain_structure$brain_structure_type_plot  <- ordered(res_comorbidity_brain_structure$brain_structure_type_plot , levels = c("Subcortical Volumes", "Cortical Regional Volumes","Cortical Volume Global and Lobal Measures", "Cortical Regional areas", "Cortical area Global and Lobal Measures", "Cortical Regional Thickness","Cortical thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+res_CP_MDD_brain_structure_sex_site$brain_structure_type  <- ordered(res_CP_MDD_brain_structure_sex_site$brain_structure_type , levels = c("Subcortical Volumes", "Cortical Regional Volumes","Cortical Volume Global and Lobal Measures", "Cortical Regional Areas", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+
+res_comorbidity_brain_structure$brain_structure_type  <- ordered(res_comorbidity_brain_structure$brain_structure_type , levels = c("Subcortical Volumes", "Cortical Regional Volumes","Cortical Volume Global and Lobal Measures", "Cortical Regional Areas", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+
+res_comorbidity_brain_structure_sex_site$brain_structure_type  <- ordered(res_comorbidity_brain_structure_sex_site$brain_structure_type , levels = c("Subcortical Volumes", "Cortical Regional Volumes","Cortical Volume Global and Lobal Measures", "Cortical Regional Areas", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
 
 # Include yes/no column to determine shape based on p-value
 res_CP_MDD_brain_structure$`Adjusted p-value` = ifelse(res_CP_MDD_brain_structure$p.adjust < 0.05, "Yes","No")
+res_CP_MDD_brain_structure_sex_site$`Adjusted p-value` = ifelse(res_CP_MDD_brain_structure_sex_site$p.adjust < 0.05, "Yes","No")
+res_comorbidity_brain_structure$significant <- ifelse(res_comorbidity_brain_structure$p.adjust < 0.05,"Yes" , "No")
+res_comorbidity_brain_structure_sex_site$significant <- ifelse(res_comorbidity_brain_structure_sex_site$p.adjust < 0.05,"Yes" , "No")
 
 # Keep results comparing comorbid groups to those with no pain or depression
 res_comorbidity_brain_structure <- res_comorbidity_brain_structure[res_comorbidity_brain_structure$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (No Probable Recurrent MDD + Chronic Pain)" | res_comorbidity_brain_structure$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + Chronic Pain)" | res_comorbidity_brain_structure$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)",]
+
+res_comorbidity_brain_structure_sex_site <- res_comorbidity_brain_structure_sex_site[res_comorbidity_brain_structure_sex_site$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (No Probable Recurrent MDD + Chronic Pain)" | res_comorbidity_brain_structure_sex_site$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + Chronic Pain)" | res_comorbidity_brain_structure_sex_site$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)",]
 
 ## Rename comorbidity groups for simplicity
 res_comorbidity_brain_structure$groups[res_comorbidity_brain_structure$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (No Probable Recurrent MDD + Chronic Pain)"] <- "CP+MDD-"
 res_comorbidity_brain_structure$groups[res_comorbidity_brain_structure$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)"] <- "CP-MDD+"
 res_comorbidity_brain_structure$groups[res_comorbidity_brain_structure$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + Chronic Pain)"] <- "CP+MDD+"
 
-## Add column indicating which resutls are statitically significant
-res_comorbidity_brain_structure$significant <- ifelse(res_comorbidity_brain_structure$p.adjust < 0.05,"Yes" , "No")
+res_comorbidity_brain_structure_sex_site$groups[res_comorbidity_brain_structure_sex_site$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (No Probable Recurrent MDD + Chronic Pain)"] <- "CP+MDD-"
+res_comorbidity_brain_structure_sex_site$groups[res_comorbidity_brain_structure_sex_site$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)"] <- "CP-MDD+"
+res_comorbidity_brain_structure_sex_site$groups[res_comorbidity_brain_structure_sex_site$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + Chronic Pain)"] <- "CP+MDD+"
 
-## Add column indicating if results are psiitvie or negative (will be used in p-value graph later)
+## Add column indicating if results are positive or negative (will be used in p-value graph later)
 res_CP_MDD_brain_structure$Direction <- ifelse(sign(res_CP_MDD_brain_structure$beta) < 1,"Negative" , "Positive")
+res_CP_MDD_brain_structure_sex_site$Direction <- ifelse(sign(res_CP_MDD_brain_structure_sex_site$beta) < 1,"Negative" , "Positive")
 
 ## Remove small dfs to clean up environment
 rm(res_CP_MDD_brain_structure_all)
 rm(res_CP_MDD_brain_structure_female)
 rm(res_CP_MDD_brain_structure_male)
+rm(res_CP_MDD_brain_structure_all)
+rm(res_CP_MDD_brain_structure_female_site)
+rm(res_CP_MDD_brain_structure_male_site)
+
 rm(res_comorbidity_brain_structure_all)
 rm(res_comorbidity_brain_structure_male)
 rm(res_comorbidity_brain_structure_female)
+rm(res_comorbidity_brain_structure_female_site)
+rm(res_comorbidity_brain_structure_male_site)
 
 ```
 
@@ -231,16 +254,20 @@ brain_structure_gg
 
 ##### Effect size graph - Chronic pain status in sex and site-stratified samples
 ```{r Effect size graph chronic pain status - sex and site-stratified samples, echo=FALSE,  fig.height=50}
-brain_structure_CP_sex_stratified <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$disorder == "chronic_pain") & (res_CP_MDD_brain_structure$sample == "Female" | res_CP_MDD_brain_structure$sample == "Male"),]
+
+## split up dataframe by disorder and sex
+res_CP_MDD_brain_structure_female_CP_site <- res_CP_MDD_brain_structure_sex_site[res_CP_MDD_brain_structure_sex_site$disorder == "chronic_pain" & res_CP_MDD_brain_structure_sex_site$sample == "Female",]
+res_CP_MDD_brain_structure_male_CP_site <- res_CP_MDD_brain_structure_sex_site[res_CP_MDD_brain_structure_sex_site$disorder == "chronic_pain" & res_CP_MDD_brain_structure_sex_site$sample == "Male",]
 
 ## Order levels of brain phenotpyes in oder of beta values to make plot neat
-brain_structure_CP_sex_stratified$brain_phenotype_plot <- reorder(brain_structure_CP_sex_stratified$brain_phenotype_plot, -brain_structure_CP_sex_stratified$beta)
+res_CP_MDD_brain_structure_female_CP_site$brain_phenotype_plot <- reorder(res_CP_MDD_brain_structure_female_CP_site$brain_phenotype_plot, -res_CP_MDD_brain_structure_female_CP_site$beta)
+res_CP_MDD_brain_structure_male_CP_site$brain_phenotype_plot <- reorder(res_CP_MDD_brain_structure_male_CP_site$brain_phenotype_plot, -res_CP_MDD_brain_structure_male_CP_site$beta)
 
 ## Create discrete colour palette
 pal1 <- wes_palette("Darjeeling1",3, type = "discrete")
 
 ## Plot resutls
-brain_structure_gg = ggplot(brain_structure_CP_sex_stratified, aes(x=brain_phenotype_plot, y=beta, shape=`Adjusted p-value`,colour=sample)) + 
+brain_structure_gg = ggplot(res_CP_MDD_brain_structure_female_CP_site, aes(x=brain_phenotype_plot, y=beta, shape=`Adjusted p-value`,colour=site)) + 
   geom_point(aes(y=beta),size=3, alpha = 0.5) +
   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
   theme_minimal() +
@@ -248,12 +275,31 @@ brain_structure_gg = ggplot(brain_structure_CP_sex_stratified, aes(x=brain_pheno
   coord_flip() +
   labs(x = "", 
        y = "Standardised effect size", 
-       title = "Chronic pain and brain structures in UK Biobank: sex-stratified",
+       title = "Chronic pain and brain structures in UK Biobank: site-stratified in female sample",
        colour = "Sex",
        shape = "Significance") +
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_color_manual(values = pal1) +
-  ggforce::facet_col(facets = vars(brain_structure_type_plot), 
+  ggforce::facet_col(facets = vars(brain_structure_type), 
+                     scales = "free_y", 
+                     space = "free")
+
+brain_structure_gg
+
+brain_structure_gg = ggplot(res_CP_MDD_brain_structure_male_CP_site, aes(x=brain_phenotype_plot, y=beta, shape=`Adjusted p-value`,colour=site)) + 
+  geom_point(aes(y=beta),size=3, alpha = 0.5) +
+  geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
+  theme_minimal() +
+  geom_hline(yintercept=0, linetype="dashed", color = "black") +
+  coord_flip() +
+  labs(x = "", 
+       y = "Standardised effect size", 
+       title = "Chronic pain and brain structures in UK Biobank: site-stratified in male sample",
+       colour = "Sex",
+       shape = "Significance") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_color_manual(values = pal1) +
+  ggforce::facet_col(facets = vars(brain_structure_type), 
                      scales = "free_y", 
                      space = "free")
 
@@ -325,6 +371,60 @@ brain_structure_gg
 ```
 
 
+
+
+
+##### Effect size graph - Probable Recurrent Major Depressive Disorder in sex and site-stratified samples
+```{r Effect size graph MDD status - sex and site-stratified samples, echo=FALSE,  fig.height=50}
+
+## split up dataframe by disorder and sex
+res_CP_MDD_brain_structure_female_MDD_site <- res_CP_MDD_brain_structure_sex_site[res_CP_MDD_brain_structure_sex_site$disorder == "recurrent_depression" & res_CP_MDD_brain_structure_sex_site$sample == "Female",]
+res_CP_MDD_brain_structure_male_MDD_site <- res_CP_MDD_brain_structure_sex_site[res_CP_MDD_brain_structure_sex_site$disorder == "recurrent_depression" & res_CP_MDD_brain_structure_sex_site$sample == "Male",]
+
+## Order levels of brain phenotpyes in oder of beta values to make plot neat
+res_CP_MDD_brain_structure_female_MDD_site$brain_phenotype_plot <- reorder(res_CP_MDD_brain_structure_female_MDD_site$brain_phenotype_plot, -res_CP_MDD_brain_structure_female_MDD_site$beta)
+res_CP_MDD_brain_structure_male_MDD_site$brain_phenotype_plot <- reorder(res_CP_MDD_brain_structure_male_MDD_site$brain_phenotype_plot, -res_CP_MDD_brain_structure_male_MDD_site$beta)
+
+## Plot resutls
+brain_structure_gg = ggplot(res_CP_MDD_brain_structure_female_MDD_site, aes(x=brain_phenotype_plot, y=beta, shape=`Adjusted p-value`,colour=site)) + 
+  geom_point(aes(y=beta),size=3, alpha = 0.5) +
+  geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
+  theme_minimal() +
+  geom_hline(yintercept=0, linetype="dashed", color = "black") +
+  coord_flip() +
+  labs(x = "", 
+       y = "Standardised effect size", 
+       title = "Depression and brain structures in UK Biobank: site-stratified in female sample",
+       colour = "Sex",
+       shape = "Significance") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_color_manual(values = pal1) +
+  ggforce::facet_col(facets = vars(brain_structure_type), 
+                     scales = "free_y", 
+                     space = "free")
+
+brain_structure_gg
+
+brain_structure_gg = ggplot(res_CP_MDD_brain_structure_male_MDD_site, aes(x=brain_phenotype_plot, y=beta, shape=`Adjusted p-value`,colour=site)) + 
+  geom_point(aes(y=beta),size=3, alpha = 0.5) +
+  geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
+  theme_minimal() +
+  geom_hline(yintercept=0, linetype="dashed", color = "black") +
+  coord_flip() +
+  labs(x = "", 
+       y = "Standardised effect size", 
+       title = "Depression and brain structures in UK Biobank: site-stratified in male sample",
+       colour = "Sex",
+       shape = "Significance") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_color_manual(values = pal1) +
+  ggforce::facet_col(facets = vars(brain_structure_type), 
+                     scales = "free_y", 
+                     space = "free")
+
+brain_structure_gg
+```
+
 ##### Effect size graph - Comorbidity in full sample 
 
 ```{r Effect size graph Comorbidity - full sample, fig.height= 25, echo=FALSE}
@@ -356,6 +456,7 @@ brain_structure_gg = ggplot(res_comorbidity_brain_structure_all, aes(x=brain_phe
 brain_structure_gg
 
 ```
+
 
 ##### Effect size graph - Comorbidity in female sample
 
