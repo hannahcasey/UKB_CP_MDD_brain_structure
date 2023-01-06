@@ -148,7 +148,7 @@ UKB_imaging_covariates$volume_frontal_lobe <- UKB_imaging_covariates$f.26815.2.0
   UKB_imaging_covariates$f.26912.2.0 + UKB_imaging_covariates$f.26804.2.0 + UKB_imaging_covariates$f.26905.2.0
 
 ## Temporal lobe FIDs:
-## Insula= 26821 + 26922
+## Insula = 26821 + 26922
 ## Superior temporal = 26817 + 26918
 ## transverse temporal = 26820 + 26921
 ## banks STS = 	26789 + 26890
@@ -201,7 +201,7 @@ UKB_imaging_covariates$volume_cingulate_lobe <- UKB_imaging_covariates$f.26813.2
 
 ## Sum lobar volumes to get global cortical volume
 UKB_imaging_covariates$volume_global_cortical <- UKB_imaging_covariates$volume_frontal_lobe + UKB_imaging_covariates$volume_temporal_lobe + UKB_imaging_covariates$volume_parietal_lobe +
-  UKB_imaging_covariates$volume_occipital_lobe +UKB_imaging_covariates$volume_cingulate_lobe 
+  UKB_imaging_covariates$volume_occipital_lobe + UKB_imaging_covariates$volume_cingulate_lobe 
 
 
 
@@ -235,7 +235,7 @@ UKB_imaging_covariates$area_frontal_lobe <- UKB_imaging_covariates$f.26748.2.0 +
 ## transverse temporal = 26753 + 26854
 ## banks STS = 	26722 + 26823
 ## Middle temporal gyrus = 26735 + 26836
-## Inferior temporal gyrus = 26796 + 26897
+## Inferior temporal gyrus = 26729 + 26730
 ## Fusiform = 26727 + 26828
 ## parahippocampal = 26736 + 26837
 ## entorhinal = 26726 + 26827
@@ -243,8 +243,8 @@ UKB_imaging_covariates$area_frontal_lobe <- UKB_imaging_covariates$f.26748.2.0 +
 ## Sum area of individual structures in temporal lobe
 UKB_imaging_covariates$area_temporal_lobe <- UKB_imaging_covariates$f.26754.2.0 + UKB_imaging_covariates$f.26855.2.0 + UKB_imaging_covariates$f.26750.2.0 +
   UKB_imaging_covariates$f.26851.2.0 + UKB_imaging_covariates$f.26753.2.0 + UKB_imaging_covariates$f.26854.2.0 + UKB_imaging_covariates$f.26722.2.0 +
-  UKB_imaging_covariates$f.26823.2.0 + UKB_imaging_covariates$f.26735.2.0 + UKB_imaging_covariates$f.26836.2.0 + UKB_imaging_covariates$f.26796.2.0 +
-  UKB_imaging_covariates$f.26897.2.0 + UKB_imaging_covariates$f.26727.2.0 + UKB_imaging_covariates$f.26828.2.0 + UKB_imaging_covariates$f.26736.2.0 +
+  UKB_imaging_covariates$f.26823.2.0 + UKB_imaging_covariates$f.26735.2.0 + UKB_imaging_covariates$f.26836.2.0 + UKB_imaging_covariates$f.26729.2.0 +
+  UKB_imaging_covariates$f.26730.2.0 + UKB_imaging_covariates$f.26727.2.0 + UKB_imaging_covariates$f.26828.2.0 + UKB_imaging_covariates$f.26736.2.0 +
   UKB_imaging_covariates$f.26837.2.0 + UKB_imaging_covariates$f.26726.2.0 + UKB_imaging_covariates$f.26827.2.0
 
 ## Parietal area lobe:
@@ -300,13 +300,8 @@ UKB_imaging_covariates$area_global_cortical <- UKB_imaging_covariates$area_front
 ## Precentral gyrus = 26778 + 26879
 ## paracentral cortex = 26771 + 26872
 
-## Sum thickness of individual structures in frontal lobe
-UKB_imaging_covariates$thickness_frontal_lobe <- UKB_imaging_covariates$f.26782.2.0 + UKB_imaging_covariates$f.26883.2.0 + UKB_imaging_covariates$f.26781.2.0 +
-  UKB_imaging_covariates$f.26882.2.0 + UKB_imaging_covariates$f.26758.2.0 + UKB_imaging_covariates$f.26859.2.0 + UKB_imaging_covariates$f.26773.2.0 +
-  UKB_imaging_covariates$f.26874.2.0 + UKB_imaging_covariates$f.26774.2.0 + UKB_imaging_covariates$f.26875.2.0 + UKB_imaging_covariates$f.26772.2.0 + 
-  UKB_imaging_covariates$f.26873.2.0 + UKB_imaging_covariates$f.26786.2.0 + UKB_imaging_covariates$f.26887.2.0 + UKB_imaging_covariates$f.26766.2.0 +
-  UKB_imaging_covariates$f.26867.2.0 + UKB_imaging_covariates$f.26768.2.0 + UKB_imaging_covariates$f.26869.2.0 + UKB_imaging_covariates$f.26778.2.0 + 
-  UKB_imaging_covariates$f.26879.2.0 + UKB_imaging_covariates$f.26771.2.0 + UKB_imaging_covariates$f.26872.2.0
+## Get weighted average of thickness of individual structures in frontal lobe
+UKB_imaging_covariates$thickness_frontal_lobe <- ((UKB_imaging_covariates$f.26782.2.0 * UKB_imaging_covariates$f.26748.2.0) + (UKB_imaging_covariates$f.26883.2.0 * UKB_imaging_covariates$f.26849.2.0) + (UKB_imaging_covariates$f.26781.2.0 * UKB_imaging_covariates$f.26747.2.0) + (UKB_imaging_covariates$f.26882.2.0 * UKB_imaging_covariates$f.26848.2.0) + (UKB_imaging_covariates$f.26758.2.0 * UKB_imaging_covariates$f.26724.2.0) + (UKB_imaging_covariates$f.26859.2.0 * UKB_imaging_covariates$f.26825.2.0) + (UKB_imaging_covariates$f.26773.2.0 * UKB_imaging_covariates$f.26739.2.0) + (UKB_imaging_covariates$f.26840.2.0 * UKB_imaging_covariates$f.26874.2.0) + (UKB_imaging_covariates$f.26774.2.0 * UKB_imaging_covariates$f.26740.2.0) + (UKB_imaging_covariates$f.26875.2.0 * UKB_imaging_covariates$f.26841.2.0) + (UKB_imaging_covariates$f.26772.2.0 * UKB_imaging_covariates$f.26805.2.0) + (UKB_imaging_covariates$f.26873.2.0 * UKB_imaging_covariates$f.26839.2.0) + (UKB_imaging_covariates$f.26786.2.0 * UKB_imaging_covariates$f.26752.2.0) + (UKB_imaging_covariates$f.26887.2.0 * UKB_imaging_covariates$f.26853.2.0) + (UKB_imaging_covariates$f.26766.2.0 * UKB_imaging_covariates$f.26732.2.0) + (UKB_imaging_covariates$f.26867.2.0 * UKB_imaging_covariates$f.26833.2.0) + (UKB_imaging_covariates$f.26768.2.0 * UKB_imaging_covariates$f.26734.2.0) + (UKB_imaging_covariates$f.26869.2.0 * UKB_imaging_covariates$f.26835.2.0)+ (UKB_imaging_covariates$f.26778.2.0 * UKB_imaging_covariates$f.26744.2.0) + (UKB_imaging_covariates$f.26879.2.0 * UKB_imaging_covariates$f.26845.2.0) + (UKB_imaging_covariates$f.26771.2.0 * UKB_imaging_covariates$f.26737.2.0) + (UKB_imaging_covariates$f.26872.2.0 * UKB_imaging_covariates$f.26838.2.0)) / UKB_imaging_covariates$area_frontal_lobe
 
 ## Temporal lobe thickness FIDs:
 ## Insula= 26788 + 26889
@@ -314,17 +309,13 @@ UKB_imaging_covariates$thickness_frontal_lobe <- UKB_imaging_covariates$f.26782.
 ## transverse temporal = 26787 + 26888
 ## banks STS = 	26756 + 26857
 ## Middle temporal gyrus = 26769 + 26870
-## Inferior temporal gyrus = 26796 + 26897
+## Inferior temporal gyrus = 26763 + 26764
 ## Fusiform = 26761 + 26862
 ## parahippocampal = 26770 + 26871
 ## entorhinal = 26760 + 26760
 
 ## Sum thickness of individual structures in temporal lobe
-UKB_imaging_covariates$thickness_temporal_lobe <- UKB_imaging_covariates$f.26788.2.0 + UKB_imaging_covariates$f.26889.2.0 + UKB_imaging_covariates$f.26784.2.0 +
-  UKB_imaging_covariates$f.26885.2.0 + UKB_imaging_covariates$f.26787.2.0 + UKB_imaging_covariates$f.26888.2.0 + UKB_imaging_covariates$f.26756.2.0 +
-  UKB_imaging_covariates$f.26857.2.0 + UKB_imaging_covariates$f.26769.2.0 + UKB_imaging_covariates$f.26870.2.0 + UKB_imaging_covariates$f.26796.2.0 +
-  UKB_imaging_covariates$f.26897.2.0 + UKB_imaging_covariates$f.26761.2.0 + UKB_imaging_covariates$f.26862.2.0 + UKB_imaging_covariates$f.26770.2.0 +
-  UKB_imaging_covariates$f.26871.2.0 + UKB_imaging_covariates$f.26760.2.0 + UKB_imaging_covariates$f.26760.2.0
+UKB_imaging_covariates$thickness_temporal_lobe <- ((UKB_imaging_covariates$f.26788.2.0 * UKB_imaging_covariates$f.26754.2.0 ) + (UKB_imaging_covariates$f.26889.2.0 * UKB_imaging_covariates$f.26855.2.0 ) + (UKB_imaging_covariates$f.26784.2.0 * UKB_imaging_covariates$f.26750.2.0 ) + (UKB_imaging_covariates$f.26885.2.0 * UKB_imaging_covariates$f.26851.2.0 ) + (UKB_imaging_covariates$f.26787.2.0 * UKB_imaging_covariates$f.26753.2.0) + (UKB_imaging_covariates$f.26888.2.0 * UKB_imaging_covariates$f.26854.2.0) + (UKB_imaging_covariates$f.26756.2.0 * UKB_imaging_covariates$f.26722.2.0) + (UKB_imaging_covariates$f.26857.2.0 * UKB_imaging_covariates$f.26823.2.0) + (UKB_imaging_covariates$f.26769.2.0 * UKB_imaging_covariates$f.26735.2.0) + (UKB_imaging_covariates$f.26870.2.0 * UKB_imaging_covariates$f.26836.2.0) + (UKB_imaging_covariates$f.26763.2.0 * UKB_imaging_covariates$f.26729.2.0) + (UKB_imaging_covariates$f.26764.2.0 * UKB_imaging_covariates$f.26730.2.0) + (UKB_imaging_covariates$f.26761.2.0 * UKB_imaging_covariates$f.26727.2.0) + (UKB_imaging_covariates$f.26862.2.0 * UKB_imaging_covariates$f.26828.2.0) + (UKB_imaging_covariates$f.26770.2.0 * UKB_imaging_covariates$f.26736.2.0) + (UKB_imaging_covariates$f.26871.2.0 * UKB_imaging_covariates$f.26837.2.0) + (UKB_imaging_covariates$f.26760.2.0 * UKB_imaging_covariates$f.26726.2.0) + (UKB_imaging_covariates$f.26760.2.0 * UKB_imaging_covariates$f.26827.2.0)) / UKB_imaging_covariates$area_temporal_lobe
 
 ## Parietal thickness lobe:
 ## Postcentral gyrus = 26776 + 26877
@@ -335,10 +326,7 @@ UKB_imaging_covariates$thickness_temporal_lobe <- UKB_imaging_covariates$f.26788
 ## Precuneus = 26779 + 26880
 
 ## Sum thickness of individual structures in parietal lobe
-UKB_imaging_covariates$thickness_parietal_lobe <- UKB_imaging_covariates$f.26776.2.0 + UKB_imaging_covariates$f.26877.2.0 + UKB_imaging_covariates$f.26771.2.0 +
-  UKB_imaging_covariates$f.26872.2.0 + UKB_imaging_covariates$f.26783.2.0 + UKB_imaging_covariates$f.26884.2.0 + UKB_imaging_covariates$f.26762.2.0 +
-  UKB_imaging_covariates$f.26863.2.0 + UKB_imaging_covariates$f.26785.2.0 + UKB_imaging_covariates$f.26886.2.0 + UKB_imaging_covariates$f.26779.2.0 +
-  UKB_imaging_covariates$f.26880.2.0
+UKB_imaging_covariates$thickness_parietal_lobe <- ((UKB_imaging_covariates$f.26776.2.0 * UKB_imaging_covariates$f.26742.2.0) + (UKB_imaging_covariates$f.26877.2.0 * UKB_imaging_covariates$f.26843.2.0) + (UKB_imaging_covariates$f.26771.2.0 * UKB_imaging_covariates$f.26737.2.0) + (UKB_imaging_covariates$f.26872.2.0 * UKB_imaging_covariates$f.26838.2.0) + (UKB_imaging_covariates$f.26783.2.0 * UKB_imaging_covariates$f.26749.2.0) + (UKB_imaging_covariates$f.26884.2.0 * UKB_imaging_covariates$f.26850.2.0) + (UKB_imaging_covariates$f.26762.2.0 * UKB_imaging_covariates$f.26728.2.0) + (UKB_imaging_covariates$f.26863.2.0 * UKB_imaging_covariates$f.26829.2.0) + (UKB_imaging_covariates$f.26785.2.0 * UKB_imaging_covariates$f.26751.2.0) + (UKB_imaging_covariates$f.26886.2.0 * UKB_imaging_covariates$f.26852.2.0) + (UKB_imaging_covariates$f.26779.2.0 * UKB_imaging_covariates$f.26745.2.0) + (UKB_imaging_covariates$f.26880.2.0 * UKB_imaging_covariates$f.26846.2.0)) / UKB_imaging_covariates$area_parietal_lobe
 
 ## Occipital thickness lobe:
 ## Lateral occipital cortex = 26765, 26866
@@ -346,9 +334,7 @@ UKB_imaging_covariates$thickness_parietal_lobe <- UKB_imaging_covariates$f.26776
 ## Pericalcarine cortex = 26775, 26876
 ## Lingual gyrus = 26767, 26868
 
-UKB_imaging_covariates$thickness_occipital_lobe <- UKB_imaging_covariates$f.26765.2.0 + UKB_imaging_covariates$f.26866.2.0 + UKB_imaging_covariates$f.26759.2.0 +
-  UKB_imaging_covariates$f.26860.2.0 + UKB_imaging_covariates$f.26775.2.0 + UKB_imaging_covariates$f.26876.2.0 + UKB_imaging_covariates$f.26767.2.0 +
-  UKB_imaging_covariates$f.26868.2.0
+UKB_imaging_covariates$thickness_occipital_lobe <- ((UKB_imaging_covariates$f.26765.2.0 * UKB_imaging_covariates$f.26731.2.0) + (UKB_imaging_covariates$f.26866.2.0 * UKB_imaging_covariates$f.26832.2.0) + (UKB_imaging_covariates$f.26759.2.0 * UKB_imaging_covariates$f.26725.2.0) + (UKB_imaging_covariates$f.26860.2.0 * UKB_imaging_covariates$f.26826.2.0) + (UKB_imaging_covariates$f.26775.2.0 * UKB_imaging_covariates$f.26741.2.0) + (UKB_imaging_covariates$f.26876.2.0 * UKB_imaging_covariates$f.26842.2.0) + (UKB_imaging_covariates$f.26767.2.0 * UKB_imaging_covariates$f.26733.2.0) + (UKB_imaging_covariates$f.26868.2.0 * UKB_imaging_covariates$f.26834.2.0)) / UKB_imaging_covariates$area_occipital_lobe
 
 ## Cingulate thickness lobe:
 ## Rostral ACC = 26780, 26881
@@ -356,19 +342,11 @@ UKB_imaging_covariates$thickness_occipital_lobe <- UKB_imaging_covariates$f.2676
 ## Posterior cingulate cortex = 26777 + 26878
 ## Cingulate isthmus = 26764 + 26865
 
-UKB_imaging_covariates$thickness_cingulate_lobe <- UKB_imaging_covariates$f.26780.2.0 + UKB_imaging_covariates$f.26881.2.0 + UKB_imaging_covariates$f.26757.2.0 +
-  UKB_imaging_covariates$f.26858.2.0 + UKB_imaging_covariates$f.26777.2.0 + UKB_imaging_covariates$f.26878.2.0 + UKB_imaging_covariates$f.26764.2.0 +
-  UKB_imaging_covariates$f.26865.2.0
+UKB_imaging_covariates$thickness_cingulate_lobe <- ((UKB_imaging_covariates$f.26780.2.0 * UKB_imaging_covariates$f.26746.2.0) + (UKB_imaging_covariates$f.26881.2.0 * UKB_imaging_covariates$f.26847.2.0) + (UKB_imaging_covariates$f.26757.2.0 * UKB_imaging_covariates$f.26723.2.0) + (UKB_imaging_covariates$f.26858.2.0 * UKB_imaging_covariates$f.26824.2.0) + (UKB_imaging_covariates$f.26777.2.0 * UKB_imaging_covariates$f.26743.2.0) + (UKB_imaging_covariates$f.26878.2.0 * UKB_imaging_covariates$f.26844.2.0) + (UKB_imaging_covariates$f.26764.2.0 * UKB_imaging_covariates$f.26730.2.0) + (UKB_imaging_covariates$f.26865.2.0 * UKB_imaging_covariates$f.26831.2.0)) / UKB_imaging_covariates$area_cingulate_lobe
 
 ## Sum lobar thicknesss to get global cortical thickness
-UKB_imaging_covariates$thickness_global_cortical <- UKB_imaging_covariates$thickness_frontal_lobe + UKB_imaging_covariates$thickness_temporal_lobe + UKB_imaging_covariates$thickness_parietal_lobe +
-  UKB_imaging_covariates$thickness_occipital_lobe +UKB_imaging_covariates$thickness_cingulate_lobe 
+UKB_imaging_covariates$thickness_global_cortical <- ((UKB_imaging_covariates$thickness_frontal_lobe * UKB_imaging_covariates$area_frontal_lobe) + (UKB_imaging_covariates$thickness_temporal_lobe * UKB_imaging_covariates$area_temporal_lobe) + (UKB_imaging_covariates$thickness_parietal_lobe * UKB_imaging_covariates$area_parietal_lobe) + (UKB_imaging_covariates$thickness_occipital_lobe * UKB_imaging_covariates$area_occipital_lobe) + (UKB_imaging_covariates$thickness_cingulate_lobe * UKB_imaging_covariates$area_cingulate_lobe)) / UKB_imaging_covariates$area_global_cortical
 
-
-## Standardise all cortical global and lobar volumes, area and thickness
-UKB_imaging_covariates <- UKB_imaging_covariates %>%
-  mutate_at(vars(contains('_lobe_')), scale) %>%
-  mutate_at(vars(contains('global_cortical')), scale)
 
 ## Calculate general MD measures
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -388,7 +366,6 @@ UKB_imaging_covariates <- UKB_imaging_covariates %>%
 # Uncinate fasciculus (right) - f.25541
 # Forceps major - f.25525
 # Forceps minor - f.25526
-
 
 MD_association_fibres <- c("f.25519.2.0", "f.25520.2.0", "f.25527.2.0", "f.25528.2.0", "f.25529.2.0", "f.25530.2.0",
                            "f.25521.2.0", "f.25522.2.0", "f.25536.2.0", "f.25537.2.0", "f.25540.2.0", "f.25541.2.0",
@@ -739,7 +716,7 @@ write.csv(UKB_imaging_covariates, "~/Desktop/PhD/projects/UKB_CP_MDD_brain_struc
 ## UKB_imaging_covariates <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates_temp.csv", header = T)
 
 n_outliers
-## 3075 brain strucutre measurements excluded in total
+## 3075 brain structure measurements excluded in total
 ## Get number of outliers for individual brain structures
 n_detailed_outliers <- (colSums(!is.na(z_scores)) - colSums(!is.na(UKB_imaging_covariates[,all_brain_structure_names])))
 
@@ -751,6 +728,10 @@ n_detailed_outliers <- (colSums(!is.na(z_scores)) - colSums(!is.na(UKB_imaging_c
 UKB_imaging_covariates[,all_brain_structure_names] <- as.data.frame(scale(UKB_imaging_covariates[,all_brain_structure_names]))
 
 ## Scale continuous covariates
+UKB_imaging_covariates$ICV_raw <- UKB_imaging_covariates$ICV
+UKB_imaging_covariates$BMI_raw <- UKB_imaging_covariates$BMI
+UKB_imaging_covariates$age_raw <- UKB_imaging_covariates$age
+
 UKB_imaging_covariates$ICV <- scale(UKB_imaging_covariates$ICV)
 UKB_imaging_covariates$BMI <- scale(UKB_imaging_covariates$BMI)
 UKB_imaging_covariates$age <- scale(UKB_imaging_covariates$age)
