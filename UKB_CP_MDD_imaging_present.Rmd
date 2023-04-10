@@ -20,7 +20,7 @@ library(ggseg)
 library(patchwork)
 library(RColorBrewer)
 library(flextable)
-#devtools::install_github("teunbrand/ggh4x",force = TRUE)
+#devtools::install_github("teunbrand/ggh4x")
 library(ggh4x)
 # Include width and height for figures in the knitr::opts_chunk$set code above
 ```
@@ -216,14 +216,14 @@ res_comorbidity_brain_structure_all$brain_structure_type_plot  = swr(res_comorbi
 res_comorbidity_brain_structure_all$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_all$brain_structure_type_plot , levels = c("Subcortical Volumes", "Cortical Regional\nVolumes","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nAreas", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
 
 ## Plot resutls
-brain_structure_gg = ggplot(res_comorbidity_brain_structure_all, aes(x=brain_phenotype_plot, y=beta, shape=significant,colour=as.factor(groups))) + 
+brain_structure_gg = ggplot(res_comorbidity_brain_structure_all, aes(x=brain_phenotype_plot, y=beta, shape=significant,colour=as.factor(groups))) +
   geom_point(aes(y=beta),size=3, alpha = 0.5) +
   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
   theme_minimal() +
   geom_hline(yintercept=0, linetype="dashed", color = "black") +
   coord_flip() +
-  labs(x = "", 
-       y = "Standardised effect size", 
+  labs(x = "",
+       y = "Standardised effect size",
        title = "",
        colour = "Comorbidity Group",
        shape = "Adjusted p-value < 0.05") +
@@ -259,7 +259,7 @@ ggplot(brain_structure_MDD_all, aes(x = brain_structure_type, y = p.adjust.minus
     geom_hline(yintercept=-log10(0.05), linetype="dashed", 
                color = "red", size=1, alpha = 0.4) +
   geom_label_repel(aes(label = ifelse(p.adjust < 0.05,as.character(brain_phenotype_plot),'')),
-                  box.padding   = 0.5, 
+                  box.padding = 2, 
                   size = 2,
                   point.padding = 0,
                   segment.color = 'grey50',
@@ -302,9 +302,10 @@ plot_depression_females <- ggplot(brain_structure_MDD_female, aes(x = brain_stru
                color = "red", size=1, alpha = 0.4) +
   geom_label_repel(aes(label = ifelse(p.adjust < 0.05,as.character(brain_phenotype_plot),'')),
                   size = 2,
-                  box.padding   = 0.5, 
+                  box.padding = 2, 
                   point.padding = 0,
                   segment.color = 'grey50',
+                  segment.alpha = 0.5,
                   position = position_jitter(seed = 151097),
                   max.overlaps = 100,
                   fill = "white",
@@ -317,28 +318,30 @@ plot_depression_females <- ggplot(brain_structure_MDD_female, aes(x = brain_stru
   guides(fill=guide_legend(override.aes=list(shape=21)), colour=guide_legend(title = "Brain Strucutre Subcategory"))
 
 
-
 plot_depression_males <- ggplot(brain_structure_MDD_male, aes(x = brain_structure_type, y = p.adjust.minus.log, colour =  brain_structure_type, shape = Direction, stroke = 1, fill = `Adjusted p-value < 0.05`)) +
   scale_shape_manual(values=c(25, 24)) + 
   scale_fill_manual(values = c("white", "dark grey")) +
-  geom_jitter(size = 2, position = position_jitter(seed = 151097)) +
+  geom_jitter(size = 2, position = position_jitter(width = 2, seed = 151097)) +
   geom_hline(yintercept=-log10(0.05), linetype="dashed", 
                color = "red", size=1, alpha = 0.4) +
   geom_label_repel(aes(label = ifelse(p.adjust < 0.05,as.character(brain_phenotype_plot),'')),
-                  box.padding   = 0.5, 
+                  box.padding = 2, 
                   size = 2,
                   point.padding = 0,
+                  xlim = c(3, NA),
                   segment.color = 'grey50',
-                  position = position_jitter(seed = 151097),
+                  segment.alpha = 0.5,
+                  position = position_jitter(width = 2,seed = 151097),
                   max.overlaps = 100,
                   fill = "white",
                   show.legend = FALSE)  +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1)) +
   xlab("") + ylab("-log10(p)") +
   scale_color_manual(values = pal2) +
   scale_y_reverse(limits = c((max(brain_structure_MDD_female$p.adjust.minus.log) + 1),0)) +
-  scale_x_discrete(position = "top") 
+  scale_x_discrete(position = "top") +
+  theme(plot.margin = unit(c(-1, 0, 0, 0), "cm"))
 
 # arrange the three plots in a single row
 prow <- cowplot::plot_grid(
@@ -348,11 +351,11 @@ prow <- cowplot::plot_grid(
   rel_heights = c(1,1.2))
 
 # extract the legend from one of the plots
-legend <- cowplot::get_legend(plot_depression_females+ theme(legend.box.margin = margin(150, 0, 0, 50)))
+legend <- cowplot::get_legend(plot_depression_females+ theme(legend.box.margin = margin(50, 100, 0, 50)))
 
 # add the legend to the row we made earlier. Give it one-third of 
 # the width of one plot (via rel_widths).
-cowplot::plot_grid(prow, legend, rel_widths = c(3, .3))
+cowplot::plot_grid(prow, legend, rel_widths = c(2, 1))
 ```
 
 ##### P-value graph - Chronic Pain Status - full sample
@@ -374,7 +377,7 @@ ggplot(brain_structure_CP_all, aes(x = brain_structure_type, y = p.adjust.minus.
                color = "red", size=1, alpha = 0.4) +
   geom_label_repel(aes(label = ifelse(p.adjust < 0.05,as.character(brain_phenotype_plot),'')),
                   size = 2,
-                  box.padding   = 1, 
+                  box.padding = 2, 
                   point.padding = 0,
                   segment.color = 'grey50',
                   position = position_jitter(seed = 151097),
@@ -415,7 +418,8 @@ plot_CP_females <- ggplot(brain_structure_CP_female, aes(x = brain_structure_typ
                color = "red", size=1, alpha = 0.4) +
   geom_label_repel(aes(label = ifelse(p.adjust < 0.05,as.character(brain_phenotype_plot),'')),
                   size = 2,
-                  box.padding   = 0.5, 
+                  box.padding = 2, 
+                  segment.alpha = 0.5,
                   point.padding = 0,
                   segment.color = 'grey50',
                   position = position_jitter(seed = 151097),
@@ -438,20 +442,22 @@ plot_CP_males <- ggplot(brain_structure_CP_male, aes(x = brain_structure_type, y
   geom_hline(yintercept=-log10(0.05), linetype="dashed", 
                color = "red", size=1, alpha = 0.4) +
   geom_label_repel(aes(label = ifelse(p.adjust < 0.05,as.character(brain_phenotype_plot),'')),
-                  box.padding   = 0.5, 
+                  box.padding = 2, 
                   size = 2,
                   point.padding = 0,
                   segment.color = 'grey50',
+                  segment.alpha = 0.5,
                   position = position_jitter(seed = 151097),
                   max.overlaps = 100,
                   fill = "white",
                   show.legend = FALSE)  +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1)) +
   xlab("") + ylab("-log10(p)") +
   scale_color_manual(values = pal2) +
   scale_y_reverse(limits = c((max(brain_structure_CP_female$p.adjust.minus.log) + 1),0)) +
-  scale_x_discrete(position = "top") 
+  scale_x_discrete(position = "top") +
+  theme(plot.margin = unit(c(-1, 0, 0, 0), "cm"))
 
 # arrange the three plots in a single row
 prow <- cowplot::plot_grid(
@@ -461,28 +467,28 @@ prow <- cowplot::plot_grid(
   rel_heights = c(1,1.2))
 
 # extract the legend from one of the plots
-legend <- cowplot::get_legend(plot_CP_females+ theme(legend.box.margin = margin(150, 0, 0, 50)))
+legend <- cowplot::get_legend(plot_CP_females+ theme(legend.box.margin = margin(50, 100, 0, 50)))
 
 # add the legend to the row we made earlier. Give it one-third of 
 # the width of one plot (via rel_widths).
-cowplot::plot_grid(prow, legend, rel_widths = c(3, .4))
+cowplot::plot_grid(prow, legend, rel_widths = c(2, 1))
 ```
 
 
-##### Cortex map
+##### Cortex map: chronic pain
 
 ```{r Cortex volume chronic pain status, echo = FALSE}
 ## Remove balanced dataset results
 res_CP_MDD_brain_structure_no_balanced <- res_CP_MDD_brain_structure[!grepl("Balanced", res_CP_MDD_brain_structure$sample),]
 
 ## Get only regional cortical volumes in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_volumes <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Volumes") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain" | res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
+res_CP_MDD_brain_structure_regional_cortical_volumes <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Volumes") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain"),]
 
 dk_cortical_regions <- dk$palette
 
 ## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
 dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
-res_CP_MDD_brain_structure_regional_cortical_volumes$regions_ggseg <- rep(dk_cortical_regions, 6)
+res_CP_MDD_brain_structure_regional_cortical_volumes$regions_ggseg <- rep(dk_cortical_regions, 3)
 
 ## Compare name columns as sanity check
 #res_CP_MDD_brain_structure_regional_cortical_volumes[c("regions_ggseg", "brain_phenotype")]
@@ -494,12 +500,6 @@ res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_str
 
 res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "Male")] <- "Chronic Pain: Male Sample"
 
-res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "All")] <- "Depression: Full Sample"
-
-res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "Female")] <- "Depression: Female Sample"
-
-res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "Male")] <- "Depression: Male Sample"
-
 
 regional_cortical_volumes_ggseg <- tibble(
   region = res_CP_MDD_brain_structure_regional_cortical_volumes$regions_ggseg, 
@@ -508,7 +508,7 @@ regional_cortical_volumes_ggseg <- tibble(
 )
 
 ## Order groups
-regional_cortical_volumes_ggseg$groups <- ordered(regional_cortical_volumes_ggseg$groups, levels = c("Chronic Pain: Full Sample", "Chronic Pain: Female Sample", "Chronic Pain: Male Sample", "Depression: Full Sample", "Depression: Female Sample", "Depression: Male Sample"))
+regional_cortical_volumes_ggseg$groups <- ordered(regional_cortical_volumes_ggseg$groups, levels = c("Chronic Pain: Full Sample", "Chronic Pain: Female Sample", "Chronic Pain: Male Sample"))
 
 ggplot() +
   geom_brain(atlas = dk,
@@ -531,13 +531,13 @@ p1 <- regional_cortical_volumes_ggseg %>%
 ```{r Cortex area chronic pain status, echo = FALSE}
 
 ## Get only regional cortical areas in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_areas <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Areas") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain" | res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
+res_CP_MDD_brain_structure_regional_cortical_areas <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Areas") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain"),]
 
 dk_cortical_regions <- dk$palette
 
 ## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
 dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
-res_CP_MDD_brain_structure_regional_cortical_areas$regions_ggseg <- rep(dk_cortical_regions, 6)
+res_CP_MDD_brain_structure_regional_cortical_areas$regions_ggseg <- rep(dk_cortical_regions, 3)
 
 ## Compare name columns as sanity check
 #res_CP_MDD_brain_structure_regional_cortical_areas[c("regions_ggseg", "brain_phenotype")]
@@ -549,12 +549,6 @@ res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_struc
 
 res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "Male")] <- "Chronic Pain: Male Sample"
 
-res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "All")] <- "Depression: Full Sample"
-
-res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "Female")] <- "Depression: Female Sample"
-
-res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "Male")] <- "Depression: Male Sample"
-
 
 regional_cortical_areas_ggseg <- tibble(
   region = res_CP_MDD_brain_structure_regional_cortical_areas$regions_ggseg, 
@@ -563,7 +557,7 @@ regional_cortical_areas_ggseg <- tibble(
 )
 
 ## Order groups
-regional_cortical_areas_ggseg$groups <- ordered(regional_cortical_areas_ggseg$groups, levels = c("Chronic Pain: Full Sample", "Chronic Pain: Female Sample", "Chronic Pain: Male Sample", "Depression: Full Sample", "Depression: Female Sample", "Depression: Male Sample"))
+regional_cortical_areas_ggseg$groups <- ordered(regional_cortical_areas_ggseg$groups, levels = c("Chronic Pain: Full Sample", "Chronic Pain: Female Sample", "Chronic Pain: Male Sample"))
 
 
 p2 <- regional_cortical_areas_ggseg %>%
@@ -582,13 +576,13 @@ p2 <- regional_cortical_areas_ggseg %>%
 ```{r Cortex thickness chronic pain status, echo = FALSE}
 
 ## Get only regional cortical thickness in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_thickness <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Thickness") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain" | res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
+res_CP_MDD_brain_structure_regional_cortical_thickness <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Thickness") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain"),]
 
 dk_cortical_regions <- dk$palette
 
 ## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
 dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
-res_CP_MDD_brain_structure_regional_cortical_thickness$regions_ggseg <- rep(dk_cortical_regions, 6)
+res_CP_MDD_brain_structure_regional_cortical_thickness$regions_ggseg <- rep(dk_cortical_regions, 3)
 
 ## Compare name columns as sanity check
 #res_CP_MDD_brain_structure_regional_cortical_thickness[c("regions_ggseg", "brain_phenotype")]
@@ -600,11 +594,6 @@ res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_s
 
 res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "Male")] <- "Chronic Pain: Male Sample"
 
-res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "All")] <- "Depression: Full Sample"
-
-res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "Female")] <- "Depression: Female Sample"
-
-res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "Male")] <- "Depression: Male Sample"
 
 regional_cortical_thickness_ggseg <- tibble(
   region = res_CP_MDD_brain_structure_regional_cortical_thickness$regions_ggseg, 
@@ -613,7 +602,7 @@ regional_cortical_thickness_ggseg <- tibble(
 )
 
 ## Order groups
-regional_cortical_thickness_ggseg$groups <- ordered(regional_cortical_thickness_ggseg$groups, levels = c("Chronic Pain: Full Sample", "Chronic Pain: Female Sample", "Chronic Pain: Male Sample", "Depression: Full Sample", "Depression: Female Sample", "Depression: Male Sample"))
+regional_cortical_thickness_ggseg$groups <- ordered(regional_cortical_thickness_ggseg$groups, levels = c("Chronic Pain: Full Sample", "Chronic Pain: Female Sample", "Chronic Pain: Male Sample"))
 
 ## Only display one hemisphere ase resutls are unilateral
 p3 <- regional_cortical_thickness_ggseg %>%
@@ -626,18 +615,13 @@ p3 <- regional_cortical_thickness_ggseg %>%
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red') +
   theme_minimal()
 
-
-
-p1/p2/p3 + plot_annotation(tag_levels = 'A')
-
 ```
+##### Subcortex volume map: chronic pain
 
-##### Subcortex volume map 
-
-```{r subcortical volume map, echo = FALSE, warning=FALSE}
+```{r subcortical volume map: chronic pain, echo = FALSE, warning=FALSE}
 
 ## Get only regional sub cortical volume
-res_CP_MDD_brain_structure_regional_subcortical_volume <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Subcortical Volumes") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain" | res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
+res_CP_MDD_brain_structure_regional_subcortical_volume <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Subcortical Volumes") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain"),]
 
 sub_cortical_regions <- c("thalamus proper","caudate", "putamen", "pallidum", "hippocampus", "amygdala", "accumbens area")
 
@@ -652,6 +636,205 @@ res_CP_MDD_brain_structure_regional_subcortical_volume$group[(res_CP_MDD_brain_s
 res_CP_MDD_brain_structure_regional_subcortical_volume$group[(res_CP_MDD_brain_structure_regional_subcortical_volume$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_subcortical_volume$sample == "Female")] <- "Chronic Pain: Female Sample"
 
 res_CP_MDD_brain_structure_regional_subcortical_volume$group[(res_CP_MDD_brain_structure_regional_subcortical_volume$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_subcortical_volume$sample == "Male")] <- "Chronic Pain: Male Sample"
+
+
+regional_subcortical_volume_ggseg <- tibble(
+  region = res_CP_MDD_brain_structure_regional_subcortical_volume$regions_ggseg, 
+  "Standardized β" = res_CP_MDD_brain_structure_regional_subcortical_volume$beta,
+  groups = res_CP_MDD_brain_structure_regional_subcortical_volume$group
+)
+
+
+## Order groups
+regional_subcortical_volume_ggseg$groups <- ordered(regional_subcortical_volume_ggseg$groups, levels = c("Chronic Pain: Full Sample", "Chronic Pain: Female Sample", "Chronic Pain: Male Sample", "Depression: Full Sample", "Depression: Female Sample", "Depression: Male Sample"))
+
+ggplot() +
+  geom_brain(atlas = aseg,
+             hemi = "right") +
+  scale_fill_brain2(wes_palette("Darjeeling1",8,type = "continuous")) +
+  theme_minimal()
+
+
+p4 <- regional_subcortical_volume_ggseg %>%
+  group_by(groups) %>%
+  ggplot() +
+  geom_brain(atlas = aseg,
+             aes(fill = `Standardized β`),
+             hemi = "left") +
+  facet_wrap(~groups) +
+  scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red') +
+  theme_minimal() +
+  theme(panel.spacing = unit(22, "lines"))
+
+
+
+(p1 / p2 / p3 / p4) + plot_annotation(tag_levels = 'A') & theme(strip.text.x = element_text(size = 20), legend.text = element_text(size = 10), legend.title = element_text(size = 15), plot.tag = element_text(size = 30))
+
+```
+
+
+##### Cortex map: depression
+
+```{r Cortex volume depression status, echo = FALSE}
+## Remove balanced dataset results
+res_CP_MDD_brain_structure_no_balanced <- res_CP_MDD_brain_structure[!grepl("Balanced", res_CP_MDD_brain_structure$sample),]
+
+## Get only regional cortical volumes in chronic pain 
+res_CP_MDD_brain_structure_regional_cortical_volumes <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Volumes") & (res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
+
+dk_cortical_regions <- dk$palette
+
+## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
+dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
+res_CP_MDD_brain_structure_regional_cortical_volumes$regions_ggseg <- rep(dk_cortical_regions, 3)
+
+## Compare name columns as sanity check
+#res_CP_MDD_brain_structure_regional_cortical_volumes[c("regions_ggseg", "brain_phenotype")]
+
+## Create informative groups
+res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "All")] <- "Depression: Full Sample"
+
+res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "Female")] <- "Depression: Female Sample"
+
+res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "Male")] <- "Depression: Male Sample"
+
+
+regional_cortical_volumes_ggseg <- tibble(
+  region = res_CP_MDD_brain_structure_regional_cortical_volumes$regions_ggseg, 
+  "Standardized β" = res_CP_MDD_brain_structure_regional_cortical_volumes$beta,
+  groups = res_CP_MDD_brain_structure_regional_cortical_volumes$group
+)
+
+## Order groups
+regional_cortical_volumes_ggseg$groups <- ordered(regional_cortical_volumes_ggseg$groups, levels = c("Depression: Full Sample", "Depression: Female Sample", "Depression: Male Sample"))
+
+ggplot() +
+  geom_brain(atlas = dk,
+  hemi = "right") +  
+   scale_fill_brain2(wes_palette("Darjeeling1",35,type = "continuous")) +
+  theme_minimal()
+
+p1 <- regional_cortical_volumes_ggseg %>%
+  group_by(groups) %>%
+  ggplot() +
+  geom_brain(atlas = dk, 
+             hemi = "right",
+             aes(fill = `Standardized β`)) +
+  facet_wrap(~groups) +
+  scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red') +
+  theme_minimal() 
+
+```
+
+```{r Cortex area depression status, echo = FALSE}
+
+## Get only regional cortical areas in chronic pain 
+res_CP_MDD_brain_structure_regional_cortical_areas <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Areas") & (res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
+
+dk_cortical_regions <- dk$palette
+
+## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
+dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
+res_CP_MDD_brain_structure_regional_cortical_areas$regions_ggseg <- rep(dk_cortical_regions, 3)
+
+## Compare name columns as sanity check
+#res_CP_MDD_brain_structure_regional_cortical_areas[c("regions_ggseg", "brain_phenotype")]
+
+## Create informative groups
+
+res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "All")] <- "Depression: Full Sample"
+
+res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "Female")] <- "Depression: Female Sample"
+
+res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "Male")] <- "Depression: Male Sample"
+
+
+regional_cortical_areas_ggseg <- tibble(
+  region = res_CP_MDD_brain_structure_regional_cortical_areas$regions_ggseg, 
+  "Standardized β" = res_CP_MDD_brain_structure_regional_cortical_areas$beta,
+  groups = res_CP_MDD_brain_structure_regional_cortical_areas$group
+)
+
+## Order groups
+regional_cortical_areas_ggseg$groups <- ordered(regional_cortical_areas_ggseg$groups, levels = c("Depression: Full Sample", "Depression: Female Sample", "Depression: Male Sample"))
+
+
+p2 <- regional_cortical_areas_ggseg %>%
+  group_by(groups) %>%
+  ggplot() +
+  geom_brain(atlas = dk, 
+             hemi = "right",
+             aes(fill = `Standardized β`)) +
+  facet_wrap(~groups) +
+  scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red') +
+  theme_minimal() 
+
+```
+
+
+```{r Cortex thickness depression status, echo = FALSE}
+
+## Get only regional cortical thickness in chronic pain 
+res_CP_MDD_brain_structure_regional_cortical_thickness <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Thickness") & (res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
+
+dk_cortical_regions <- dk$palette
+
+## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
+dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
+res_CP_MDD_brain_structure_regional_cortical_thickness$regions_ggseg <- rep(dk_cortical_regions, 3)
+
+## Compare name columns as sanity check
+#res_CP_MDD_brain_structure_regional_cortical_thickness[c("regions_ggseg", "brain_phenotype")]
+
+## Create informative groups
+
+res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "All")] <- "Depression: Full Sample"
+
+res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "Female")] <- "Depression: Female Sample"
+
+res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "Male")] <- "Depression: Male Sample"
+
+regional_cortical_thickness_ggseg <- tibble(
+  region = res_CP_MDD_brain_structure_regional_cortical_thickness$regions_ggseg, 
+  "Standardized β" = res_CP_MDD_brain_structure_regional_cortical_thickness$beta,
+  groups = res_CP_MDD_brain_structure_regional_cortical_thickness$group
+)
+
+## Order groups
+regional_cortical_thickness_ggseg$groups <- ordered(regional_cortical_thickness_ggseg$groups, levels = c("Depression: Full Sample", "Depression: Female Sample", "Depression: Male Sample"))
+
+## Only display one hemisphere ase resutls are unilateral
+p3 <- regional_cortical_thickness_ggseg %>%
+  group_by(groups) %>%
+  ggplot() +
+  geom_brain(atlas = dk, 
+             hemi = "right",
+             aes(fill = `Standardized β`)) +
+  facet_wrap(~groups) +
+  scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red') +
+  theme_minimal()
+
+
+
+patchwork_cortical_MDD <- p1/p2/p3 
+
+```
+
+##### Subcortex volume map: depression
+
+```{r subcortical volume map: depression, echo = FALSE, warning=FALSE}
+
+## Get only regional sub cortical volume
+res_CP_MDD_brain_structure_regional_subcortical_volume <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Subcortical Volumes") & (res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
+
+sub_cortical_regions <- c("thalamus proper","caudate", "putamen", "pallidum", "hippocampus", "amygdala", "accumbens area")
+
+res_CP_MDD_brain_structure_regional_subcortical_volume$regions_ggseg <- sub_cortical_regions
+
+## Compare name columns as sanity check
+#res_CP_MDD_brain_structure_regional_subcortical_volume[c("regions_ggseg", "brain_phenotype")]
+
+## Create informative groups
 
 res_CP_MDD_brain_structure_regional_subcortical_volume$group[(res_CP_MDD_brain_structure_regional_subcortical_volume$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_subcortical_volume$sample == "All")] <- "Depression: Full Sample"
 
@@ -677,7 +860,7 @@ ggplot() +
   theme_minimal()
 
 
-regional_subcortical_volume_ggseg %>%
+p4 <- regional_subcortical_volume_ggseg %>%
   group_by(groups) %>%
   ggplot() +
   geom_brain(atlas = aseg,
@@ -685,10 +868,13 @@ regional_subcortical_volume_ggseg %>%
              hemi = "left") +
   facet_wrap(~groups) +
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red') +
-  theme_minimal()
+  theme_minimal() +
+  theme(panel.spacing = unit(22, "lines")) 
+  
 
-
+(p1 / p2 / p3 / p4) + plot_annotation(tag_levels = 'A') & theme(strip.text.x = element_text(size = 20), legend.text = element_text(size = 10), legend.title = element_text(size = 15), plot.tag = element_text(size = 30))
 ```
+
 
 ![](../output/plots/individual/p1.png)![](../output/plots/individual/p1.png) 
 
