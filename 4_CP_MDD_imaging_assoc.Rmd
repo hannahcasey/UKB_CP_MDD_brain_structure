@@ -48,9 +48,9 @@ setwd(work_dir)
 ## Load in data
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Load dataframes containing markers of inflammation, imaging features of interest and covariates
-UKB_imaging_covariates <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates.csv", header = TRUE)
+UKB_imaging_covariates <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_qc.csv", header = TRUE)
 
-UKB_imaging_covariates_long <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates_long.csv", header = TRUE)
+UKB_imaging_covariates_long <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_long_qc.csv", header = TRUE)
 
 ## Load in Chronic Pain (Keira's Phenotype) and Depression (Natasha's Phenotype) data
 UKB_CP <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_chronic_pain_phenotype/output/UKB_chronic_pain_phenotype_imaging.csv")
@@ -925,11 +925,9 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
   ## Combine association results
   all_assoc <- do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc))
   
-  ## Add column indicating methylation score p-value threshold
+  ## Add column indicating disorder
   all_assoc$disorder<- disorder
   
-  ## append association analysis for all dnam p-values
-  #disorder[1]
   if (disorder == "chronic_pain"){
     all_CP_MDD_structure_assoc <- all_assoc
   }else{
@@ -1130,7 +1128,7 @@ MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.adjust"] <-
 ## Combine association results
 all_comorbidity_structure_assoc <- do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc))
 
-## Add column indicating methylation score p-value threshold
+## Add column indicating disorder
 all_comorbidity_structure_assoc$disorder<- "comorbidity"
 
 
@@ -1340,7 +1338,7 @@ for (sex in c("females", "males")){
     ## Combine association results
     all_assoc <- do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc))
     
-    ## Add column indicating methylation score p-value threshold
+    ## Add column indicating disorder
     all_assoc$disorder<- disorder
     
     ## append association analysis
@@ -1552,7 +1550,7 @@ for (sex in c("females", "males")){
   
 }
 
-## Add column indicating methylation score p-value threshold
+## Add column indicating disorder
 all_comorbidity_structure_assoc_females$disorder<- "comorbidity"
 all_comorbidity_structure_assoc_males$disorder<- "comorbidity"
 
@@ -1771,7 +1769,7 @@ for (site in c("Newcastle" ,"Cheadle", "Reading")){
       ## Combine association results
       all_assoc <- do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc))
       
-      ## Add column indicating methylation score p-value threshold
+      ## Add column indicating disorder
       all_assoc$disorder <- disorder
       
       ## append association analysis 
@@ -2277,7 +2275,7 @@ for (sex in c("females", "males")){
     ## Combine association results
     all_assoc <- do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc))
     
-    ## Add column indicating methylation score p-value threshold
+    ## Add column indicating disorder
     all_assoc$disorder  <- disorder
     
     ## append association analysis
@@ -2488,7 +2486,7 @@ for (sex in c("females", "males")){
   
 }
 
-## Add column indicating methylation score p-value threshold
+## Add column indicating disorder
 balanced_all_comorbidity_structure_assoc_females$disorder<- "comorbidity"
 balanced_all_comorbidity_structure_assoc_males$disorder<- "comorbidity"
 

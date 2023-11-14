@@ -729,8 +729,8 @@ dim(UKB_imaging_covariates_long)
 
 ```{r Save to project folder}
 
-write.csv(UKB_imaging_covariates, "/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates.csv", quote = F)
-write.csv(UKB_imaging_covariates_long, "~/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_long.csv", quote = F)
+write.csv(UKB_imaging_covariates, "/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_qc.csv", quote = F)
+write.csv(UKB_imaging_covariates_long, "/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_long_qc.csv", quote = F)
 ```
 
 
