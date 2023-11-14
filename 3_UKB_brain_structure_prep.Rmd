@@ -7,7 +7,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 library(dplyr)
-library(rebus) #to build regular expressions
 library(utils) #for progress bar in for loop
 library(tidyverse)
 library(data.table)
@@ -16,108 +15,24 @@ library(rlist)
 
 ## Load in all brains structure IDPs and covariates from UKB.
 
-```{r Load and format all UKB covariate and imaging data}
+```{r Load covariate and imaging data}
 
-## Load in covariate information:
-## f.21022 = Age at recruitment -
+## Load in formatted UKB dataset containing following covariates and structural imaging data - see 1_duckDB_get_data.R
+## f.21003 = Age at assessment -
 ## f.31 = Sex -
 ## f.21001 = BMI -
 ## f.54 = assessment centre -
 ## Volume of EstimatedTotalIntraCranial (whole brain)
 
-## Load in baseline characteristics - sex and age
-UKB_baseline_characteristics <- readRDS("/Volumes/GenScotDepression/data/ukb/phenotypes/fields/2020-09-phenotypes-ukb43743/BaselineCharacteristics.rds")
+## Load in data
+UKB_imaging_covariates <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates.csv", header = T)
 
-## Extract sex and sex information
-UKB_sex_age <- cbind(UKB_baseline_characteristics[,1],
-                                               UKB_baseline_characteristics[grepl("f.31.0.0", names(UKB_baseline_characteristics))],
-                                               UKB_baseline_characteristics[grepl("f.21022.0.0", names(UKB_baseline_characteristics))])
+## Recode imaging sites
+UKB_imaging_covariates$assessment_centre_first_imaging[UKB_imaging_covariates$assessment_centre_first_imaging == 11027] <- "Newcastle"
+UKB_imaging_covariates$assessment_centre_first_imaging[UKB_imaging_covariates$assessment_centre_first_imaging == 11025] <- "Cheadle"
+UKB_imaging_covariates$assessment_centre_first_imaging[UKB_imaging_covariates$assessment_centre_first_imaging == 11026] <- "Reading"
+UKB_imaging_covariates$assessment_centre_first_imaging[UKB_imaging_covariates$assessment_centre_first_imaging == 11028] <- "Bristol"
 
-## Rename ID and sex column in new filtered dataframe
-UKB_sex_age <- UKB_sex_age %>%
-  rename(f.eid = "UKB_baseline_characteristics[, 1]",
-         sex = f.31.0.0,
-         age = f.21022.0.0)
-
-## Create new variable, age^2
-UKB_sex_age$age_squared <- (UKB_sex_age$age^2)
-
-## Remove redundant dataframes 
-rm(UKB_baseline_characteristics)
-
-## Load in physical measures data - BMI
-UKB_physical_measures <- readRDS("/Volumes/GenScotDepression/data/ukb/phenotypes/fields/2021-04-phenotypes-ukb44797/PhysicalMeasures.rds")
-
-## Extract BMI data
-UKB_BMI <- cbind(UKB_physical_measures[,1], UKB_physical_measures[grepl("f.21001.0.0", names(UKB_physical_measures))])
-
-## Rename ID and BMI column in new filtered dataframe
-UKB_BMI <- UKB_BMI %>%
-  rename(f.eid = "UKB_physical_measures[, 1]",
-         BMI = f.21001.0.0)
-
-## Remove redundant dataframes 
-rm(UKB_physical_measures)
-
-## Load in recruitment data - assessment centre
-UKB_recruitment <- readRDS("/Volumes/GenScotDepression/data/ukb/phenotypes/fields/2021-04-phenotypes-ukb44797/Recruitment.rds")
-UKB_assessment_centre_first_imaging <- cbind(UKB_recruitment[,1],
-                                  UKB_recruitment[grepl("f.54.2.0", names(UKB_recruitment))])
-
-## Rename ID and 2nd instance assessment centre column in new filtered dataframe
-UKB_assessment_centre_first_imaging <- UKB_assessment_centre_first_imaging %>%
-  rename(f.eid = "UKB_recruitment[, 1]",
-         assessment_centre_first_imaging = f.54.2.0)
-
-UKB_assessment_centre_first_imaging$assessment_centre_first_imaging[UKB_assessment_centre_first_imaging$assessment_centre_first_imaging == 11027] <- "Newcastle"
-UKB_assessment_centre_first_imaging$assessment_centre_first_imaging[UKB_assessment_centre_first_imaging$assessment_centre_first_imaging == 11025] <- "Cheadle"
-UKB_assessment_centre_first_imaging$assessment_centre_first_imaging[UKB_assessment_centre_first_imaging$assessment_centre_first_imaging == 11026] <- "Reading"
-UKB_assessment_centre_first_imaging$assessment_centre_first_imaging[UKB_assessment_centre_first_imaging$assessment_centre_first_imaging == 11028] <- "Bristol"
-
-## Remove redundant dataframes 
-rm(UKB_recruitment)
-
-## Load in structural imaging data
-UKB_imaging <- readRDS("/Volumes/GenScotDepression/data/ukb/phenotypes/fields/2020-02-imaging-ukb40531/Imaging.rds")
-
-## Extract total ICV data - sum of volume of white matter(f.25008), volume of grey matter (f.25006) and volume of ventricular cerebrospinal fluid (25004)
-UKB_imaging_ICV <- cbind(UKB_imaging[,1],
-                                     UKB_imaging[grepl("f.25008.", names(UKB_imaging))],
-                                     UKB_imaging[grepl("f.25006.", names(UKB_imaging))],
-                                     UKB_imaging[grepl("f.25004.", names(UKB_imaging))])
-## Add white matter, grey matter and cerebrospinal fluid volume to calcuate total ICV
-UKB_imaging_ICV$ICV <- UKB_imaging_ICV$f.25008.2.0 + UKB_imaging_ICV$f.25006.2.0 + UKB_imaging_ICV$f.25004.2.0
-
-
-## Rename ID in new filtered dataframe
-UKB_imaging_ICV <- UKB_imaging_ICV %>%
-  rename(f.eid = "UKB_imaging[, 1]")
-
-## Create regular expression matchinng number ranges identifying field IDs containing regional cortical volumes, regional FA measures, regional MD measures and subcortical volumes
-rx_cort <- number_range(26721, 26922)
-rx_FA <- number_range(25488, 25514)
-rx_MA <- number_range(25515, 25541)
-rx_subcort <- number_range(25011, 25024)
-
-UKB_imaging_small <- cbind(UKB_imaging[,1],
-                               UKB_imaging[grepl(rx_cort, names(UKB_imaging))],
-                               UKB_imaging[grepl(rx_FA, names(UKB_imaging))],
-                               UKB_imaging[grepl(rx_MA, names(UKB_imaging))],
-                               UKB_imaging[grepl(rx_subcort, names(UKB_imaging))])
-
-## Rename ID column in new filtered dataframe
-UKB_imaging_small <- UKB_imaging_small %>%
-  rename(f.eid = "UKB_imaging[, 1]")
-
-## Remove redundant dataframes 
-rm(UKB_imaging)
-
-
-## Combine ID, covariates, CRP PRS and DKT structural measures into single dataframe
-UKB_imaging_covariates <- left_join(UKB_BMI, UKB_sex_age, by = "f.eid")
-UKB_imaging_covariates <- left_join(UKB_imaging_covariates, UKB_assessment_centre_first_imaging, by = "f.eid")
-UKB_imaging_covariates <- left_join(UKB_imaging_covariates, UKB_imaging_ICV, by = "f.eid")
-UKB_imaging_covariates <- left_join(UKB_imaging_covariates, UKB_imaging_small, by = "f.eid")
 ```
 
 ## Calculate Global and lobar meaurments for imaging features
@@ -716,7 +631,7 @@ write.csv(UKB_imaging_covariates, "~/Desktop/PhD/projects/UKB_CP_MDD_brain_struc
 ## UKB_imaging_covariates <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates_temp.csv", header = T)
 
 n_outliers
-## 3075 brain structure measurements excluded in total
+## 3300 brain structure measurements excluded in total
 ## Get number of outliers for individual brain structures
 n_detailed_outliers <- (colSums(!is.na(z_scores)) - colSums(!is.na(UKB_imaging_covariates[,all_brain_structure_names])))
 
@@ -814,8 +729,8 @@ dim(UKB_imaging_covariates_long)
 
 ```{r Save to project folder}
 
-write.csv(UKB_imaging_covariates, "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates.csv", quote = F)
-write.csv(UKB_imaging_covariates_long, "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates_long.csv", quote = F)
+write.csv(UKB_imaging_covariates, "/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates.csv", quote = F)
+write.csv(UKB_imaging_covariates_long, "~/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_long.csv", quote = F)
 ```
 
 

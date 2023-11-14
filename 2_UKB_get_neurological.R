@@ -1,7 +1,7 @@
 library(dplyr)
 
 ## Load in verbal interview
-UKB_verbal_interview <- readRDS("/Volumes/GenScotDepression/data/ukb/phenotypes/fields/2021-04-phenotypes-ukb44797/VerbalInterview.rds")
+UKB_verbal_interview <- read_csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_verbal_interview.csv", header = T)
 
 ## get cancer and non-cancer codes f.20001 and f.20002
 
@@ -45,7 +45,7 @@ UKB_illness_codes_cancer <- cbind(UKB_verbal_interview$f.eid,
 # Brain cancer/primary malignant brain tumour - 1032
 # Meningeal cancer/malignant meningioma - 1031
 
-UKB_neurological <- data_frame(f_eid = UKB_illness_codes$`UKB_verbal_interview$f.eid`)
+UKB_neurological <- data_frame(f_eid = UKB_illness_codes_non_cancer$`UKB_verbal_interview$f.eid`)
 
 ## Make array of neurologival illness codes
 UKB_neurological_codes_not_cancer <- c(1683, 1245, 1491, 1425, 1433, 1258, 1263, 1246, 1264, 1626, 1266, 1583, 1247, 1259, 1261, 1244, 1240, 1397, 1434, 1262, 1524, 1081, 1086, 1083, 1082, 1659)
