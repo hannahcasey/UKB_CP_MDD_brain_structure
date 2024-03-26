@@ -31,6 +31,7 @@ library(tidyr)
 library(Hmisc)
 library(lmerTest)
 library(emmeans)
+library(lme4)
 set.seed(151097)
 ```
 
@@ -52,7 +53,7 @@ UKB_imaging_covariates <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_
 
 UKB_imaging_covariates_long <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_long_qc.csv", header = TRUE)
 
-## Load in Chronic Pain (Keira's Phenotype) and Depression (Natasha's Phenotype) data
+## Load in Chronic Pain (Keira's Phenotype) (changes to imaging timepoint) and Depression (Natasha's Phenotype) data
 UKB_CP <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_chronic_pain_phenotype/output/UKB_chronic_pain_phenotype_imaging.csv")
 
 ## Remame ID column, f_eid -> f_eid
@@ -103,7 +104,7 @@ UKB_CP_MDD$comorbidity_status[UKB_CP_MDD$recurrent_depression == 1 & UKB_CP_MDD$
 
 ## Merge chronic pain and depression data with preprocessed imaging dataset
 
-```{r Merge CP and MDD data with imaing}
+```{r Merge CP and MDD data with imaging}
 
 UKB_CP_MDD_imaging_covariates <-  left_join(UKB_imaging_covariates, UKB_CP_MDD, by = "f.eid")
 UKB_CP_MDD_imaging_covariates_long <-  left_join(UKB_imaging_covariates_long, UKB_CP_MDD, by = "f.eid")
@@ -190,7 +191,7 @@ age_noCPMDD_m_text <- paste0(round(age_noCPMDD_m,2), "/", round(age_noCPnoMDD_m,
 age_CPnoMDD_f_text <- paste0(round(age_CPnoMDD_f,2), "/", round(age_noCPnoMDD_f,2))
 age_CPnoMDD_m_text <- paste0(round(age_CPnoMDD_m,2), "/", round(age_noCPnoMDD_m,2))
 age_noCPnoMDD_f_text <- paste0(round(age_noCPnoMDD_f,2), "/", round(age_noCPnoMDD_f,2))
-age_noCPnoMDD_m_text <- paste0(round(age_noCPnoMDD_f,2), "/", round(age_noCPnoMDD_m,2))
+age_noCPnoMDD_m_text <- paste0(round(age_noCPnoMDD_m,2), "/", round(age_noCPnoMDD_m,2))
 
 ## Get average BMI of female/male cases/controls each disroder
 BMI_depression_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
@@ -224,7 +225,7 @@ BMI_noCPMDD_m_text <- paste0(round(BMI_noCPMDD_m,2), "/", round(BMI_noCPnoMDD_m,
 BMI_CPnoMDD_f_text <- paste0(round(BMI_CPnoMDD_f,2), "/", round(BMI_noCPnoMDD_f,2))
 BMI_CPnoMDD_m_text <- paste0(round(BMI_CPnoMDD_m,2), "/", round(BMI_noCPnoMDD_m,2))
 BMI_noCPnoMDD_f_text <- paste0(round(BMI_noCPnoMDD_f,2), "/", round(BMI_noCPnoMDD_f,2))
-BMI_noCPnoMDD_m_text <- paste0(round(BMI_noCPnoMDD_f,2), "/", round(BMI_noCPnoMDD_m,2))
+BMI_noCPnoMDD_m_text <- paste0(round(BMI_noCPnoMDD_m,2), "/", round(BMI_noCPnoMDD_m,2))
 
 ## Perform t-test to determine if age and BMI are significantly different between female/male cases/controls in each disorder
 t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
@@ -320,7 +321,7 @@ UKB_CP_MDD_demographics <- data.frame(Groups = c("MDD", "CP", "CP+MDD+", "CP+MDD
 
 ## Create functions to carry out association analysis and hemisphere interaction analysis
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Function to ajdust p.values is dataframes with more rows than comparisons being made
+## Function to adjust p.values if dataframes with more rows than comparisons being made
 p.adjust.new <- function (p, method = p.adjust.methods, n = length(p)) 
 {
     method <- match.arg(method)
@@ -520,8 +521,10 @@ unilateral_structure_assoc_group <- function(dependent, independent, covariates,
   
   for (i in 1:length(dependent)){
     
-    mod <- paste0(dependent[i], "~", independent,  "+" ,  paste(covariates, collapse = " + "))
-    
+    # mod <- paste0(dependent[i], "~", independent,  "+" ,  paste(covariates, collapse = " + "))
+    mod <- paste0(dependent[i], "~", independent)
+
+        
     glm1 <- glm(as.formula(mod),
                 data = dataset,
                 na.action = na.omit)
@@ -734,9 +737,7 @@ lapply(UKB_CP_MDD_imaging_covariates_long[,brain_structure_covariates_T1], summa
 
 ```
 
-
 ## Carry out association analysis
-
 ```{r association analysis}
 
 ## Loop through each disorder to carry out association analysis
@@ -1358,7 +1359,7 @@ for (sex in c("females", "males")){
 
 ## Set CP-MDD- as reference group
 UKB_CP_MDD_imaging_covariates_long_females$comorbidity_group <- relevel(factor(UKB_CP_MDD_imaging_covariates_long_females$comorbidity_group), ref = "No Probable Recurrent MDD + No Chronic Pain") 
-UKB_CP_MDD_imaging_covariates_females$comorbidity_group <- relevel(factor(UKB_CP_MDD_imaging_covariates_females$comorbidity_group), ref = "No Probable Recurrent MDD + No Chronic Pain") 
+UKB_CP_MDD_imaging_covariates_females$comorbidity_group <- relevel(factor(UKB_CP_MDD_imaging_covariates_females$comorbidity_group), ref = "No Probable Recurrent MDD + No Chronic Pain")
 
 ## Set CP-MDD- as reference group
 UKB_CP_MDD_imaging_covariates_long_males$comorbidity_group <- relevel(factor(UKB_CP_MDD_imaging_covariates_long_males$comorbidity_group), ref = "No Probable Recurrent MDD + No Chronic Pain") 

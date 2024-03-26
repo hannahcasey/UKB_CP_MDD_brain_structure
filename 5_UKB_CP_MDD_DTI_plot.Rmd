@@ -1,0 +1,118 @@
+---
+title: "Display UKB DTI in CP and MDD"
+author: "Hannah Casey"
+date: "2023-11-16"
+output: html_document
+---
+
+This markdown will details the steps taken to plot DTI results in chronic pain and depression in UK Biobank.
+
+### Required software:
+
+[Mango](https://mangoviewer.com)
+
+[R](https://www.r-project.org/#:~:text=Getting%20Started,choose%20your%20preferred%20CRAN%20mirror.)
+
+### Create heatmap of standardized effect sizes
+
+```{r setup, include=FALSE}
+
+## Load libraries
+library(ggplot2)
+
+# Read in results 
+res_CP_MDD_brain_structure_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_CP_MDD_structure_assoc.csv",header=T)
+res_CP_MDD_brain_structure_all$sample <- "All"
+
+res_CP_MDD_brain_structure_female <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_CP_MDD_structure_assoc_females.csv",header=T)
+res_CP_MDD_brain_structure_female$sample <- "Female"
+
+res_CP_MDD_brain_structure_male <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_CP_MDD_structure_assoc_males.csv",header=T)
+res_CP_MDD_brain_structure_male$sample <- "Male"
+
+res_CP_MDD_brain_structure <- rbind(res_CP_MDD_brain_structure_all, res_CP_MDD_brain_structure_female, res_CP_MDD_brain_structure_male)
+
+## Create new columns to reformat brain phenotypes for plotting
+res_CP_MDD_brain_structure$brain_phenotype_plot <-  gsub("MD", "MD in", res_CP_MDD_brain_structure$brain_phenotype)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("FA", "FA in", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("volume", "Volume of", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("area", "Area of", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("thickness", "Thickness of", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("sub_cortical_Volume", "Subcortical volume", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("_|[.]", " ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+
+
+
+
+## Get only indidual MD tract measures
+res_CP_MDD_brain_structure_regional_MD <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "MD Tracts") & (res_CP_MDD_brain_structure$disorder == "chronic_pain" | res_CP_MDD_brain_structure$disorder == "recurrent_depression"),]
+
+## Get only individual FA tract measures
+res_CP_MDD_brain_structure_regional_FA <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "FA Tracts") & (res_CP_MDD_brain_structure$disorder == "chronic_pain" | res_CP_MDD_brain_structure$disorder == "recurrent_depression"),]
+
+
+
+## Get HEX colour to represent Beta scores of each tract in each sample
+## Get heatmap of MD and FA measures for individual DTI tracts
+p1 <- ggplot(res_CP_MDD_brain_structure_regional_MD, aes(x =brain_phenotype, y = sample, fill = beta)) +
+  geom_tile() +
+  scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red') +
+  facet_grid(. ~ disorder)
+
+p2 <- ggplot(res_CP_MDD_brain_structure_regional_FA, aes(x =brain_phenotype, y = sample, fill = beta)) +
+  geom_tile() +
+  scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red')+
+  facet_grid(. ~ disorder)
+
+
+# get plot build
+build <- ggplot_build(p1)
+# select hex value and x-value data
+hex_df <- build$data[[1]][, c("fill", "PANEL", "y", "x")]
+# order hex value data
+hex_df_ordered_1 <- hex_df[with(hex_df, order(PANEL, y, x)), ]
+
+## Add tract, sample and disorder name
+hex_df_ordered_1$tract <- sort(unique(res_CP_MDD_brain_structure_regional_MD$brain_phenotype))
+hex_df_ordered_1$sample <- c(rep("All", 15), rep("Female",15), rep("Male", 15))
+hex_df_ordered_1$disorder <- c(rep("CP", 45), rep("MDD", 45))
+
+# get plot build
+build <- ggplot_build(p2)
+# select hex value and x-value data
+hex_df <- build$data[[1]][, c("fill", "PANEL", "y", "x")]
+# order hex value data
+hex_df_ordered_2 <- hex_df[with(hex_df, order(PANEL, y, x)), ]
+
+## Add tract, sample and disorder name
+hex_df_ordered_2$tract <- sort(unique(res_CP_MDD_brain_structure_regional_FA$brain_phenotype))
+hex_df_ordered_2$sample <- c(rep("All", 15), rep("Female",15), rep("Male", 15))
+hex_df_ordered_2$disorder <- c(rep("CP", 45), rep("MDD", 45))
+
+```
+
+### Download AutoPtx v0.1.1 and ExBox6:
+
+[https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/AutoPtx](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/AutoPtx)
+
+### Run analysis 
+
+### Display DTI tract effect sizes
+
+In Mango:
+
+1. Select 'Open' > select 'Open Image'... > select 'nodif_brain_mask.nii.gz' in 'Exbox6' folder (start window)
+
+2. Select 'Image' > select 'Build Surface' (image window)
+
+3.  Select 'Surface' > select 'Material...' > set to 0.7 transparency (surface window)
+
+4. Select 'File' > select select 'Add Overlay...' > Choose NII file  (image window)
+
+5. Select 'Shapes' > select 'Add Overlay...' (surface window)
+
+6. Select 'Shapes' > toggle name of DTI tract > select 'Material...' > press 'Select Color' > input HEX number from dataframe above > select 'OK' > Change 'Overlay Search Distance' to 0 > uncheck 'Show Overlay Colors' > select 'OK'
+
+7. Repeat steps 4-6 until all DTI tracts have been added. When 'Add Overlay...' greyed out, select 'Remove Overlays'.
+
+

@@ -324,8 +324,7 @@ PC_res_MD_projection_fibres <- princomp(UKB_imaging_covariates_temp[,MD_projecti
 PC_res_MD_global <- princomp(UKB_imaging_covariates_temp[,MD_global],scores = TRUE)$scores[,1]
 
 ## Add 1st PC to temporary dataframe
-UKB_imaging_covariates_temp <- cbind(as.data.frame(UKB_imaging_covariates_temp[,"f.eid"]), PC_res_MD_association_fibres, PC_res_MD_thalamic_radiations, PC_res_MD_projection_fibres,
-                                                             PC_res_MD_global)
+UKB_imaging_covariates_temp <- cbind(as.data.frame(UKB_imaging_covariates_temp[,"f.eid"]), PC_res_MD_association_fibres, PC_res_MD_thalamic_radiations, PC_res_MD_projection_fibres, PC_res_MD_global)
 
 ## Rename column containing 1st PC of each general MD meaure and keep only ID and general MD meaures
 UKB_imaging_covariates_temp <- UKB_imaging_covariates_temp %>%
@@ -339,7 +338,6 @@ UKB_imaging_covariates_temp <- UKB_imaging_covariates_temp %>%
 
 ## Merge with full dataframe 
 UKB_imaging_covariates <- left_join(UKB_imaging_covariates, UKB_imaging_covariates_temp, by = "f.eid")
-
 
 
 ## Calculate general FA measures
@@ -406,8 +404,7 @@ PC_res_FA_projection_fibres <- princomp(UKB_imaging_covariates_temp[,FA_projecti
 PC_res_FA_global <- princomp(UKB_imaging_covariates_temp[,FA_global],scores = TRUE)$scores[,1]
 
 ## Add 1st PC to temporary dataframe
-UKB_imaging_covariates_temp <- cbind(as.data.frame(UKB_imaging_covariates_temp$f.eid), PC_res_FA_association_fibres, PC_res_FA_thalamic_radiations, PC_res_FA_projection_fibres,
-                                                  PC_res_FA_global)
+UKB_imaging_covariates_temp <- cbind(as.data.frame(UKB_imaging_covariates_temp$f.eid), PC_res_FA_association_fibres, PC_res_FA_thalamic_radiations, PC_res_FA_projection_fibres, PC_res_FA_global)
 
 ## Rename column containing 1st PC of each general FA meaure and keep only ID and general FA meaures
 UKB_imaging_covariates_temp <- UKB_imaging_covariates_temp %>%
@@ -468,7 +465,6 @@ for (i in 1:length(cortical_volume_FIDs)){
   ## rename column
   names(UKB_imaging_covariates)[names(UKB_imaging_covariates) == cortical_volume_FIDs[i]] <- cortical_volume
 }
-
 
 ## Change names of cortical areas from FIDs to descriptive names
 ## get names of individual cortical areas
@@ -636,21 +632,11 @@ n_outliers
 n_detailed_outliers <- (colSums(!is.na(z_scores)) - colSums(!is.na(UKB_imaging_covariates[,all_brain_structure_names])))
 
 ```
-## Scale all brain structures and continuous covariates
+## Scale all brain structures
 
 ```{r Scale data }
 ## Scale brain strucutre data
 UKB_imaging_covariates[,all_brain_structure_names] <- as.data.frame(scale(UKB_imaging_covariates[,all_brain_structure_names]))
-
-## Scale continuous covariates
-UKB_imaging_covariates$ICV_raw <- UKB_imaging_covariates$ICV
-UKB_imaging_covariates$BMI_raw <- UKB_imaging_covariates$BMI
-UKB_imaging_covariates$age_raw <- UKB_imaging_covariates$age
-
-UKB_imaging_covariates$ICV <- scale(UKB_imaging_covariates$ICV)
-UKB_imaging_covariates$BMI <- scale(UKB_imaging_covariates$BMI)
-UKB_imaging_covariates$age <- scale(UKB_imaging_covariates$age)
-UKB_imaging_covariates$age_squared <- scale(UKB_imaging_covariates$age_squared)
 ```
 
 ## Create long-formatted dataframe with bilateral data (needed for LME)
