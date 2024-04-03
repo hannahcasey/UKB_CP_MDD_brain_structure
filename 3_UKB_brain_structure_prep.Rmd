@@ -634,7 +634,7 @@ n_detailed_outliers <- (colSums(!is.na(z_scores)) - colSums(!is.na(UKB_imaging_c
 
 ```{r Scale data }
 ## Scale brain strucutre data
-UKB_imaging_covariates[,c(all_brain_structure_names, "ICV", "X_position", "Y_position", "Z_position")] <- as.data.frame(scale(UKB_imaging_covariates[,c(all_brain_structure_names, "ICV", "X_position", "Y_position", "Z_position")]))
+UKB_imaging_covariates[,c(all_brain_structure_names, "age", "age_squared", "BMI", "ICV", "X_position", "Y_position", "Z_position")] <- as.data.frame(scale(UKB_imaging_covariates[,c(all_brain_structure_names, "age", "age_squared", "BMI", "ICV", "X_position", "Y_position", "Z_position")]))
 ```
 
 ## Remove those of non-British/Irish ancestry
