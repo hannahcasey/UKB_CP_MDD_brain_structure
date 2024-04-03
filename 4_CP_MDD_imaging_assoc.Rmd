@@ -37,7 +37,7 @@ set.seed(151097)
 
 ## Load in data
 
-Load in dataframes containing imaging data, covariate and inflammatory biomarkers from UK Biobank (created using UKB_imaging_prep.R script). 
+Load in dataframes containing imaging data and covariate from UK Biobank (created using UKB_imaging_prep.R script).
 
 ```{r load in data, include = FALSE}
 
@@ -48,7 +48,7 @@ setwd(work_dir)
 
 ## Load in data
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Load dataframes containing markers of inflammation, imaging features of interest and covariates
+## Load dataframes containing imaging features of interest and covariates
 UKB_imaging_covariates <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_qc.csv", header = TRUE)
 
 UKB_imaging_covariates_long <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_long_qc.csv", header = TRUE)
@@ -116,7 +116,7 @@ UKB_CP_MDD_imaging_covariates_long <-  left_join(UKB_imaging_covariates_long, UK
 
 ## retains only essential variables
 UKB_CP_MDD_imaging_covariates_complete <- UKB_CP_MDD_imaging_covariates %>%
-  select(f.eid, BMI,BMI_raw, sex, age, age_raw, ICV, ICV_raw, recurrent_depression, chronic_pain, comorbidity_group, volume_pericalcarine_right, MD_acoustic_radiation_left)
+  select(f.eid, BMI, sex, age, ICV, recurrent_depression, chronic_pain, comorbidity_group)
 
 ## Get data with complete imaging
 UKB_CP_MDD_imaging_covariates_complete <- UKB_CP_MDD_imaging_covariates_complete[!is.na(UKB_CP_MDD_imaging_covariates_complete$ICV),]
@@ -160,25 +160,25 @@ n_noCPnoMDD_cases_m <- sum(UKB_CP_MDD_imaging_covariates_complete$comorbidity_gr
 n_noCPnoMDD_cases_text <- paste0(n_noCPnoMDD_cases_f, "/",n_noCPnoMDD_cases_m, " (", round(n_noCPnoMDD_cases_f/(n_noCPnoMDD_cases_f + n_noCPnoMDD_cases_m), 2) * 100, "%)")
 
 ## Get average age of female/male cases/controls each disroder
-age_depression_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-age_depression_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
-age_CP_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-age_CP_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+age_depression_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+age_depression_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+age_CP_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+age_CP_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
 
-age_no_depression_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-age_no_depression_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
-age_no_CP_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-age_no_CP_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+age_no_depression_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+age_no_depression_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+age_no_CP_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+age_no_CP_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
 
-age_CPMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-age_noCPMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-age_CPnoMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-age_noCPnoMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+age_CPMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+age_noCPMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+age_CPnoMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+age_noCPnoMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
 
-age_CPMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
-age_noCPMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
-age_CPnoMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
-age_noCPnoMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+age_CPMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+age_noCPMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+age_CPnoMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+age_noCPnoMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
 
 age_depression_f_text <- paste0(round(age_depression_f, 2),"/", round(age_no_depression_f, 2))
 age_depression_m_text <- paste0(round(age_depression_m,2), "/", round(age_no_depression_m,2))
@@ -194,25 +194,25 @@ age_noCPnoMDD_f_text <- paste0(round(age_noCPnoMDD_f,2), "/", round(age_noCPnoMD
 age_noCPnoMDD_m_text <- paste0(round(age_noCPnoMDD_m,2), "/", round(age_noCPnoMDD_m,2))
 
 ## Get average BMI of female/male cases/controls each disroder
-BMI_depression_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-BMI_depression_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
-BMI_CP_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-BMI_CP_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+BMI_depression_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+BMI_depression_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+BMI_CP_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+BMI_CP_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
 
-BMI_no_depression_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-BMI_no_depression_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
-BMI_no_CP_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-BMI_no_CP_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+BMI_no_depression_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+BMI_no_depression_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+BMI_no_CP_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+BMI_no_CP_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
 
-BMI_CPMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-BMI_noCPMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-BMI_CPnoMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
-BMI_noCPnoMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+BMI_CPMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+BMI_noCPMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+BMI_CPnoMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
+BMI_noCPnoMDD_f <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], na.rm = TRUE)
 
-BMI_CPMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
-BMI_noCPMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
-BMI_CPnoMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
-BMI_noCPnoMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+BMI_CPMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+BMI_noCPMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+BMI_CPnoMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
+BMI_noCPnoMDD_m <- mean(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], na.rm = TRUE)
 
 BMI_depression_f_text <- paste0(round(BMI_depression_f, 2),"/", round(BMI_no_depression_f, 2))
 BMI_depression_m_text <- paste0(round(BMI_depression_m,2), "/", round(BMI_no_depression_m,2))
@@ -228,84 +228,84 @@ BMI_noCPnoMDD_f_text <- paste0(round(BMI_noCPnoMDD_f,2), "/", round(BMI_noCPnoMD
 BMI_noCPnoMDD_m_text <- paste0(round(BMI_noCPnoMDD_m,2), "/", round(BMI_noCPnoMDD_m,2))
 
 ## Perform t-test to determine if age and BMI are significantly different between female/male cases/controls in each disorder
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
 if (t$p.value < 0.05){
   age_depression_f_text <- paste0(age_depression_f_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
 if (t$p.value < 0.05){
   age_depression_m_text <- paste0(age_depression_m_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
 if (t$p.value < 0.05){
   age_CP_f_text <- paste0(age_CP_f_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
 if (t$p.value < 0.05){
   age_CP_m_text <- paste0(age_CP_m_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
 if (t$p.value < 0.05){
   age_CPMDD_f_text <- paste0(age_CPMDD_f_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
 if (t$p.value < 0.05){
   age_CPMDD_m_text <- paste0(age_CPMDD_m_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
 if (t$p.value < 0.05){
   age_CPnoMDD_f_text <- paste0(age_CPnoMDD_f_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
 if (t$p.value < 0.05){
   age_CPnoMDD_m_text <- paste0(age_CPnoMDD_m_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
 if (t$p.value < 0.05){
   age_noCPMDD_f_text <- paste0(age_noCPMDD_f_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$age_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$age[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
 if (t$p.value < 0.05){
   age_noCPMDD_m_text <- paste0(age_noCPMDD_m_text, " *")
 }
 
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
 if (t$p.value < 0.05){
   BMI_depression_f_text <- paste0(BMI_depression_f_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$recurrent_depression == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
 if (t$p.value < 0.05){
   BMI_depression_m_text <- paste0(BMI_depression_m_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
 if (t$p.value < 0.05){
   BMI_CP_f_text <- paste0(BMI_CP_f_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 1 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$chronic_pain == 0 & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
 if (t$p.value < 0.05){
   BMI_CP_m_text <- paste0(BMI_CP_m_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
 if (t$p.value < 0.05){
   BMI_CPMDD_f_text <- paste0(BMI_CPMDD_f_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
 if (t$p.value < 0.05){
   BMI_CPMDD_m_text <- paste0(BMI_CPMDD_m_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
 if (t$p.value < 0.05){
   BMI_CPnoMDD_f_text <- paste0(BMI_CPnoMDD_f_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
 if (t$p.value < 0.05){
   BMI_CPnoMDD_m_text <- paste0(BMI_CPnoMDD_m_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"], UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Female"])
 if (t$p.value < 0.05){
   BMI_noCPMDD_f_text <- paste0(BMI_noCPMDD_f_text, " *")
 }
-t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$BMI_raw[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
+t <- t.test(UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"], UKB_CP_MDD_imaging_covariates_complete$BMI[UKB_CP_MDD_imaging_covariates_complete$comorbidity_group == "No Probable Recurrent MDD + No Chronic Pain" & UKB_CP_MDD_imaging_covariates_complete$sex == "Male"])
 if (t$p.value < 0.05){
   BMI_noCPMDD_m_text <- paste0(BMI_noCPMDD_m_text, " *")
 }
@@ -412,6 +412,9 @@ unilateral_structure_assoc <- function(dependent, independent, covariates, datas
   
   ## Adjust p-value
   output$p.adjust <- p.adjust.new(output$p.value, method = "fdr", n = n_comparisons)
+  
+  ## Do not adjust global measures
+  output$p.adjust[grepl("global|Global", output$brain_phenotype)] <- output$p.value[grepl("global|Global", output$brain_phenotype)]
   
   ## Add column indicating brain strucutre sup type being analysed
   output$brain_structure_type <- structural_subtype
@@ -558,6 +561,14 @@ unilateral_structure_assoc_group <- function(dependent, independent, covariates,
     ## Adjust p-value
     output$p.adjust <- p.adjust.new(output$p.value, method = "fdr", n = nrow(output))
     
+    ## Check if global measures present
+    if(any(grepl("global|Global", output$brain_phenotype))){
+      ## Iterate through each gloabl measute and addjust for group comparison
+      for (global_measure in unique(grep("global|Global", output$brain_phenotype, value = T))){
+        output$p.adjust[output$brain_phenotype == global_measure] <- p.adjust.new(output$p.value[output$brain_phenotype == global_measure], method = "fdr", n = 6)
+      }
+    }
+    
     ## Add column indicating brain strucutre sup type being analysed
     output$brain_structure_type <- structural_subtype
     
@@ -681,8 +692,8 @@ bilateral_structure_assoc_group <- function(dependent, independent, covariates, 
 ```{r define association analysis input}
 
 ## Define covariates to be used in association analysis
-brain_structure_covariates_T1 <- c("sex", "age", "age_squared", "ICV", "BMI", "assessment_centre_first_imaging")
-brain_structure_covariates_diffusion <- c("sex", "age", "age_squared", "BMI", "assessment_centre_first_imaging")
+brain_structure_covariates_T1 <- c("sex", "age", "age_squared", "ICV", "BMI", "assessment_centre_first_imaging", "X_position", "Y_position", "Z_position")
+brain_structure_covariates_diffusion <- c("sex", "age", "age_squared", "BMI", "assessment_centre_first_imaging", "X_position", "Y_position", "Z_position")
 
 ## Define subsets of brain structure variables
 ## General cortical measures
@@ -791,9 +802,6 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
                            n_comparisons = length(cortical_volume_general) -1,
                            structural_subtype = "Cortical Volume Global and Lobal Measures")
   
-  cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.adjust"] <- cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.value"]
-  
-  
   ## Cortical Thickness
   
   hemisphere_interaction(dependent = cortical_thickness_bilateral,
@@ -820,8 +828,6 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
                            n_comparisons = length(cortical_thickness_general) -1,
                            structural_subtype = "Cortical Thickness Global and Lobal Measures")
   
-  cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.adjust"] <- cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.value"]
-  
   ## Cortical Area
   
   hemisphere_interaction(dependent = cortical_area_bilateral,
@@ -847,9 +853,6 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
                            dataset = UKB_CP_MDD_imaging_covariates,
                            n_comparisons = length(cortical_area_general) -1,
                            structural_subtype = "Cortical Area Global and Lobal Measures")
-  
-  cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.adjust"] <- cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.value"]
-  
   ##FA
   
   hemisphere_interaction(dependent = FA_bilateral,
@@ -886,8 +889,6 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
                            n_comparisons = length(FA_general) -1,
                            structural_subtype = "FA General Measures")
   
-  FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.adjust"] <- FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.value"]
-  
   ##MD
   
   hemisphere_interaction(dependent = MD_bilateral,
@@ -920,8 +921,6 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
                            dataset = UKB_CP_MDD_imaging_covariates,
                            n_comparisons = length(MD_general) -1,
                            structural_subtype = "MD General Measures")
-  
-  MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.adjust"] <- MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.value"]
   
   ## Combine association results
   all_assoc <- do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc))
@@ -994,9 +993,6 @@ cortical_volume_general_assoc <- unilateral_structure_assoc_group(dependent = co
                          structural_subtype = "Cortical Volume Global and Lobal Measures")
 
 
-cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.adjust"] <- cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.value"]
-
-
 ## Cortical Thickness
 
 hemisphere_interaction_group(dependent = cortical_thickness_bilateral,
@@ -1022,8 +1018,6 @@ cortical_thickness_general_assoc <- unilateral_structure_assoc_group(dependent =
                          dataset = UKB_CP_MDD_imaging_covariates,
                          n_comparisons = length(cortical_thickness_general) -1,
                          structural_subtype = "Cortical Thickness Global and Lobal Measures")
-
-cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.adjust"] <- cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.value"]
 
 ## Cortical Area
 
@@ -1051,7 +1045,6 @@ cortical_area_general_assoc <- unilateral_structure_assoc_group(dependent = cort
                          n_comparisons = length(cortical_area_general) -1,
                          structural_subtype = "Cortical Area Global and Lobal Measures")
 
-cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.adjust"] <- cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.value"]
 
 ##FA
 
@@ -1089,8 +1082,6 @@ FA_general_assoc <- unilateral_structure_assoc_group(dependent = FA_general,
                          n_comparisons = length(FA_general) -1,
                          structural_subtype = "FA General Measures")
 
-FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.adjust"] <- FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.value"]
-
 ##MD
 
 hemisphere_interaction_group(dependent = MD_bilateral,
@@ -1123,8 +1114,6 @@ MD_general_assoc <- unilateral_structure_assoc_group(dependent = MD_general,
                          dataset = UKB_CP_MDD_imaging_covariates,
                          n_comparisons = length(MD_general) -1,
                          structural_subtype = "MD General Measures")
-
-MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.adjust"] <- MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.value"]
 
 ## Combine association results
 all_comorbidity_structure_assoc <- do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc))
@@ -1204,8 +1193,6 @@ for (sex in c("females", "males")){
                              n_comparisons = length(cortical_volume_general) -1,
                              structural_subtype = "Cortical Volume Global and Lobal Measures")
     
-    cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.adjust"] <- cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.value"]
-    
     
     ## Cortical Thickness
     
@@ -1233,8 +1220,6 @@ for (sex in c("females", "males")){
                              n_comparisons = length(cortical_thickness_general) -1,
                              structural_subtype = "Cortical Thickness Global and Lobal Measures")
     
-    cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.adjust"] <- cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.value"]
-    
     ## Cortical Area
     
     hemisphere_interaction(dependent = cortical_area_bilateral,
@@ -1260,8 +1245,6 @@ for (sex in c("females", "males")){
                              dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
                              n_comparisons = length(cortical_area_general) -1,
                              structural_subtype = "Cortical Area Global and Lobal Measures")
-    
-    cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.adjust"] <- cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.value"]
     
     ##FA
     
@@ -1299,8 +1282,6 @@ for (sex in c("females", "males")){
                              n_comparisons = length(FA_general) -1,
                              structural_subtype = "FA General Measures")
     
-    FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.adjust"] <- FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.value"]
-    
     ##MD
     
     hemisphere_interaction(dependent = MD_bilateral,
@@ -1333,8 +1314,6 @@ for (sex in c("females", "males")){
                              dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
                              n_comparisons = length(MD_general) -1,
                              structural_subtype = "MD General Measures")
-    
-    MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.adjust"] <- MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.value"]
     
     ## Combine association results
     all_assoc <- do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc))
@@ -1413,10 +1392,6 @@ for (sex in c("females", "males")){
                            n_comparisons = length(cortical_volume_general) -1,
                            structural_subtype = "Cortical Volume Global and Lobal Measures")
   
-  
-  cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.adjust"] <- cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.value"]
-  
-  
   ## Cortical Thickness
   
   hemisphere_interaction_group(dependent = cortical_thickness_bilateral,
@@ -1443,8 +1418,6 @@ for (sex in c("females", "males")){
                            n_comparisons = length(cortical_thickness_general) -1,
                            structural_subtype = "Cortical Thickness Global and Lobal Measures")
   
-  cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.adjust"] <- cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.value"]
-  
   ## Cortical Area
   
   hemisphere_interaction_group(dependent = cortical_area_bilateral,
@@ -1470,8 +1443,6 @@ for (sex in c("females", "males")){
                            dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
                            n_comparisons = length(cortical_area_general) -1,
                            structural_subtype = "Cortical Area Global and Lobal Measures")
-  
-  cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.adjust"] <- cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.value"]
   
   ##FA
   
@@ -1509,8 +1480,6 @@ for (sex in c("females", "males")){
                            n_comparisons = length(FA_general) -1,
                            structural_subtype = "FA General Measures")
   
-  FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.adjust"] <- FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.value"]
-  
   ##MD
   
   hemisphere_interaction_group(dependent = MD_bilateral,
@@ -1544,8 +1513,6 @@ for (sex in c("females", "males")){
                            n_comparisons = length(MD_general) -1,
                            structural_subtype = "MD General Measures")
   
-  MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.adjust"] <- MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.value"]
-  
   ## Combine association results
   assign(paste0("all_comorbidity_structure_assoc_", sex), do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc)))
   
@@ -1554,454 +1521,6 @@ for (sex in c("females", "males")){
 ## Add column indicating disorder
 all_comorbidity_structure_assoc_females$disorder<- "comorbidity"
 all_comorbidity_structure_assoc_males$disorder<- "comorbidity"
-
-```
-
-## Carry out site and sex-stratified association analysis
-
-```{r site and sex-stratified association analysis}
-
-## Get site and sex-specific dataframes
-UKB_CP_MDD_imaging_covariates_long_females_Newcastle <- UKB_CP_MDD_imaging_covariates_long[UKB_CP_MDD_imaging_covariates_long$sex == "Female" & UKB_CP_MDD_imaging_covariates_long$assessment_centre_first_imaging == "Newcastle",]
-UKB_CP_MDD_imaging_covariates_long_females_Cheadle <- UKB_CP_MDD_imaging_covariates_long[UKB_CP_MDD_imaging_covariates_long$sex == "Female" & UKB_CP_MDD_imaging_covariates_long$assessment_centre_first_imaging == "Cheadle",]
-UKB_CP_MDD_imaging_covariates_long_females_Reading <- UKB_CP_MDD_imaging_covariates_long[UKB_CP_MDD_imaging_covariates_long$sex == "Female" & UKB_CP_MDD_imaging_covariates_long$assessment_centre_first_imaging == "Reading",]
-
-UKB_CP_MDD_imaging_covariates_long_males_Newcastle <- UKB_CP_MDD_imaging_covariates_long[UKB_CP_MDD_imaging_covariates_long$sex == "Male" & UKB_CP_MDD_imaging_covariates_long$assessment_centre_first_imaging == "Newcastle",]
-UKB_CP_MDD_imaging_covariates_long_males_Cheadle <- UKB_CP_MDD_imaging_covariates_long[UKB_CP_MDD_imaging_covariates_long$sex == "Male" & UKB_CP_MDD_imaging_covariates_long$assessment_centre_first_imaging == "Cheadle",]
-UKB_CP_MDD_imaging_covariates_long_males_Reading <- UKB_CP_MDD_imaging_covariates_long[UKB_CP_MDD_imaging_covariates_long$sex == "Male" & UKB_CP_MDD_imaging_covariates_long$assessment_centre_first_imaging == "Reading",]
-
-UKB_CP_MDD_imaging_covariates_females_Newcastle <- UKB_CP_MDD_imaging_covariates[UKB_CP_MDD_imaging_covariates$sex == "Female" & UKB_CP_MDD_imaging_covariates$assessment_centre_first_imaging == "Newcastle",]
-UKB_CP_MDD_imaging_covariates_females_Cheadle <- UKB_CP_MDD_imaging_covariates[(UKB_CP_MDD_imaging_covariates$sex == "Female" & UKB_CP_MDD_imaging_covariates$assessment_centre_first_imaging == "Cheadle"),]
-UKB_CP_MDD_imaging_covariates_females_Reading <- UKB_CP_MDD_imaging_covariates[UKB_CP_MDD_imaging_covariates$sex == "Female" & UKB_CP_MDD_imaging_covariates$assessment_centre_first_imaging == "Reading",]
-
-UKB_CP_MDD_imaging_covariates_males_Newcastle <- UKB_CP_MDD_imaging_covariates[UKB_CP_MDD_imaging_covariates$sex == "Male" & UKB_CP_MDD_imaging_covariates$assessment_centre_first_imaging == "Newcastle",]
-UKB_CP_MDD_imaging_covariates_males_Cheadle <- UKB_CP_MDD_imaging_covariates[UKB_CP_MDD_imaging_covariates$sex == "Male" & UKB_CP_MDD_imaging_covariates$assessment_centre_first_imaging == "Cheadle",]
-UKB_CP_MDD_imaging_covariates_males_Reading <- UKB_CP_MDD_imaging_covariates[UKB_CP_MDD_imaging_covariates$sex == "Male" & UKB_CP_MDD_imaging_covariates$assessment_centre_first_imaging == "Reading",]
-
-## No imaging available from Bristol
-
-## Remove sex and site as covariates
-brain_structure_covariates_T1_no_sex_site <- brain_structure_covariates_T1[brain_structure_covariates_T1 != "sex" & brain_structure_covariates_T1 != "assessment_centre_first_imaging"]
-brain_structure_covariates_diffusion_no_sex_site <- brain_structure_covariates_diffusion[brain_structure_covariates_diffusion != "sex" & brain_structure_covariates_diffusion != "assessment_centre_first_imaging"]
-
-## Loop through each disorder to carry out association analysis
-for (site in c("Newcastle" ,"Cheadle", "Reading")){
-  for (sex in c("females", "males")){
-    for (disorder in c("chronic_pain", "recurrent_depression")){
-      
-      ##Subcortical Volume
-      ## Flag if any bilateral hemisphere measurements need to be analyzed separately
-      hemisphere_interaction(dependent = sub_cortical_volume_bilateral,
-                             independent = disorder,
-                             covariates = brain_structure_covariates_T1_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                             n_comparisons = length(sub_cortical_volume_bilateral),
-                             hemisphere_col = "hemi",
-                             structural_subtype = "Subcortical Volumes")
-      
-      
-      subcortical_volume_assoc <- bilateral_structure_assoc(dependent = sub_cortical_volume_bilateral,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_T1_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                               n_comparisons = length(sub_cortical_volume_bilateral),
-                               hemisphere_col = "hemi",
-                               structural_subtype = "Subcortical Volumes",
-                               id_col = "f.eid")
-      ## Cortical Volume
-      
-      hemisphere_interaction(dependent = cortical_volume_bilateral,
-                             independent = disorder,
-                             covariates = brain_structure_covariates_T1_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                             n_comparisons = length(cortical_volume_bilateral),
-                             hemisphere_col = "hemi",
-                             structural_subtype = "Cortical Regional Volumes")
-      
-      cortical_volume_assoc <- bilateral_structure_assoc(dependent = cortical_volume_bilateral,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_T1_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                               n_comparisons = length(cortical_volume_bilateral),
-                               hemisphere_col = "hemi",
-                               structural_subtype = "Cortical Regional Volumes",
-                               id_col = "f.eid")
-      
-      
-      cortical_volume_general_assoc <- unilateral_structure_assoc(dependent = cortical_volume_general,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_T1_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                               n_comparisons = length(cortical_volume_general) -1,
-                               structural_subtype = "Cortical Volume Global and Lobal Measures")
-      
-      cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.adjust"] <- cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.value"]
-      
-      
-      ## Cortical Thickness
-      
-      hemisphere_interaction(dependent = cortical_thickness_bilateral,
-                             independent = disorder,
-                             covariates = brain_structure_covariates_T1_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                             n_comparisons = length(cortical_thickness_bilateral),
-                             hemisphere_col = "hemi",
-                             structural_subtype = "Cortical Regional Thickness")
-      
-      cortical_thickness_assoc <- bilateral_structure_assoc(dependent = cortical_thickness_bilateral,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_T1_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                               n_comparisons = length(cortical_thickness_bilateral),
-                               hemisphere_col = "hemi",
-                               structural_subtype = "Cortical Regional Thickness",
-                               id_col = "f.eid")
-      
-      cortical_thickness_general_assoc <- unilateral_structure_assoc(dependent = cortical_thickness_general,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_T1_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                               n_comparisons = length(cortical_thickness_general) -1,
-                               structural_subtype = "Cortical Thickness Global and Lobal Measures")
-      
-      cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.adjust"] <- cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.value"]
-      
-      ## Cortical Area
-      
-      hemisphere_interaction(dependent = cortical_area_bilateral,
-                             independent = disorder,
-                             covariates = brain_structure_covariates_T1_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                             n_comparisons = length(cortical_area_bilateral),
-                             hemisphere_col = "hemi",
-                             structural_subtype = "Cortical Regional Areas")
-      
-      cortical_area_assoc <- bilateral_structure_assoc(dependent = cortical_area_bilateral,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_T1_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                               n_comparisons = length(cortical_area_bilateral),
-                               hemisphere_col = "hemi",
-                               structural_subtype = "Cortical Regional Areas",
-                               id_col = "f.eid")
-      
-      cortical_area_general_assoc <- unilateral_structure_assoc(dependent = cortical_area_general,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_T1_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                               n_comparisons = length(cortical_area_general) -1,
-                               structural_subtype = "Cortical Area Global and Lobal Measures")
-      
-      cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.adjust"] <- cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.value"]
-      
-      ##FA
-      
-      hemisphere_interaction(dependent = FA_bilateral,
-                             independent = disorder,
-                             covariates = brain_structure_covariates_diffusion_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                             n_comparisons = length(FA_bilateral),
-                             hemisphere_col = "hemi",
-                             structural_subtype = "FA Tracts")
-      
-      
-      FA_bilateral_assoc <- bilateral_structure_assoc(dependent = FA_bilateral,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_diffusion_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                               n_comparisons = length(FA_bilateral),
-                               hemisphere_col = "hemi",
-                               structural_subtype = "FA Tracts",
-                               id_col = "f.eid")
-      
-      
-      FA_unilateral_assoc <- unilateral_structure_assoc(dependent = FA_unilateral,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_diffusion_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                               n_comparisons = length(FA_unilateral),
-                               structural_subtype = "FA Tracts")
-      
-      
-      FA_general_assoc <- unilateral_structure_assoc(dependent = FA_general,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_diffusion_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                               n_comparisons = length(FA_general) -1,
-                               structural_subtype = "FA General Measures")
-      
-      FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.adjust"] <- FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.value"]
-      
-      ##MD
-      
-      hemisphere_interaction(dependent = MD_bilateral,
-                             independent = disorder,
-                             covariates = brain_structure_covariates_diffusion_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                             n_comparisons = length(MD_bilateral),
-                             hemisphere_col = "hemi",
-                             structural_subtype = "MD Tracts")
-      
-      MD_bilateral_assoc <- bilateral_structure_assoc(dependent = MD_bilateral,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_diffusion_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                               n_comparisons = length(MD_bilateral),
-                               hemisphere_col = "hemi",
-                               structural_subtype = "MD Tracts",
-                               id_col = "f.eid")
-      
-      MD_unilateral_assoc <- unilateral_structure_assoc(dependent = MD_unilateral,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_diffusion_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                               n_comparisons = length(MD_unilateral),
-                               structural_subtype = "MD Tracts")
-      
-      MD_general_assoc <- unilateral_structure_assoc(dependent = MD_general,
-                               independent = disorder,
-                               covariates = brain_structure_covariates_diffusion_no_sex_site,
-                               dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                               n_comparisons = length(MD_general) -1,
-                               structural_subtype = "MD General Measures")
-      
-      MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.adjust"] <- MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.value"]
-      
-      ## Combine association results
-      all_assoc <- do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc))
-      
-      ## Add column indicating disorder
-      all_assoc$disorder <- disorder
-      
-      ## append association analysis 
-      if (disorder == "chronic_pain"){
-        assign(paste0("all_CP_MDD_structure_assoc_", sex, "_by_site"), all_assoc)
-      }else{
-        assign(paste0("all_CP_MDD_structure_assoc_", sex, "_by_site") , rbind(get(paste0("all_CP_MDD_structure_assoc_", sex, "_by_site")), all_assoc))
-      }
-    }
-  }
-  
-  ## Add column indicating site
-  all_CP_MDD_structure_assoc_males_by_site$site <- site
-  all_CP_MDD_structure_assoc_females_by_site$site <- site
-      
-  if (site == "Newcastle"){
-    assign("all_CP_MDD_structure_assoc_males_site", all_CP_MDD_structure_assoc_males_by_site)
-    assign("all_CP_MDD_structure_assoc_females_site", all_CP_MDD_structure_assoc_females_by_site)    
-  }else{
-    assign("all_CP_MDD_structure_assoc_males_site" , rbind(all_CP_MDD_structure_assoc_males_site, all_CP_MDD_structure_assoc_males_by_site))
-    assign("all_CP_MDD_structure_assoc_females_site", rbind(all_CP_MDD_structure_assoc_females_site, all_CP_MDD_structure_assoc_females_by_site))
-  }
-  paste("site-stratified brain strucutre association complete for", site)
-}
-
-```
-
-## Carry out site and sex-stratified association for comorbidity groups
-
-```{r sex and site-stratified assocaition in comorbidity groups}
-
-for (site in c("Newcastle" ,"Cheadle", "Reading")){
-  for (sex in c("females", "males")){
-  
-    ##Subcortical Volume
-    ## flag if any bilateral hemisphere measurements need to be analyzed separately
-    hemisphere_interaction_group(dependent = sub_cortical_volume_bilateral,
-                           independent = "comorbidity_group",
-                           covariates = brain_structure_covariates_T1_no_sex_site,
-                           dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                           n_comparisons = length(sub_cortical_volume_bilateral),
-                           hemisphere_col = "hemi",
-                           structural_subtype = "Subcortical Volumes")
-  
-  
-    subcortical_volume_assoc <- bilateral_structure_assoc_group(dependent = sub_cortical_volume_bilateral,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_T1_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                             n_comparisons = length(sub_cortical_volume_bilateral),
-                             hemisphere_col = "hemi",
-                             structural_subtype = "Subcortical Volumes",
-                             id_col = "f.eid")
-    ## Cortical Volume
-  
-    hemisphere_interaction_group(dependent = cortical_volume_bilateral,
-                           independent = "comorbidity_group",
-                           covariates = brain_structure_covariates_T1_no_sex_site,
-                           dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                           n_comparisons = length(cortical_volume_bilateral),
-                           hemisphere_col = "hemi",
-                           structural_subtype = "Cortical Regional Volumes")
-  
-    cortical_volume_assoc <- bilateral_structure_assoc_group(dependent =  cortical_volume_bilateral,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_T1_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                             n_comparisons = length(cortical_volume_bilateral),
-                             hemisphere_col = "hemi",
-                             structural_subtype = "Cortical Regional Volumes",
-                             id_col = "f.eid")
-  
-  
-    cortical_volume_general_assoc <- unilateral_structure_assoc_group(dependent = cortical_volume_general,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_T1_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                             n_comparisons = length(cortical_volume_general) -1,
-                             structural_subtype = "Cortical Volume Global and Lobal Measures")
-  
-  
-    cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.adjust"] <- cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.value"]
-  
-  
-    ## Cortical Thickness
-  
-    hemisphere_interaction_group(dependent = cortical_thickness_bilateral,
-                           independent = "comorbidity_group",
-                           covariates = brain_structure_covariates_T1_no_sex_site,
-                           dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                           n_comparisons = length(cortical_thickness_bilateral),
-                           hemisphere_col = "hemi",
-                           structural_subtype = "Cortical Regional Thickness")
-  
-    cortical_thickness_assoc <- bilateral_structure_assoc_group(dependent = cortical_thickness_bilateral,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_T1_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                             n_comparisons = length(cortical_thickness_bilateral),
-                             hemisphere_col = "hemi",
-                             structural_subtype = "Cortical Regional Thickness",
-                             id_col = "f.eid")
-  
-    cortical_thickness_general_assoc <- unilateral_structure_assoc_group(dependent = cortical_thickness_general,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_T1_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                             n_comparisons = length(cortical_thickness_general) -1,
-                             structural_subtype = "Cortical Thickness Global and Lobal Measures")
-  
-    cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.adjust"] <- cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.value"]
-  
-    ## Cortical Area
-  
-    hemisphere_interaction_group(dependent = cortical_area_bilateral,
-                           independent = "comorbidity_group",
-                           covariates = brain_structure_covariates_T1_no_sex_site,
-                           dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                           n_comparisons = length(cortical_area_bilateral),
-                           hemisphere_col = "hemi",
-                           structural_subtype = "Cortical Regional Areas")
-  
-    cortical_area_assoc <- bilateral_structure_assoc_group(dependent = cortical_area_bilateral,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_T1_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                             n_comparisons = length(cortical_area_bilateral),
-                             hemisphere_col = "hemi",
-                             structural_subtype = "Cortical Regional Areas",
-                             id_col = "f.eid")
-  
-    cortical_area_general_assoc <- unilateral_structure_assoc_group(dependent = cortical_area_general,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_T1_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                             n_comparisons = length(cortical_area_general) -1,
-                             structural_subtype = "Cortical Area Global and Lobal Measures")
-  
-    cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.adjust"] <- cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.value"]
-  
-    ##FA
-  
-    hemisphere_interaction_group(dependent = FA_bilateral,
-                           independent = "comorbidity_group",
-                           covariates = brain_structure_covariates_diffusion_no_sex_site,
-                           dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                           n_comparisons = length(FA_bilateral),
-                           hemisphere_col = "hemi",
-                           structural_subtype = "FA Tracts")
-  
-  
-    FA_bilateral_assoc <- bilateral_structure_assoc_group(dependent = FA_bilateral,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_diffusion_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                             n_comparisons = length(FA_bilateral),
-                             hemisphere_col = "hemi",
-                             structural_subtype = "FA Tracts",
-                             id_col = "f.eid")
-  
-  
-    FA_unilateral_assoc <- unilateral_structure_assoc_group(dependent = FA_unilateral,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_diffusion_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                             n_comparisons = length(FA_unilateral),
-                             structural_subtype = "FA Tracts")
-  
-  
-    FA_general_assoc <- unilateral_structure_assoc_group(dependent = FA_general,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_diffusion_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                             n_comparisons = length(FA_general) -1,
-                             structural_subtype = "FA General Measures")
-  
-    FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.adjust"] <- FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.value"]
-  
-    ##MD
-  
-    hemisphere_interaction_group(dependent = MD_bilateral,
-                           independent = "comorbidity_group",
-                           covariates = brain_structure_covariates_diffusion_no_sex_site,
-                           dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                           n_comparisons = length(MD_bilateral),
-                           hemisphere_col = "hemi",
-                           structural_subtype = "MD Tracts")
-  
-    MD_bilateral_assoc <- bilateral_structure_assoc_group(dependent = MD_bilateral,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_diffusion_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex, "_", site)),
-                             n_comparisons = length(MD_bilateral),
-                             hemisphere_col = "hemi",
-                             structural_subtype = "MD Tracts",
-                             id_col = "f.eid")
-  
-    MD_unilateral_assoc <- unilateral_structure_assoc_group(dependent = MD_unilateral,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_diffusion_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                             n_comparisons = length(MD_unilateral),
-                             structural_subtype = "MD Tracts")
-  
-    MD_general_assoc <- unilateral_structure_assoc_group(dependent = MD_general,
-                             independent = "comorbidity_group",
-                             covariates = brain_structure_covariates_diffusion_no_sex_site,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex, "_", site)),
-                             n_comparisons = length(MD_general) -1,
-                             structural_subtype = "MD General Measures")
-  
-    MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.adjust"] <- MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.value"]
-  
-    ## Combine association results
-    assign(paste0("all_comorbidity_structure_assoc_", sex,  "_by_site"), do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc)))
-  }
-  
-  ## Add column indicating site
-  all_comorbidity_structure_assoc_males_by_site$site <- site
-  all_comorbidity_structure_assoc_females_by_site$site <- site
-      
-  if (site == "Newcastle"){
-    assign("all_comorbidity_structure_assoc_males_site", all_comorbidity_structure_assoc_males_by_site)
-    assign("all_comorbidity_structure_assoc_females_site", all_comorbidity_structure_assoc_females_by_site)    
-  }else{
-    assign("all_comorbidity_structure_assoc_males_site" , rbind(all_comorbidity_structure_assoc_males_site, all_comorbidity_structure_assoc_males_by_site))
-    assign("all_comorbidity_structure_assoc_females_site", rbind(all_comorbidity_structure_assoc_females_site, all_comorbidity_structure_assoc_females_by_site))
-  }
-  
-}
-
 
 ```
 
@@ -2141,8 +1660,6 @@ for (sex in c("females", "males")){
                              n_comparisons = length(cortical_volume_general) -1,
                              structural_subtype = "Cortical Volume Global and Lobal Measures")
     
-    cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.adjust"] <- cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.value"]
-    
     
     ## Cortical Thickness
     
@@ -2170,8 +1687,6 @@ for (sex in c("females", "males")){
                              n_comparisons = length(cortical_thickness_general) -1,
                              structural_subtype = "Cortical Thickness Global and Lobal Measures")
     
-    cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.adjust"] <- cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.value"]
-    
     ## Cortical Area
     
     hemisphere_interaction(dependent = cortical_area_bilateral,
@@ -2197,8 +1712,6 @@ for (sex in c("females", "males")){
                              dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",disorder, "_balanced_",sex)),
                              n_comparisons = length(cortical_area_general) -1,
                              structural_subtype = "Cortical Area Global and Lobal Measures")
-    
-    cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.adjust"] <- cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.value"]
     
     ##FA
     
@@ -2236,8 +1749,6 @@ for (sex in c("females", "males")){
                              n_comparisons = length(FA_general) -1,
                              structural_subtype = "FA General Measures")
     
-    FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.adjust"] <- FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.value"]
-    
     ##MD
     
     hemisphere_interaction(dependent = MD_bilateral,
@@ -2270,8 +1781,6 @@ for (sex in c("females", "males")){
                              dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",disorder, "_balanced_",sex)),
                              n_comparisons = length(MD_general) -1,
                              structural_subtype = "MD General Measures")
-    
-    MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.adjust"] <- MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.value"]
     
     ## Combine association results
     all_assoc <- do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc))
@@ -2349,10 +1858,6 @@ for (sex in c("females", "males")){
                            n_comparisons = length(cortical_volume_general) -1,
                            structural_subtype = "Cortical Volume Global and Lobal Measures")
   
-  
-  cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.adjust"] <- cortical_volume_general_assoc[cortical_volume_general_assoc$brain_phenotype == "volume_global_cortical", "p.value"]
-  
-  
   ## Cortical Thickness
   
   hemisphere_interaction_group(dependent = cortical_thickness_bilateral,
@@ -2379,8 +1884,6 @@ for (sex in c("females", "males")){
                            n_comparisons = length(cortical_thickness_general) -1,
                            structural_subtype = "Cortical Thickness Global and Lobal Measures")
   
-  cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.adjust"] <- cortical_thickness_general_assoc[cortical_thickness_general_assoc$brain_phenotype == "thickness_global_cortical", "p.value"]
-  
   ## Cortical Area
   
   hemisphere_interaction_group(dependent = cortical_area_bilateral,
@@ -2406,9 +1909,6 @@ for (sex in c("females", "males")){
                            dataset = get(paste0("UKB_CP_MDD_imaging_covariates_CPMDD_balanced_",sex)),
                            n_comparisons = length(cortical_area_general) -1,
                            structural_subtype = "Cortical Area Global and Lobal Measures")
-  
-  cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.adjust"] <- cortical_area_general_assoc[cortical_area_general_assoc$brain_phenotype == "area_global_cortical", "p.value"]
-  
   ##FA
   
   hemisphere_interaction_group(dependent = FA_bilateral,
@@ -2445,8 +1945,6 @@ for (sex in c("females", "males")){
                            n_comparisons = length(FA_general) -1,
                            structural_subtype = "FA General Measures")
   
-  FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.adjust"] <- FA_general_assoc[FA_general_assoc$brain_phenotype == "FA_global", "p.value"]
-  
   ##MD
   
   hemisphere_interaction_group(dependent = MD_bilateral,
@@ -2480,8 +1978,6 @@ for (sex in c("females", "males")){
                            n_comparisons = length(MD_general) -1,
                            structural_subtype = "MD General Measures")
   
-  MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.adjust"] <- MD_general_assoc[MD_general_assoc$brain_phenotype == "MD_global", "p.value"]
-  
   ## Combine association results
   assign(paste0("balanced_all_comorbidity_structure_assoc_", sex), do.call("rbind", list(subcortical_volume_assoc, cortical_volume_assoc, cortical_area_assoc, cortical_thickness_assoc, cortical_area_general_assoc, cortical_thickness_general_assoc, cortical_volume_general_assoc, FA_bilateral_assoc, FA_general_assoc, FA_unilateral_assoc, MD_bilateral_assoc, MD_general_assoc, MD_unilateral_assoc)))
   
@@ -2503,24 +1999,15 @@ write.csv(all_CP_MDD_structure_assoc_females, paste0(work_dir,"output/all_CP_MDD
 
 write.csv(all_CP_MDD_structure_assoc_males, paste0(work_dir,"output/all_CP_MDD_structure_assoc_males.csv"), quote = FALSE, row.names = FALSE)
 
-write.csv(all_CP_MDD_structure_assoc_females_site, paste0(work_dir,"output/all_CP_MDD_structure_assoc_females_site.csv"), quote = FALSE, row.names = FALSE)
-
-write.csv(all_CP_MDD_structure_assoc_males_site, paste0(work_dir,"output/all_CP_MDD_structure_assoc_males_site.csv"), quote = FALSE, row.names = FALSE)
-
 write.csv(balanced_all_CP_MDD_structure_assoc_females, paste0(work_dir,"output/balanced_all_CP_MDD_structure_assoc_females.csv"), quote = FALSE, row.names = FALSE)
 
 write.csv(balanced_all_CP_MDD_structure_assoc_males, paste0(work_dir,"output/balanced_all_CP_MDD_structure_assoc_males.csv"), quote = FALSE, row.names = FALSE)
-
 
 write.csv(all_comorbidity_structure_assoc, paste0(work_dir,"output/all_comorbidity_structure_assoc.csv"), quote = FALSE, row.names = FALSE)
 
 write.csv(all_comorbidity_structure_assoc_females, paste0(work_dir,"output/all_comorbidity_structure_assoc_females.csv"), quote = FALSE, row.names = FALSE)
 
 write.csv(all_comorbidity_structure_assoc_males, paste0(work_dir,"output/all_comorbidity_structure_assoc_males.csv"), quote = FALSE, row.names = FALSE)
-
-write.csv(all_comorbidity_structure_assoc_females_site, paste0(work_dir,"output/all_comorbidity_structure_assoc_females_site.csv"), quote = FALSE, row.names = FALSE)
-
-write.csv(all_comorbidity_structure_assoc_males_site, paste0(work_dir,"output/all_comorbidity_structure_assoc_males_site.csv"), quote = FALSE, row.names = FALSE)
 
 write.csv(balanced_all_comorbidity_structure_assoc_females, paste0(work_dir,"output/balanced_all_comorbidity_structure_assoc_females.csv"), quote = FALSE, row.names = FALSE)
 

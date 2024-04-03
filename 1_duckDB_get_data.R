@@ -27,6 +27,13 @@ BaselineCharacteristics <- tbl(con, 'BaselineCharacteristics')
 ## Extract sex (31) information
 UKB_sex <- BaselineCharacteristics %>%
   select(f.eid, f.31.0.0)
+
+## Get baseline characteristics
+Touchscreen <- tbl(con, 'Touchscreen')
+
+## Extract Ethnic background (21000) information
+Touchscreen_ethnicity <- Touchscreen %>%
+  select(f.eid, f.21000.0.0) 
   
 ## Get recruitment - age and imaging site
 Recruitment <- tbl(con, 'Recruitment')
@@ -49,6 +56,9 @@ Imaging_ICV <- Imaging %>%
   select(f.eid, f.25008.2.0, f.25006.2.0, f.25004.2.0) %>%
   mutate(ICV = f.25008.2.0 + f.25006.2.0 + f.25004.2.0)
 
+Imaging_coords <- Imaging %>%
+  select(f.eid, f.25756.2.0, f.25757.2.0, f.25758.2.0)
+
 ## Create regular expression matching number ranges identifying field IDs containing regional cortical volumes, regional FA measures, regional MD measures and subcortical volumes
 rx_cort <- number_range(26721, 26922)
 rx_FA <- number_range(25488, 25514)
@@ -66,8 +76,10 @@ UKB_imaging_small <- Imaging %>%
 
 ## Combine dataframes
 UKB_imaging_covariates <- left_join(UKB_sex, UKB_age_site, by = "f.eid")
+UKB_imaging_covariates <- left_join(UKB_imaging_covariates, Touchscreen_ethnicity, by = "f.eid")
 UKB_imaging_covariates <- left_join(UKB_imaging_covariates, UKB_BMI, by = "f.eid")
 UKB_imaging_covariates <- left_join(UKB_imaging_covariates, Imaging_ICV, by = "f.eid")
+UKB_imaging_covariates <- left_join(UKB_imaging_covariates, Imaging_coords, by = "f.eid")
 UKB_imaging_covariates <- left_join(UKB_imaging_covariates, UKB_imaging_small, by = "f.eid")
 
 
@@ -76,7 +88,11 @@ UKB_imaging_covariates <- left_join(UKB_imaging_covariates, UKB_imaging_small, b
 UKB_imaging_covariates <- UKB_imaging_covariates %>%
   rename(sex = f.31.0.0,
          age = f.21003.2.0,
+         ethnicity = f.21000.0.0,
          assessment_centre_first_imaging = f.54.2.0,
+         X_position = f.25756.2.0,
+         Y_position = f.25757.2.0,
+         Z_position = f.25758.2.0,
          BMI = f.21001.2.0) %>%
   mutate(age_squared = age^2)
   
