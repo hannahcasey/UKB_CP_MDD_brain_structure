@@ -28,6 +28,7 @@ library(ggh4x)
 **Pre-processing and QC - brain structure data:**
 
 - Outliers removed (>5 SD)
+- Only British/Irish
 
 - Global DTI measures calculated using PCA
 
@@ -45,9 +46,12 @@ Covariates:
 - BMI
 - UKB imaging assessment centre
 - ICV (only for measures of brain volume)
+- Imaging scanner coords
 
 Multiple comparision correction: FDR
   - n = number of brain structure phenotypes per imaging subcategory
+  
+#### Get results
 
 ```{r Load in and format data, echo=FALSE,  fig.height=50}
 # Read in results 
@@ -106,9 +110,9 @@ res_comorbidity_brain_structure$brain_phenotype_plot <-  gsub("_|[.]", " ", res_
 
 
 ## Reorder brain phenotype and subgroups for plotting
-res_CP_MDD_brain_structure$brain_structure_type  <- ordered(res_CP_MDD_brain_structure$brain_structure_type , levels = c("Subcortical Volumes", "Cortical Regional Volumes","Cortical Volume Global and Lobal Measures", "Cortical Regional Areas", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+res_CP_MDD_brain_structure$brain_structure_type  <- ordered(res_CP_MDD_brain_structure$brain_structure_type , levels = c("Subcortical Volume", "Cortical Regional Volume","Cortical Volume Global and Lobal Measures", "Cortical Regional Area", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
 
-res_comorbidity_brain_structure$brain_structure_type  <- ordered(res_comorbidity_brain_structure$brain_structure_type , levels = c("Subcortical Volumes", "Cortical Regional Volumes","Cortical Volume Global and Lobal Measures", "Cortical Regional Areas", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+res_comorbidity_brain_structure$brain_structure_type  <- ordered(res_comorbidity_brain_structure$brain_structure_type , levels = c("Subcortical Volume", "Cortical Regional Volume","Cortical Volume Global and Lobal Measures", "Cortical Regional Area", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
 
 # Include yes/no column to determine shape based on p-value
 res_CP_MDD_brain_structure$`Adjusted p-value < 0.05` = ifelse(res_CP_MDD_brain_structure$p.adjust < 0.05, "Yes","No")
@@ -245,13 +249,13 @@ res_comorbidity_brain_structure_CP_MDD$brain_structure_type_plot  = swr(res_como
 
 
 ## Order brain structure catagories for plotting
-res_comorbidity_brain_structure_noCP_noMDD$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_noCP_noMDD$brain_structure_type_plot , levels = c("Subcortical Volumes", "Cortical Regional\nVolumes","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nAreas", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+res_comorbidity_brain_structure_noCP_noMDD$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_noCP_noMDD$brain_structure_type_plot , levels = c("Subcortical Volume", "Cortical Regional\nVolume","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nArea", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
 
-res_comorbidity_brain_structure_CP_noMDD$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_CP_noMDD$brain_structure_type_plot , levels = c("Subcortical Volumes", "Cortical Regional\nVolumes","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nAreas", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+res_comorbidity_brain_structure_CP_noMDD$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_CP_noMDD$brain_structure_type_plot , levels = c("Subcortical Volume", "Cortical Regional\nVolume","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nArea", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
 
-res_comorbidity_brain_structure_noCP_MDD$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_noCP_MDD$brain_structure_type_plot , levels = c("Subcortical Volumes", "Cortical Regional\nVolumes","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nAreas", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+res_comorbidity_brain_structure_noCP_MDD$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_noCP_MDD$brain_structure_type_plot , levels = c("Subcortical Volume", "Cortical Regional\nVolume","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nArea", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
 
-res_comorbidity_brain_structure_CP_MDD$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_CP_MDD$brain_structure_type_plot , levels = c("Subcortical Volumes", "Cortical Regional\nVolumes","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nAreas", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+res_comorbidity_brain_structure_CP_MDD$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_CP_MDD$brain_structure_type_plot , levels = c("Subcortical Volume", "Cortical Regional\nVolume","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nArea", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
 
 ## Reduce results to only significant findings
 res_comorbidity_brain_structure_noCP_noMDD <-   res_comorbidity_brain_structure_noCP_noMDD %>%
@@ -352,9 +356,9 @@ levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[le
 
 levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot) == "Cortical Thickness\nGlobal and Lobal\nMeasures"] <- "Cortical Thickness Global and\nLobal Measures"
 
-levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot) == "Cortical Regional\nVolumes"] <- "Cortical Regional Volumes"
+levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot) == "Cortical Regional\nVolume"] <- "Cortical Regional Volume"
 
-levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot) == "Cortical Regional\nAreas"] <- "Cortical Regional Areas"
+levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot) == "Cortical Regional\nArea"] <- "Cortical Regional Area"
 
 levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot) == "Cortical Regional\nThickness"] <- "Cortical Regional Thickness"
 
@@ -385,9 +389,6 @@ plot_comorbidity_CP_MDD = ggplot(res_comorbidity_brain_structure_CP_MDD_plot, ae
 
 plot_comorbidity_CP_MDD
 ```
-
-
-
 
 ##### P-value graph - Depression - full sample
 
@@ -659,7 +660,7 @@ ggplot() +
 res_CP_MDD_brain_structure_no_balanced <- res_CP_MDD_brain_structure[!grepl("Balanced", res_CP_MDD_brain_structure$sample),]
 
 ## Get only regional cortical volumes in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_volumes <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Volumes") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain"),]
+res_CP_MDD_brain_structure_regional_cortical_volumes <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Volume") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain"),]
 
 dk_cortical_regions <- dk$palette
 
@@ -702,7 +703,7 @@ p1 <- regional_cortical_volumes_ggseg %>%
 ```{r Cortex area: chronic pain status, echo = FALSE}
 
 ## Get only regional cortical areas in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_areas <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Areas") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain"),]
+res_CP_MDD_brain_structure_regional_cortical_areas <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Area") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain"),]
 
 dk_cortical_regions <- dk$palette
 
@@ -790,7 +791,7 @@ p3 <- regional_cortical_thickness_ggseg %>%
 ```{r Subcortical volume: chronic pain status, echo = FALSE, warning=FALSE}
 
 ## Get only regional sub cortical volume
-res_CP_MDD_brain_structure_regional_subcortical_volume <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Subcortical Volumes") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain"),]
+res_CP_MDD_brain_structure_regional_subcortical_volume <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Subcortical Volume") & (res_CP_MDD_brain_structure_no_balanced$disorder == "chronic_pain"),]
 
 sub_cortical_regions <- c("thalamus proper","caudate", "putamen", "pallidum", "hippocampus", "amygdala", "accumbens area")
 
@@ -841,7 +842,7 @@ p4 <- regional_subcortical_volume_ggseg %>%
 res_CP_MDD_brain_structure_no_balanced <- res_CP_MDD_brain_structure[!grepl("Balanced", res_CP_MDD_brain_structure$sample),]
 
 ## Get only regional cortical volumes in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_volumes <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Volumes") & (res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
+res_CP_MDD_brain_structure_regional_cortical_volumes <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Volume") & (res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
 
 dk_cortical_regions <- dk$palette
 
@@ -884,7 +885,7 @@ p1 <- regional_cortical_volumes_ggseg %>%
 ```{r Cortex area: depression status, echo = FALSE}
 
 ## Get only regional cortical areas in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_areas <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Areas") & (res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
+res_CP_MDD_brain_structure_regional_cortical_areas <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Cortical Regional Area") & (res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
 
 dk_cortical_regions <- dk$palette
 
@@ -977,7 +978,7 @@ patchwork_cortical_MDD <- p1/p2/p3
 ```{r Subcortical volume: depression status, echo = FALSE, warning=FALSE}
 
 ## Get only regional sub cortical volume
-res_CP_MDD_brain_structure_regional_subcortical_volume <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Subcortical Volumes") & (res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
+res_CP_MDD_brain_structure_regional_subcortical_volume <- res_CP_MDD_brain_structure_no_balanced[(res_CP_MDD_brain_structure_no_balanced$brain_structure_type == "Subcortical Volume") & (res_CP_MDD_brain_structure_no_balanced$disorder == "recurrent_depression"),]
 
 sub_cortical_regions <- c("thalamus proper","caudate", "putamen", "pallidum", "hippocampus", "amygdala", "accumbens area")
 
@@ -1051,7 +1052,7 @@ brain_structure_gg
 ##### Effect size graph - Chronic pain status in sex-stratified samples
 ```{r Effect size graph chronic pain status - sex-stratified samples, echo=FALSE,  fig.height=50}
 ## Plot resutls
-brain_structure_gg = ggplot(brain_structure_CP_sex_stratified, aes(x=brain_phenotype_plot, y=beta, shape=`Adjusted p-value < 0.05`,colour=sample)) + 
+brain_structure_gg = ggplot(subset(res_CP_MDD_brain_structure[res_CP_MDD_brain_structure$disorder == "chronic_pain",], sample %in% c("Male", "Female", "All")), aes(x=brain_phenotype_plot, y=beta, shape=`Adjusted p-value < 0.05`,colour=sample)) + 
   geom_point(aes(y=beta),size=3, alpha = 0.5) +
   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
   theme_minimal() +
@@ -1102,7 +1103,7 @@ brain_structure_gg
 ```{r Effect size graph MDD - sex-stratified sample, echo=FALSE,  fig.height=50}
 
 ## Plot resutls
-brain_structure_gg = ggplot(brain_structure_MDD_sex_stratified, aes(x=brain_phenotype_plot, y=beta, shape=`Adjusted p-value < 0.05`,colour=sample)) + 
+brain_structure_gg = ggplot(subset(res_CP_MDD_brain_structure[res_CP_MDD_brain_structure$disorder == "recurrent_depression",], sample %in% c("Male", "Female", "All")), aes(x=brain_phenotype_plot, y=beta, shape=`Adjusted p-value < 0.05`,colour=sample)) + 
   geom_point(aes(y=beta),size=3, alpha = 0.5) +
   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
   theme_minimal() +
@@ -1227,7 +1228,9 @@ brain_structure_gg
 ####  Number of significant hits
 
 ```{r}
-sum(res_comorbidity_brain_structure_all$p.adjust < 0.05)
+res_comorbidity_brain_structure_full <- res_comorbidity_brain_structure_all[res_comorbidity_brain_structure_all$sample == "All",]
+
+sum(res_comorbidity_brain_structure_full$p.adjust < 0.05)
 sum(res_comorbidity_brain_structure_female$p.adjust < 0.05)
 sum(res_comorbidity_brain_structure_male$p.adjust < 0.05)
 
