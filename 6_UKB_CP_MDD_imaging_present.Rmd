@@ -55,35 +55,35 @@ Multiple comparision correction: FDR
 
 ```{r Load in and format data, echo=FALSE,  fig.height=50}
 # Read in results 
-res_CP_MDD_brain_structure_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_CP_MDD_structure_assoc.csv",header=T)
+res_CP_MDD_brain_structure_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_all.csv",header=T)
 res_CP_MDD_brain_structure_all$sample <- "All"
 
-res_CP_MDD_brain_structure_female <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_CP_MDD_structure_assoc_females.csv",header=T)
+res_CP_MDD_brain_structure_female <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_females.csv",header=T)
 res_CP_MDD_brain_structure_female$sample <- "Female"
 
-res_CP_MDD_brain_structure_male <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_CP_MDD_structure_assoc_males.csv",header=T)
+res_CP_MDD_brain_structure_male <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_males.csv",header=T)
 res_CP_MDD_brain_structure_male$sample <- "Male"
 
-res_CP_MDD_brain_structure_female_balanced <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/balanced_all_CP_MDD_structure_assoc_females.csv",header=T)
+res_CP_MDD_brain_structure_female_balanced <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/balanced_CP_MDD_structure_assoc_females.csv",header=T)
 res_CP_MDD_brain_structure_female_balanced$sample <- "Balanced:Female"
 
-res_CP_MDD_brain_structure_male_balanced <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/balanced_all_CP_MDD_structure_assoc_males.csv",header=T)
+res_CP_MDD_brain_structure_male_balanced <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/balanced_CP_MDD_structure_assoc_males.csv",header=T)
 res_CP_MDD_brain_structure_male_balanced$sample <- "Balanced:Male"
 
 
-res_comorbidity_brain_structure_all <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_comorbidity_structure_assoc.csv")
+res_comorbidity_brain_structure_all <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_all.csv")
 res_comorbidity_brain_structure_all$sample <- "All"
 
-res_comorbidity_brain_structure_female <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_comorbidity_structure_assoc_females.csv")
+res_comorbidity_brain_structure_female <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_females.csv")
 res_comorbidity_brain_structure_female$sample <- "Female"
 
-res_comorbidity_brain_structure_male <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_comorbidity_structure_assoc_males.csv")
+res_comorbidity_brain_structure_male <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_males.csv")
 res_comorbidity_brain_structure_male$sample <- "Male"
 
-res_comorbidity_brain_structure_female_balanced <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/balanced_all_comorbidity_structure_assoc_females.csv")
+res_comorbidity_brain_structure_female_balanced <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/balanced_comorbidity_structure_assoc_females.csv")
 res_comorbidity_brain_structure_female_balanced$sample <- "Balanced:Female"
 
-res_comorbidity_brain_structure_male_balanced <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/balanced_all_comorbidity_structure_assoc_males.csv")
+res_comorbidity_brain_structure_male_balanced <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/balanced_comorbidity_structure_assoc_males.csv")
 res_comorbidity_brain_structure_male_balanced$sample <- "Balanced:Male"
 
 ## Combine results into single dataframes
@@ -107,7 +107,6 @@ res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("thickness", "Thick
 res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("sub_cortical_Volume", "Subcortical volume", res_comorbidity_brain_structure$brain_phenotype_plot)
 res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("\\.[1-9]", "", res_comorbidity_brain_structure$brain_phenotype_plot)
 res_comorbidity_brain_structure$brain_phenotype_plot <-  gsub("_|[.]", " ", res_comorbidity_brain_structure$brain_phenotype_plot)
-
 
 ## Reorder brain phenotype and subgroups for plotting
 res_CP_MDD_brain_structure$brain_structure_type  <- ordered(res_CP_MDD_brain_structure$brain_structure_type , levels = c("Subcortical Volume", "Cortical Regional Volume","Cortical Volume Global and Lobal Measures", "Cortical Regional Area", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
@@ -189,22 +188,26 @@ res_CP_MDD_brain_structure$Direction <- ifelse(sign(res_CP_MDD_brain_structure$b
 rm(res_CP_MDD_brain_structure_all)
 rm(res_CP_MDD_brain_structure_female)
 rm(res_CP_MDD_brain_structure_male)
+rm(res_CP_MDD_brain_structure_female_balanced)
+rm(res_CP_MDD_brain_structure_male_balanced)
 
-res_comorbidity_brain_structure_all_save <- res_comorbidity_brain_structure_all
-res_comorbidity_brain_structure_male_save <- res_comorbidity_brain_structure_male
-res_comorbidity_brain_structure_female_save <- res_comorbidity_brain_structure_female
+rm(res_comorbidity_brain_structure_all)
+rm(res_comorbidity_brain_structure_female)
+rm(res_comorbidity_brain_structure_male)
+rm(res_comorbidity_brain_structure_female_balanced)
+rm(res_comorbidity_brain_structure_male_balanced)
 
+rm(temp)
 ```
 
 ----------------------------------------------------------------------------------------------------------------------------
-
+#### Create palettes
 ```{r Create palettes, include=FALSE}
 ## Get continuous colour palette
 pal_discrete <- wes_palette("Zissou1", 100, type = "continuous")
 
 ## Create discrete colour palette
 pal_continuous <- wes_palette("Darjeeling1",3, type = "discrete")
-
 
 ```
 
@@ -280,7 +283,7 @@ res_comorbidity_brain_structure_CP_MDD_plot <- res_comorbidity_brain_structure_C
   
 ## Plot resutls
 ## Reference: CP+MDD-
-plot_comorbidity_noCP_noMDD = ggplot(res_comorbidity_brain_structure_noCP_noMDD, aes(x=brain_phenotype_plot, y=beta, shape=significant,colour=as.factor(groups))) +
+c = ggplot(res_comorbidity_brain_structure_noCP_noMDD, aes(x=brain_phenotype_plot, y=beta, shape=significant,colour=as.factor(groups))) +
   geom_point(aes(y=beta),size=3, alpha = 0.5) +
   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
   theme_minimal() +
@@ -503,7 +506,7 @@ prow <- cowplot::plot_grid(
   rel_heights = c(1,1.2))
 
 # extract the legend from one of the plots
-legend <- cowplot::get_legend(plot_depression_females+ theme(legend.box.margin = margin(50, 100, 0, 50)))
+legend <- cowplot::get_legend(plot_depression_females + theme(legend.box.margin = ggplot2::margin(50, 100, 0, 50)))
 
 # add the legend to the row we made earlier. Give it one-third of 
 # the width of one plot (via rel_widths).
@@ -533,7 +536,7 @@ ggplot(brain_structure_CP_all, aes(x = brain_structure_type, y = p.adjust.minus.
                   point.padding = 0,
                   segment.color = 'grey50',
                   position = position_jitter(seed = 151097),
-                  max.overlaps = 100,
+                  max.overlaps = 50,
                   fill = "white",
                   show.legend = FALSE) +
   theme_classic() +
@@ -619,7 +622,7 @@ prow <- cowplot::plot_grid(
   rel_heights = c(1,1.2))
 
 # extract the legend from one of the plots
-legend <- cowplot::get_legend(plot_CP_females+ theme(legend.box.margin = margin(50, 100, 0, 50)))
+legend <- cowplot::get_legend(plot_CP_females+ theme(legend.box.margin = ggplot2::margin(50, 100, 0, 50)))
 
 # add the legend to the row we made earlier. Give it one-third of 
 # the width of one plot (via rel_widths).
@@ -669,7 +672,7 @@ dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %i
 res_CP_MDD_brain_structure_regional_cortical_volumes$regions_ggseg <- rep(dk_cortical_regions, 3)
 
 ## Compare name columns as sanity check
-#res_CP_MDD_brain_structure_regional_cortical_volumes[c("regions_ggseg", "brain_phenotype")]
+res_CP_MDD_brain_structure_regional_cortical_volumes[c("regions_ggseg", "brain_phenotype")]
 
 ## Create informative groups
 res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "All")] <- "Chronic Pain: Full Sample"
@@ -753,7 +756,18 @@ dk_cortical_regions <- dk$palette
 
 ## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
 dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
+
+## Check if any hemispheres have been analysed seperately 
+repeated_index <- grep("right", res_CP_MDD_brain_structure_regional_cortical_thickness$brain_phenotype, value = T)
+
+grep("inferior temporal", dk_cortical_regions)
+
+
 res_CP_MDD_brain_structure_regional_cortical_thickness$regions_ggseg <- rep(dk_cortical_regions, 3)
+
+
+rep(dk_cortical_regions, 3)[repeated_index]
+
 
 ## Compare name columns as sanity check
 #res_CP_MDD_brain_structure_regional_cortical_thickness[c("regions_ggseg", "brain_phenotype")]
