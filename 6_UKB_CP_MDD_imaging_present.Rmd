@@ -5,7 +5,6 @@ date: "6/17/2022"
 output: html_document
 ---
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,fig.width=12, fig.height=12)
 # Read in relevant R packages
@@ -190,12 +189,6 @@ rm(res_CP_MDD_brain_structure_female)
 rm(res_CP_MDD_brain_structure_male)
 rm(res_CP_MDD_brain_structure_female_balanced)
 rm(res_CP_MDD_brain_structure_male_balanced)
-
-rm(res_comorbidity_brain_structure_all)
-rm(res_comorbidity_brain_structure_female)
-rm(res_comorbidity_brain_structure_male)
-rm(res_comorbidity_brain_structure_female_balanced)
-rm(res_comorbidity_brain_structure_male_balanced)
 
 rm(temp)
 ```
@@ -629,7 +622,6 @@ legend <- cowplot::get_legend(plot_CP_females+ theme(legend.box.margin = ggplot2
 cowplot::plot_grid(prow, legend, rel_widths = c(2, 1))
 ```
 
-
 ##### Cortex atlas map
 ```{r Cortex atlas, echo = FALSE}
 
@@ -641,9 +633,7 @@ ggplot() +
 
 ```
 
-
 ##### Subcortical atlas map
-
 ```{r Subcortical atlas map, echo = FALSE}
 
 ggplot() +
@@ -655,9 +645,7 @@ ggplot() +
 
 ```
 
-
 ##### Brain map: chronic pain
-
 ```{r Coritcal volumn: chronic pain status, echo = FALSE}
 ## Remove balanced dataset results
 res_CP_MDD_brain_structure_no_balanced <- res_CP_MDD_brain_structure[!grepl("Balanced", res_CP_MDD_brain_structure$sample),]
@@ -695,7 +683,7 @@ p1 <- regional_cortical_volumes_ggseg %>%
   group_by(groups) %>%
   ggplot() +
   geom_brain(atlas = dk, 
-             hemi = "right",
+             #hemi = "right",
              aes(fill = `Standardized β`)) +
   facet_wrap(~groups) +
   scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red') +
@@ -754,23 +742,18 @@ res_CP_MDD_brain_structure_regional_cortical_thickness <- res_CP_MDD_brain_struc
 
 dk_cortical_regions <- dk$palette
 
+## Check if any hemispheres have been analysed seperately 
+seperate_hemispheres <- grep("right", res_CP_MDD_brain_structure_regional_cortical_thickness$brain_phenotype, value = T)
+
 ## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
 dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
+## Remove "inferior temporal"
+dk_cortical_regions_no_IT <- dk_cortical_regions[!dk_cortical_regions == "inferior temporal"]
 
-## Check if any hemispheres have been analysed seperately 
-repeated_index <- grep("right", res_CP_MDD_brain_structure_regional_cortical_thickness$brain_phenotype, value = T)
-
-grep("inferior temporal", dk_cortical_regions)
-
-
-res_CP_MDD_brain_structure_regional_cortical_thickness$regions_ggseg <- rep(dk_cortical_regions, 3)
-
-
-rep(dk_cortical_regions, 3)[repeated_index]
-
+res_CP_MDD_brain_structure_regional_cortical_thickness$regions_ggseg <- c(dk_cortical_regions_no_IT, "inferior temporal", "inferior temporal", dk_cortical_regions_no_IT, "inferior temporal", "inferior temporal", dk_cortical_regions)
 
 ## Compare name columns as sanity check
-#res_CP_MDD_brain_structure_regional_cortical_thickness[c("regions_ggseg", "brain_phenotype")]
+res_CP_MDD_brain_structure_regional_cortical_thickness[c("regions_ggseg", "brain_phenotype")]
 
 ## Create informative groups
 res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "All")] <- "Chronic Pain: Full Sample"
@@ -862,10 +845,19 @@ dk_cortical_regions <- dk$palette
 
 ## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
 dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
-res_CP_MDD_brain_structure_regional_cortical_volumes$regions_ggseg <- rep(dk_cortical_regions, 3)
+## Get version without "bankssts", "fusiform", "rostral middle frontal"
+dk_cortical_regions_males <- dk_cortical_regions[!dk_cortical_regions %in% c("bankssts", "fusiform", "rostral middle frontal")]
+## Get version without "bankssts", "superior temporal", "supramarginal"
+dk_cortical_regions_all <- dk_cortical_regions[!dk_cortical_regions %in% c("bankssts", "superior temporal", "supramarginal")]
+
+
+res_CP_MDD_brain_structure_regional_cortical_volumes$regions_ggseg <- c(dk_cortical_regions_all, rep(c("bankssts", "superior temporal", "supramarginal"), 2),
+                                                                        dk_cortical_regions,
+                                                                        dk_cortical_regions_males, rep(c("bankssts", "fusiform", "rostral middle frontal"), 2)
+                                                                        )
 
 ## Compare name columns as sanity check
-#res_CP_MDD_brain_structure_regional_cortical_volumes[c("regions_ggseg", "brain_phenotype")]
+res_CP_MDD_brain_structure_regional_cortical_volumes[c("regions_ggseg", "brain_phenotype")]
 
 ## Create informative groups
 res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "All")] <- "Depression: Full Sample"
@@ -905,13 +897,15 @@ dk_cortical_regions <- dk$palette
 
 ## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
 dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
-res_CP_MDD_brain_structure_regional_cortical_areas$regions_ggseg <- rep(dk_cortical_regions, 3)
+## Remove "inferior parietal" and "inferior temporal" 
+dk_cortical_regions_all <- dk_cortical_regions[!dk_cortical_regions %in% c("inferior parietal", "inferior temporal")]
 
+res_CP_MDD_brain_structure_regional_cortical_areas$regions_ggseg <- c(dk_cortical_regions_all, rep(c("inferior parietal", "inferior temporal"), 2),
+                                                                                                   dk_cortical_regions, dk_cortical_regions)
 ## Compare name columns as sanity check
 #res_CP_MDD_brain_structure_regional_cortical_areas[c("regions_ggseg", "brain_phenotype")]
 
 ## Create informative groups
-
 res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "All")] <- "Depression: Full Sample"
 
 res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "Female")] <- "Depression: Female Sample"
@@ -1263,18 +1257,23 @@ sum(brain_structure_MDD_male$`Adjusted p-value < 0.05` == "Yes")
 ```{r}
 cat("Unbalanced comorbidity:")
 sum(res_comorbidity_brain_structure$p.adjust < 0.05)
-sum(res_comorbidity_brain_structure_female_save$p.adjust < 0.05)
-sum(res_comorbidity_brain_structure_male_save$p.adjust < 0.05)
+sum(res_comorbidity_brain_structure_female$p.adjust < 0.05)
+sum(res_comorbidity_brain_structure_male$p.adjust < 0.05)
 cat("Balanced comorbidity:")
 sum(res_comorbidity_brain_structure_balanced_f$p.adjust < 0.05)
 sum(res_comorbidity_brain_structure_balanced_m$p.adjust < 0.05)
 cat("Unbalanced CP:")
 sum(brain_structure_CP_female$`Adjusted p-value < 0.05` == "Yes")
 sum(brain_structure_CP_male$`Adjusted p-value < 0.05` == "Yes")
+cat("Balanced CP:")
+nrow(res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$sample == "Balanced:Female") & res_CP_MDD_brain_structure$disorder == "chronic_pain" & res_CP_MDD_brain_structure$`Adjusted p-value < 0.05` == "Yes",])
+nrow(res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$sample == "Balanced:Male") & res_CP_MDD_brain_structure$disorder == "chronic_pain" & res_CP_MDD_brain_structure$`Adjusted p-value < 0.05` == "Yes",])
 cat("Unbalanced MDD:")
 sum(brain_structure_MDD_female$`Adjusted p-value < 0.05` == "Yes")
 sum(brain_structure_MDD_male$`Adjusted p-value < 0.05` == "Yes")
-
+cat("Balanced MDD:")
+nrow(res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$sample == "Balanced:Female") & res_CP_MDD_brain_structure$disorder == "recurrent_depression" & res_CP_MDD_brain_structure$`Adjusted p-value < 0.05` == "Yes",])
+nrow(res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$sample == "Balanced:Male") & res_CP_MDD_brain_structure$disorder == "recurrent_depression" & res_CP_MDD_brain_structure$`Adjusted p-value < 0.05` == "Yes",])
 ```
 
 

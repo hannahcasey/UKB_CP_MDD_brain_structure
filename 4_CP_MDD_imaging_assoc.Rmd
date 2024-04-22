@@ -13,7 +13,6 @@ library(stringr)
 library(nlme) #lme function
 library(tidyr)
 library(Hmisc)
-library(lmerTest)
 library(emmeans)
 library(lme4)
 set.seed(151097)
@@ -33,9 +32,15 @@ setwd(work_dir)
 ## Load in data
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Load dataframes containing imaging features of interest and covariates
-UKB_imaging_covariates <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_qc.csv", header = TRUE)
+#UKB_imaging_covariates <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_qc.csv", header = TRUE)
 
-UKB_imaging_covariates_long <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_long_qc.csv", header = TRUE)
+#write.csv(UKB_imaging_covariates, "/Users/hannahcasey/Desktop/UKB_imaging_covariates.csv")
+UKB_imaging_covariates <- read.csv("/Users/hannahcasey/Desktop/UKB_imaging_covariates.csv", header = TRUE)
+
+#UKB_imaging_covariates_long <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_long_qc.csv", header = TRUE)
+
+#write.csv(UKB_imaging_covariates_long, "/Users/hannahcasey/Desktop/UKB_imaging_covariates_long.csv")
+UKB_imaging_covariates_long <- read.csv("/Users/hannahcasey/Desktop/UKB_imaging_covariates_long.csv", header = TRUE)
 
 ## Load in Chronic Pain (Keira's Phenotype) (changes to imaging timepoint) and Depression (Natasha's Phenotype) data
 UKB_CP <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_chronic_pain_phenotype/output/UKB_chronic_pain_phenotype_imaging.csv")
@@ -87,7 +92,6 @@ UKB_CP_MDD$comorbidity_status[UKB_CP_MDD$recurrent_depression == 1 & UKB_CP_MDD$
 ```
 
 ## Merge chronic pain and depression data with preprocessed imaging dataset
-
 ```{r Merge CP and MDD data with imaging}
 
 UKB_CP_MDD_imaging_covariates <-  left_join(UKB_imaging_covariates, UKB_CP_MDD, by = "f.eid")
@@ -95,7 +99,6 @@ UKB_CP_MDD_imaging_covariates_long <-  left_join(UKB_imaging_covariates_long, UK
 ```
 
 ## Get baseline characteristics for each subgroup in analysis
-
 ```{r Get baseline characteristics}
 
 ## retains only essential variables
@@ -644,7 +647,6 @@ bilateral_structure_assoc_group <- function(dependent, independent, covariates, 
 ```
 
 ## Define association analysis inputs
-
 ```{r define association analysis input}
 
 ## Define covariates to be used in association analysis
@@ -734,7 +736,7 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
     if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
     
     subcortical_volume_assoc <- rbind(subcortical_volume_assoc,
-                                      unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = disorder,
                                                                  covariates = brain_structure_covariates_T1,
                                                                  dataset = UKB_CP_MDD_imaging_covariates,
@@ -769,7 +771,7 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
     
     cortical_volume_assoc <- rbind(cortical_volume_assoc,
-                                      unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = disorder,
                                                                  covariates = brain_structure_covariates_T1,
                                                                  dataset = UKB_CP_MDD_imaging_covariates,
@@ -811,7 +813,7 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
     
     cortical_thickness_assoc <- rbind(cortical_thickness_assoc,
-                                      unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = disorder,
                                                                  covariates = brain_structure_covariates_T1,
                                                                  dataset = UKB_CP_MDD_imaging_covariates,
@@ -853,7 +855,7 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
     
     cortical_area_assoc <- rbind(cortical_area_assoc,
-                                      unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = disorder,
                                                                  covariates = brain_structure_covariates_T1,
                                                                  dataset = UKB_CP_MDD_imaging_covariates,
@@ -896,7 +898,7 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
       if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
     
     FA_bilateral_assoc <- rbind(FA_bilateral_assoc,
-                                      unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = disorder,
                                                                  covariates = brain_structure_covariates_T1,
                                                                  dataset = UKB_CP_MDD_imaging_covariates,
@@ -946,7 +948,7 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
       if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
     
     MD_bilateral_assoc <- rbind(MD_bilateral_assoc,
-                                      unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = disorder,
                                                                  covariates = brain_structure_covariates_T1,
                                                                  dataset = UKB_CP_MDD_imaging_covariates,
@@ -989,7 +991,6 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
 ```
 
 ## Carry out association for comorbidity groups
-
 ```{r association in comorbidity groups}
 
 ## Set CP-MDD- as reference group
@@ -1020,7 +1021,7 @@ subcortical_volume_assoc <- bilateral_structure_assoc_group(dependent = sub_cort
 if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
 
   subcortical_volume_assoc <- rbind(subcortical_volume_assoc,
-                                    unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                    unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                independent = "comorbidity_group",
                                                                covariates = brain_structure_covariates_T1,
                                                                dataset = UKB_CP_MDD_imaging_covariates,
@@ -1054,7 +1055,7 @@ cortical_volume_assoc <- bilateral_structure_assoc_group(dependent =  cortical_v
 if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
 
   cortical_volume_assoc <- rbind(cortical_volume_assoc,
-                                    unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                    unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                independent = "comorbidity_group",
                                                                covariates = brain_structure_covariates_T1,
                                                                dataset = UKB_CP_MDD_imaging_covariates,
@@ -1097,7 +1098,7 @@ cortical_thickness_assoc <- bilateral_structure_assoc_group(dependent =  cortica
 if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
 
   cortical_thickness_assoc <- rbind(cortical_thickness_assoc,
-                                    unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                    unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                independent = "comorbidity_group",
                                                                covariates = brain_structure_covariates_T1,
                                                                dataset = UKB_CP_MDD_imaging_covariates,
@@ -1138,7 +1139,7 @@ cortical_area_assoc <- bilateral_structure_assoc_group(dependent =  cortical_are
 if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
 
   cortical_area_assoc <- rbind(cortical_area_assoc,
-                                    unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                    unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                independent = "comorbidity_group",
                                                                covariates = brain_structure_covariates_T1,
                                                                dataset = UKB_CP_MDD_imaging_covariates,
@@ -1181,7 +1182,7 @@ FA_bilateral_assoc <- bilateral_structure_assoc_group(dependent = FA_bilateral[!
 if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
 
   FA_bilateral_assoc <- rbind(FA_bilateral_assoc,
-                        unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                        unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                         independent = "comorbidity_group",
                         covariates = brain_structure_covariates_T1,
                         dataset = UKB_CP_MDD_imaging_covariates,
@@ -1231,7 +1232,7 @@ MD_bilateral_assoc <- bilateral_structure_assoc_group(dependent = MD_bilateral[!
 if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
 
   MD_bilateral_assoc <- rbind(MD_bilateral_assoc,
-                        unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                        unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                         independent = "comorbidity_group",
                         covariates = brain_structure_covariates_T1,
                         dataset = UKB_CP_MDD_imaging_covariates,
@@ -1269,7 +1270,6 @@ comorbidity_structure_assoc_all$disorder<- "comorbidity"
 ```
 
 ## Carry out sex-stratified association analysis
-
 ```{r sex-stratified association analysis}
 
 ## Get sex-specific dataframes
@@ -1312,7 +1312,7 @@ for (sex in c("females", "males")){
       if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
       
       subcortical_volume_assoc <- rbind(subcortical_volume_assoc,
-                                        unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                        unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                    independent = disorder,
                                                                    covariates = brain_structure_covariates_T1_no_sex,
                                                                    dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
@@ -1346,7 +1346,7 @@ for (sex in c("females", "males")){
     if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
       
       cortical_volume_assoc <- rbind(cortical_volume_assoc,
-                                        unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                        unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                    independent = disorder,
                                                                    covariates = brain_structure_covariates_T1_no_sex,
                                                                    dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
@@ -1387,7 +1387,7 @@ for (sex in c("females", "males")){
     if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
       
       cortical_thickness_assoc <- rbind(cortical_thickness_assoc,
-                                        unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                        unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                    independent = disorder,
                                                                    covariates = brain_structure_covariates_T1_no_sex,
                                                                    dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
@@ -1428,7 +1428,7 @@ for (sex in c("females", "males")){
     if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
       
       cortical_area_assoc <- rbind(cortical_area_assoc,
-                                        unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                        unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                    independent = disorder,
                                                                    covariates = brain_structure_covariates_T1_no_sex,
                                                                    dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
@@ -1469,7 +1469,7 @@ for (sex in c("females", "males")){
         if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
       
       FA_bilateral_assoc <- rbind(FA_bilateral_assoc,
-                                        unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                        unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                    independent = disorder,
                                                                    covariates = brain_structure_covariates_T1_no_sex,
                                                                    dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
@@ -1519,7 +1519,7 @@ for (sex in c("females", "males")){
         if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
       
       MD_bilateral_assoc <- rbind(MD_bilateral_assoc,
-                                        unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                        unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                    independent = disorder,
                                                                    covariates = brain_structure_covariates_T1_no_sex,
                                                                    dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
@@ -1563,7 +1563,6 @@ for (sex in c("females", "males")){
 ```
 
 ## Carry out sex-stratified association for comorbidity groups
-
 ```{r sex-stratified assocaition in comorbidity groups}
 
 ## Set CP-MDD- as reference group
@@ -1599,7 +1598,7 @@ for (sex in c("females", "males")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
   
     subcortical_volume_assoc <- rbind(subcortical_volume_assoc,
-                                      unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = "comorbidity_group",
                                                                  covariates = brain_structure_covariates_T1_no_sex,
                                                                  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
@@ -1633,7 +1632,7 @@ for (sex in c("females", "males")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
   
     cortical_volume_assoc <- rbind(cortical_volume_assoc,
-                                      unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = "comorbidity_group",
                                                                  covariates = brain_structure_covariates_T1_no_sex,
                                                                  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
@@ -1676,7 +1675,7 @@ for (sex in c("females", "males")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
   
     cortical_thickness_assoc <- rbind(cortical_thickness_assoc,
-                                      unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = "comorbidity_group",
                                                                  covariates = brain_structure_covariates_T1_no_sex,
                                                                  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
@@ -1717,7 +1716,7 @@ for (sex in c("females", "males")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
   
     cortical_area_assoc <- rbind(cortical_area_assoc,
-                                      unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = "comorbidity_group",
                                                                  covariates = brain_structure_covariates_T1_no_sex,
                                                                  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
@@ -1760,7 +1759,7 @@ for (sex in c("females", "males")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
   
     FA_bilateral_assoc <- rbind(FA_bilateral_assoc,
-                          unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                          unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                           independent = "comorbidity_group",
                           covariates = brain_structure_covariates_T1_no_sex,
                           dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
@@ -1810,7 +1809,7 @@ for (sex in c("females", "males")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
   
     MD_bilateral_assoc <- rbind(MD_bilateral_assoc,
-                          unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                          unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                           independent = "comorbidity_group",
                           covariates = brain_structure_covariates_T1_no_sex,
                           dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
@@ -1848,7 +1847,6 @@ comorbidity_structure_assoc_males$disorder<- "comorbidity"
 ```
 
 ## Get equal numbers of male and females in each sample
-
 ```{r balance datasets between sexes}
 UKB_CP_MDD_imaging_covariates_recurrent_depression_balanced <- UKB_CP_MDD_imaging_covariates %>%
   select(f.eid, BMI, sex, age, recurrent_depression, ICV, volume_paracentral_right, assessment_centre_first_imaging, sub_cortical_volume_thalamus_left, MD_acoustic_radiation_left) %>%
@@ -1911,7 +1909,6 @@ table(UKB_CP_MDD_imaging_covariates_CPMDD_balanced$comorbidity_group, UKB_CP_MDD
 ```
 
 ## Carry out association analysis in sex-balanced datasets
-
 ```{r sex-stratified association analysis in balanced datasets}
 
 ## Get sex-specific and sex-balanced dataframes
@@ -1959,7 +1956,7 @@ for (sex in c("females", "males")){
       if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
       
       subcortical_volume_assoc <- rbind(subcortical_volume_assoc,
-                                        unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                        unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                    independent = disorder,
                                                                    covariates = brain_structure_covariates_T1_no_sex,
                                                                    dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",disorder, "_balanced_", sex)),
@@ -1993,7 +1990,7 @@ for (sex in c("females", "males")){
     if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
       
       cortical_volume_assoc <- rbind(cortical_volume_assoc,
-                                        unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                        unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                    independent = disorder,
                                                                    covariates = brain_structure_covariates_T1_no_sex,
                                                                    dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",disorder, "_balanced_", sex)),
@@ -2034,7 +2031,7 @@ for (sex in c("females", "males")){
     if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
       
       cortical_thickness_assoc <- rbind(cortical_thickness_assoc,
-                                        unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                        unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                    independent = disorder,
                                                                    covariates = brain_structure_covariates_T1_no_sex,
                                                                    dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",disorder, "_balanced_", sex)),
@@ -2076,7 +2073,7 @@ for (sex in c("females", "males")){
     if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
       
       cortical_area_assoc <- rbind(cortical_area_assoc,
-                                        unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                        unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                    independent = disorder,
                                                                    covariates = brain_structure_covariates_T1_no_sex,
                                                                    dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",disorder, "_balanced_", sex)),
@@ -2117,7 +2114,7 @@ for (sex in c("females", "males")){
         if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
       
       FA_bilateral_assoc <- rbind(FA_bilateral_assoc,
-                                        unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                        unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                    independent = disorder,
                                                                    covariates = brain_structure_covariates_T1_no_sex,
                                                                    dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",disorder, "_balanced_", sex)),
@@ -2167,7 +2164,7 @@ for (sex in c("females", "males")){
         if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
       
       MD_bilateral_assoc <- rbind(MD_bilateral_assoc,
-                                        unilateral_structure_assoc(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                        unilateral_structure_assoc(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                    independent = disorder,
                                                                    covariates = brain_structure_covariates_T1_no_sex,
                                                                    dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",disorder, "_balanced_", sex)),
@@ -2211,7 +2208,6 @@ for (sex in c("females", "males")){
 ```
 
 ## Carry out sex-stratified association for comorbidity groups sex-balanced datasets
-
 ```{r sex-stratified assocaition in comorbidity groups}
 
 ## Set CP-MDD- as reference group
@@ -2245,7 +2241,7 @@ for (sex in c("females", "males")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
   
     subcortical_volume_assoc <- rbind(subcortical_volume_assoc,
-                                      unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = "comorbidity_group",
                                                                  covariates = brain_structure_covariates_T1_no_sex,
                                                                  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_CPMDD_balanced_",sex)),
@@ -2279,7 +2275,7 @@ for (sex in c("females", "males")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
   
     cortical_volume_assoc <- rbind(cortical_volume_assoc,
-                                      unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = "comorbidity_group",
                                                                  covariates = brain_structure_covariates_T1_no_sex,
                                                                  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_CPMDD_balanced_",sex)),
@@ -2322,7 +2318,7 @@ for (sex in c("females", "males")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
   
     cortical_thickness_assoc <- rbind(cortical_thickness_assoc,
-                                      unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = "comorbidity_group",
                                                                  covariates = brain_structure_covariates_T1_no_sex,
                                                                  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_CPMDD_balanced_",sex)),
@@ -2363,7 +2359,7 @@ for (sex in c("females", "males")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
   
     cortical_area_assoc <- rbind(cortical_area_assoc,
-                                      unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                                      unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                                                                  independent = "comorbidity_group",
                                                                  covariates = brain_structure_covariates_T1_no_sex,
                                                                  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_CPMDD_balanced_",sex)),
@@ -2406,7 +2402,7 @@ for (sex in c("females", "males")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
   
     FA_bilateral_assoc <- rbind(FA_bilateral_assoc,
-                          unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                          unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                           independent = "comorbidity_group",
                           covariates = brain_structure_covariates_T1_no_sex,
                           dataset = get(paste0("UKB_CP_MDD_imaging_covariates_CPMDD_balanced_",sex)),
@@ -2456,7 +2452,7 @@ for (sex in c("females", "males")){
   if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
   
     MD_bilateral_assoc <- rbind(MD_bilateral_assoc,
-                          unilateral_structure_assoc_group(dependent = paste0(hemisphere_interactions, c("_right", "_left")),
+                          unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
                           independent = "comorbidity_group",
                           covariates = brain_structure_covariates_T1_no_sex,
                           dataset = get(paste0("UKB_CP_MDD_imaging_covariates_CPMDD_balanced_",sex)),
@@ -2494,7 +2490,6 @@ balanced_comorbidity_structure_assoc_males$disorder<- "comorbidity"
 ```
 
 ## Save results
-
 ```{r Save output}
 ## Save output
 write.csv(CP_MDD_structure_assoc_all, paste0(work_dir,"output/CP_MDD_structure_assoc_all.csv"), quote = FALSE, row.names = FALSE)
