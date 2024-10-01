@@ -20,9 +20,6 @@ UKB_non_british_irish_with_imaging_CP <- UKB_CP$n_eid[(UKB_CP$n_eid %in% UKB_bri
 UKB_non_british_irish_with_imaging_MDD <- UKB_MDD$f_eid[(UKB_MDD$f_eid %in% UKB_british_irish_with_imaging) & !is.na(UKB_MDD$recurrent_depression)] ## IDs british/irish in imaging sample with MDD phenotyping
 UKB_non_british_irish_with_imaging_CPMDD <- UKB_non_british_irish_with_imaging_MDD[UKB_non_british_irish_with_imaging_MDD %in% UKB_non_british_irish_with_imaging_CP]
 
-## Get overlap of participants with EOP data who also drink and are british/irish
-EOP_alcohol_keep <- EOP_keep$x[!EOP_keep$x %in% alcohol_exclude$x]
-eligible_keep <- EOP_alcohol_keep[EOP_alcohol_keep %in% british_irish_keep$x]
 
 UKB_pop <- boxGrob(glue("UK Biobank Sample",
                         "n = {pop}",
@@ -70,7 +67,7 @@ CPMDD_pop <- boxGrob(glue("Both Chronic Pain and Depression Phenotyping",
                    just = "centre")
 
 grid.newpage()
-jpeg("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/flowchart.jpg", width = 700, height = 700)
+jpeg("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/flowchart.jpg", width = 700, height = 900)
 
 UKB_pop
 eligible_pop

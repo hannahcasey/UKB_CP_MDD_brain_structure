@@ -30,7 +30,6 @@ UKB_imaging_covariates$assessment_centre_first_imaging[UKB_imaging_covariates$as
 UKB_imaging_covariates$assessment_centre_first_imaging[UKB_imaging_covariates$assessment_centre_first_imaging == 11025] <- "Cheadle"
 UKB_imaging_covariates$assessment_centre_first_imaging[UKB_imaging_covariates$assessment_centre_first_imaging == 11026] <- "Reading"
 UKB_imaging_covariates$assessment_centre_first_imaging[UKB_imaging_covariates$assessment_centre_first_imaging == 11028] <- "Bristol"
-
 ```
 
 ## Calculate Global and lobar meaurments for imaging features
@@ -628,7 +627,6 @@ n_outliers
 ## 3300 brain structure measurements excluded in total
 ## Get number of outliers for individual brain structures
 n_detailed_outliers <- (colSums(!is.na(z_scores)) - colSums(!is.na(UKB_imaging_covariates[,all_brain_structure_names])))
-
 ```
 ## Scale all brain structures and continuous covariates
 
