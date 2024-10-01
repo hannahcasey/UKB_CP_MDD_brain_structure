@@ -2090,7 +2090,6 @@ for (sex in c("females", "males")){
     
         sig_sex_interaction_general <- cortical_volume_general[cortical_volume_general %in% unique(df_sex_interactions$brain_phenotype[df_sex_interactions$brain_structure_type == "Cortical Regional Volume" & df_sex_interactions$p < 0.05])]
     
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",disorder, "_balanced_", sex)),
     if (length(sig_sex_interaction_general) > 0){
       
       cortical_volume_general_assoc <- unilateral_structure_assoc(dependent = sig_sex_interaction_general,
@@ -2290,7 +2289,6 @@ for (sex in c("females", "males")){
     FA_general_assoc <- unilateral_structure_assoc(dependent = sig_sex_interaction_general,
                              independent = disorder,
                              covariates = brain_structure_covariates_diffusion_no_sex,
-                             dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",disorder, "_balanced_", sex)),
                              dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
                              n_comparisons = sig_sex_interaction_general,
                              structural_subtype = "FA General Measures")
@@ -2803,6 +2801,8 @@ write.csv(comorbidity_structure_assoc_males, paste0(work_dir,"output/comorbidity
 write.csv(UKB_CP_MDD_demographics, paste0(work_dir,"output/UKB_CP_MDD_demographics.csv"), quote = FALSE, row.names = FALSE)
 
 ```
+
+
 
 
 
@@ -3453,6 +3453,4 @@ write.csv(UKB_CP_MDD_demographics, paste0(work_dir,"output/UKB_CP_MDD_demographi
 <!-- balanced_comorbidity_structure_assoc_males$disorder<- "comorbidity" -->
 
 <!-- ``` -->
-
-
 
