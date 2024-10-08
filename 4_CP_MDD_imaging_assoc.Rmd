@@ -32,15 +32,15 @@ setwd(work_dir)
 ## Load in data
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Load dataframes containing imaging features of interest and covariates
-# UKB_imaging_covariates <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_qc.csv", header = TRUE)
+UKB_imaging_covariates <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_qc.csv", header = TRUE)
 # 
 # write.csv(UKB_imaging_covariates, "/Users/hannahcasey/Desktop/UKB_imaging_covariates.csv")
-UKB_imaging_covariates <- read.csv("/Users/hannahcasey/Desktop/UKB_imaging_covariates.csv", header = TRUE)
+#UKB_imaging_covariates <- read.csv("/Users/hannahcasey/Desktop/UKB_imaging_covariates.csv", header = TRUE)
 
-#UKB_imaging_covariates_long <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_long_qc.csv", header = TRUE)
+UKB_imaging_covariates_long <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_long_qc.csv", header = TRUE)
 
 #write.csv(UKB_imaging_covariates_long, "/Users/hannahcasey/Desktop/UKB_imaging_covariates_long.csv")
-UKB_imaging_covariates_long <- read.csv("/Users/hannahcasey/Desktop/UKB_imaging_covariates_long.csv", header = TRUE)
+#UKB_imaging_covariates_long <- read.csv("/Users/hannahcasey/Desktop/UKB_imaging_covariates_long.csv", header = TRUE)
 
 ## Load in Chronic Pain (Keira's Phenotype) (changes to imaging timepoint) and Depression (Natasha's Phenotype) data
 UKB_CP <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_chronic_pain_phenotype/output/UKB_chronic_pain_phenotype_imaging.csv")
@@ -673,9 +673,9 @@ bilateral_sex_interaction <- function(dependent, independent, sex_variable, cova
     output[i,"interaction"] <- row.names(summary(lme1)[["coefficients"]])[index]
     output[i,"brain_phenotype"] <- i
     output[i,"disorder"] <- independent
-    output[i,"estimate"] <- summary(lme1)[["coefficients"]][index, "Estimate"]
-    output[i,"SE"] <- summary(lme1)[["coefficients"]][index, "Std. Error"]
-    output[i,"p"] <- summary(lme1)[["coefficients"]][index, "Pr(>|t|)"]
+    output[i,"beta"] <- summary(lme1)[["coefficients"]][index, "Estimate"]
+    output[i,"std"] <- summary(lme1)[["coefficients"]][index, "Std. Error"]
+    output[i,"p.value"] <- summary(lme1)[["coefficients"]][index, "Pr(>|t|)"]
   }
   
     ## Add column indicating brain strucutre sup type being analysed
@@ -713,9 +713,9 @@ unilateral_sex_interaction <- function(dependent, independent, sex_variable, cov
     output[i,"interaction"] <- row.names(summary(glm1)[["coefficients"]])[index]
     output[i,"brain_phenotype"] <- i
     output[i,"disorder"] <- independent
-    output[i, "estimate"] <- summary(glm1)[["coefficients"]][index, "Estimate"]
-    output[i, "SE"] <- summary(glm1)[["coefficients"]][index, "Std. Error"]
-    output[i, "p"] <- summary(glm1)[["coefficients"]][index, "Pr(>|t|)"]
+    output[i, "beta"] <- summary(glm1)[["coefficients"]][index, "Estimate"]
+    output[i, "std"] <- summary(glm1)[["coefficients"]][index, "Std. Error"]
+    output[i, "p.value"] <- summary(glm1)[["coefficients"]][index, "Pr(>|t|)"]
     
   }
   
@@ -763,9 +763,9 @@ bilateral_sex_interaction_group <- function(dependent, independent, sex_variable
       output[rep(i,6), "brain_phenotype"] <- i
       output[output$brain_phenotype == i,"groups"] <- as.data.frame(contrast1)$comorbidity_group_pairwise
       output[output$brain_phenotype == i,"contrast"] <- as.data.frame(contrast1)$sex_pairwise
-      output[output$brain_phenotype == i, "estimate"] <- as.data.frame(contrast1)$estimate
-      output[output$brain_phenotype == i, "SE"] <- as.data.frame(contrast1)$SE
-      output[output$brain_phenotype == i, "p"] <- as.data.frame(contrast1)$p.value
+      output[output$brain_phenotype == i, "beta"] <- as.data.frame(contrast1)$estimate
+      output[output$brain_phenotype == i, "std"] <- as.data.frame(contrast1)$SE
+      output[output$brain_phenotype == i, "p.value"] <- as.data.frame(contrast1)$p.value
       
       ## Add column indicating brain strucutre sup type being analysed
       output$brain_structure_type <- structural_subtype
@@ -777,7 +777,7 @@ bilateral_sex_interaction_group <- function(dependent, independent, sex_variable
   return(output)
 }
 
-unilateral_sex_interaction_group <- function(dependent, independent, sex_variable, covariates, datasets, structural_subtype){
+unilateral_sex_interaction_group <- function(dependent, independent, sex_variable, covariates, dataset, structural_subtype){
   
   ## Input:
   ## dependent: names of dependent variables
@@ -811,9 +811,9 @@ unilateral_sex_interaction_group <- function(dependent, independent, sex_variabl
       output[rep(i,6), "brain_phenotype"] <- i
       output[output$brain_phenotype == i,"groups"] <- as.data.frame(contrast1)$comorbidity_group_pairwise
       output[output$brain_phenotype == i,"contrast"] <- as.data.frame(contrast1)$sex_pairwise
-      output[output$brain_phenotype == i, "estimate"] <- as.data.frame(contrast1)$estimate
-      output[output$brain_phenotype == i, "SE"] <- as.data.frame(contrast1)$SE
-      output[output$brain_phenotype == i, "p"] <- as.data.frame(contrast1)$p.value
+      output[output$brain_phenotype == i, "betal"] <- as.data.frame(contrast1)$estimate
+      output[output$brain_phenotype == i, "std"] <- as.data.frame(contrast1)$SE
+      output[output$brain_phenotype == i, "p.value"] <- as.data.frame(contrast1)$p.value
       
       ## Add column indicating brain strucutre sup type being analysed
       output$brain_structure_type <- structural_subtype
@@ -1180,7 +1180,6 @@ hemisphere_interactions <- hemisphere_interaction_group(dependent = sub_cortical
                        independent = "comorbidity_group",
                        covariates = brain_structure_covariates_T1,
                        dataset = UKB_CP_MDD_imaging_covariates_long,
-                       n_comparisons = length(sub_cortical_volume_bilateral),
                        hemisphere_col = "hemi",
                        structural_subtype = "Subcortical Volume")
 
@@ -1215,7 +1214,6 @@ hemisphere_interactions <- hemisphere_interaction_group(dependent = cortical_vol
                        independent = "comorbidity_group",
                        covariates = brain_structure_covariates_T1,
                        dataset = UKB_CP_MDD_imaging_covariates_long,
-                       n_comparisons = length(cortical_volume_bilateral),
                        hemisphere_col = "hemi",
                        structural_subtype = "Cortical Regional Volume")
 
@@ -1231,12 +1229,13 @@ cortical_volume_assoc <- bilateral_structure_assoc_group(dependent =  cortical_v
 if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
 
   cortical_volume_assoc <- rbind(cortical_volume_assoc,
-                                    unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-                                                               independent = "comorbidity_group",
-                                                               covariates = brain_structure_covariates_T1,
-                                                               dataset = UKB_CP_MDD_imaging_covariates,
-                                                               n_comparisons = length(sub_cortical_volume_bilateral), ## Adjusted for after
-                                                               structural_subtype = "Cortical Regional Volume")
+                                    unilateral_structure_assoc_group(
+                                      dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
+                                      independent = "comorbidity_group",
+                                      covariates = brain_structure_covariates_T1,
+                                      dataset = UKB_CP_MDD_imaging_covariates,
+                                      n_comparisons = length(sub_cortical_volume_bilateral), ## Adjusted for after
+                                      structural_subtype = "Cortical Regional Volume")
   )
   
   ## Adjust pvalues
@@ -1258,7 +1257,6 @@ hemisphere_interactions <- hemisphere_interaction_group(dependent = cortical_thi
                        independent = "comorbidity_group",
                        covariates = brain_structure_covariates_T1,
                        dataset = UKB_CP_MDD_imaging_covariates_long,
-                       n_comparisons = length(cortical_thickness_bilateral),
                        hemisphere_col = "hemi",
                        structural_subtype = "Cortical Regional Thickness")
 
@@ -1274,12 +1272,13 @@ cortical_thickness_assoc <- bilateral_structure_assoc_group(dependent =  cortica
 if (!is.null(hemisphere_interactions)){ ## If hemi interaction found, run separately
 
   cortical_thickness_assoc <- rbind(cortical_thickness_assoc,
-                                    unilateral_structure_assoc_group(dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-                                                               independent = "comorbidity_group",
-                                                               covariates = brain_structure_covariates_T1,
-                                                               dataset = UKB_CP_MDD_imaging_covariates,
-                                                               n_comparisons = length(sub_cortical_thickness_bilateral), ## Adjusted for after
-                                                               structural_subtype = "Cortical Regional Thickness")
+                                    unilateral_structure_assoc_group(
+                                      dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
+                                      independent = "comorbidity_group",
+                                      covariates = brain_structure_covariates_T1,
+                                      dataset = UKB_CP_MDD_imaging_covariates,
+                                      n_comparisons = length(sub_cortical_thickness_bilateral), ## Adjusted for after
+                                      structural_subtype = "Cortical Regional Thickness")
   )
   
   ## Adjust pvalues
@@ -1299,7 +1298,6 @@ hemisphere_interactions <- hemisphere_interaction_group(dependent = cortical_are
                        independent = "comorbidity_group",
                        covariates = brain_structure_covariates_T1,
                        dataset = UKB_CP_MDD_imaging_covariates_long,
-                       n_comparisons = length(cortical_area_bilateral),
                        hemisphere_col = "hemi",
                        structural_subtype = "Cortical Regional Area")
 
@@ -1341,7 +1339,6 @@ hemisphere_interactions <- hemisphere_interaction_group(dependent = FA_bilateral
                        independent = "comorbidity_group",
                        covariates = brain_structure_covariates_diffusion,
                        dataset = UKB_CP_MDD_imaging_covariates_long,
-                       n_comparisons = length(FA_bilateral),
                        hemisphere_col = "hemi",
                        structural_subtype = "FA Tracts")
 
@@ -1392,7 +1389,6 @@ hemisphere_interactions <- hemisphere_interaction_group(dependent = MD_bilateral
                        independent = "comorbidity_group",
                        covariates = brain_structure_covariates_diffusion,
                        dataset = UKB_CP_MDD_imaging_covariates_long,
-                       n_comparisons = length(MD_bilateral),
                        hemisphere_col = "hemi",
                        structural_subtype = "MD Tracts")
 
@@ -1728,7 +1724,6 @@ hemisphere_interactions <- hemisphere_interaction_group(dependent = sub_cortical
                        independent = "comorbidity_group",
                        covariates = brain_structure_covariates_T1,
                        dataset = UKB_CP_MDD_imaging_covariates_long,
-                       n_comparisons = length(sub_cortical_volume_bilateral),
                        hemisphere_col = "hemi",
                        structural_subtype = "Subcortical Volume")
 
@@ -1762,7 +1757,6 @@ hemisphere_interactions <- hemisphere_interaction_group(dependent = cortical_vol
                        independent = "comorbidity_group",
                        covariates = brain_structure_covariates_T1,
                        dataset = UKB_CP_MDD_imaging_covariates_long,
-                       n_comparisons = length(cortical_volume_bilateral),
                        hemisphere_col = "hemi",
                        structural_subtype = "Cortical Regional Volume")
 
@@ -1804,7 +1798,6 @@ hemisphere_interactions <- hemisphere_interaction_group(dependent = cortical_thi
                        independent = "comorbidity_group",
                        covariates = brain_structure_covariates_T1,
                        dataset = UKB_CP_MDD_imaging_covariates_long,
-                       n_comparisons = length(cortical_thickness_bilateral),
                        hemisphere_col = "hemi",
                        structural_subtype = "Cortical Regional Thickness")
 
@@ -1845,7 +1838,6 @@ hemisphere_interactions <- hemisphere_interaction_group(dependent = cortical_are
                        independent = "comorbidity_group",
                        covariates = brain_structure_covariates_T1,
                        dataset = UKB_CP_MDD_imaging_covariates_long,
-                       n_comparisons = length(cortical_area_bilateral),
                        hemisphere_col = "hemi",
                        structural_subtype = "Cortical Regional Area")
 
@@ -1886,7 +1878,6 @@ hemisphere_interactions <- hemisphere_interaction_group(dependent = FA_bilateral
                        independent = "comorbidity_group",
                        covariates = brain_structure_covariates_diffusion,
                        dataset = UKB_CP_MDD_imaging_covariates_long,
-                       n_comparisons = length(FA_bilateral),
                        hemisphere_col = "hemi",
                        structural_subtype = "FA Tracts")
 
@@ -1935,7 +1926,6 @@ hemisphere_interactions <- hemisphere_interaction_group(dependent = MD_bilateral
                        independent = "comorbidity_group",
                        covariates = brain_structure_covariates_diffusion,
                        dataset = UKB_CP_MDD_imaging_covariates_long,
-                       n_comparisons = length(MD_bilateral),
                        hemisphere_col = "hemi",
                        structural_subtype = "MD Tracts")
 
@@ -1985,6 +1975,7 @@ comorbidity_structure_sex_interaction_all <- do.call("rbind", list(subcortical_v
 ```
 
 
+
 ## Carry out sex-stratified association analysis
 ```{r sex-stratified association analysis}
 
@@ -2001,7 +1992,7 @@ UKB_CP_MDD_imaging_covariates_males <- UKB_CP_MDD_imaging_covariates[UKB_CP_MDD_
 for (sex in c("females", "males")){
   for (disorder in c("chronic_pain", "recurrent_depression")){
     
-   df_sex_interactions <- filter(CP_MDD_structure_sex_interaction_all, disorder == disorder)
+   df_sex_interactions <- filter(CP_MDD_structure_sex_interaction_all, disorder == get("disorder", envir = .env))
     
     ##Subcortical Volume ----
     sig_sex_interaction_bilateral <- unique(df_sex_interactions$brain_phenotype[df_sex_interactions$brain_structure_type == "Subcortical Volume" & df_sex_interactions$p < 0.05])
@@ -2407,7 +2398,6 @@ for (sex in c("females", "males")){
     independent = "comorbidity_group",
     covariates = brain_structure_covariates_T1_no_sex,
     dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex)),
-    n_comparisons = length(sub_cortical_volume_bilateral),
     hemisphere_col = "hemi",
     structural_subtype = "Subcortical Volume")
 
@@ -2628,7 +2618,6 @@ for (sex in c("females", "males")){
                          independent = "comorbidity_group",
                          covariates = brain_structure_covariates_diffusion_no_sex,
                          dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex)),
-                         n_comparisons = length(FA_bilateral),
                          hemisphere_col = "hemi",
                          structural_subtype = "FA Tracts")
   
@@ -2700,7 +2689,6 @@ for (sex in c("females", "males")){
                          independent = "comorbidity_group",
                          covariates = brain_structure_covariates_diffusion_no_sex,
                          dataset = get(paste0("UKB_CP_MDD_imaging_covariates_long_",sex)),
-                         n_comparisons = length(MD_bilateral),
                          hemisphere_col = "hemi",
                          structural_subtype = "MD Tracts")
   
@@ -2780,6 +2768,8 @@ comorbidity_structure_assoc_males$disorder<- "comorbidity"
 ## Save output
 write.csv(CP_MDD_structure_assoc_all, paste0(work_dir,"output/CP_MDD_structure_assoc_all.csv"), quote = FALSE, row.names = FALSE)
 
+write.csv(CP_MDD_structure_sex_interaction_all, paste0(work_dir,"output/CP_MDD_structure_sex_interaction_all.csv"), quote = FALSE, row.names = FALSE)
+
 write.csv(CP_MDD_structure_assoc_females, paste0(work_dir,"output/CP_MDD_structure_assoc_females.csv"), quote = FALSE, row.names = FALSE)
 
 write.csv(CP_MDD_structure_assoc_males, paste0(work_dir,"output/CP_MDD_structure_assoc_males.csv"), quote = FALSE, row.names = FALSE)
@@ -2789,6 +2779,8 @@ write.csv(CP_MDD_structure_assoc_males, paste0(work_dir,"output/CP_MDD_structure
 # write.csv(balanced_CP_MDD_structure_assoc_males, paste0(work_dir,"output/balanced_CP_MDD_structure_assoc_males.csv"), quote = FALSE, row.names = FALSE)
 
 write.csv(comorbidity_structure_assoc_all, paste0(work_dir,"output/comorbidity_structure_assoc_all.csv"), quote = FALSE, row.names = FALSE)
+
+write.csv(comorbidity_structure_sex_interaction_all, paste0(work_dir,"output/comorbidity_structure_sex_interaction_all.csv"), quote = FALSE, row.names = FALSE)
 
 write.csv(comorbidity_structure_assoc_females, paste0(work_dir,"output/comorbidity_structure_assoc_females.csv"), quote = FALSE, row.names = FALSE)
 

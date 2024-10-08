@@ -13,24 +13,30 @@ This markdown will details the steps taken to plot DTI results in chronic pain a
 
 [R](https://www.r-project.org/#:~:text=Getting%20Started,choose%20your%20preferred%20CRAN%20mirror.)
 
-### Create heatmap of standardized effect sizes
+### Map standardized effect sizes to HEX colour codes
 
 ```{r setup, include=FALSE}
-
-## Load libraries
-library(ggplot2)
-
 # Read in results 
-res_CP_MDD_brain_structure_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_CP_MDD_structure_assoc.csv",header=T)
+res_CP_MDD_brain_structure_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_all.csv",header=T)
 res_CP_MDD_brain_structure_all$sample <- "All"
 
-res_CP_MDD_brain_structure_female <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_CP_MDD_structure_assoc_females.csv",header=T)
+CP_MDD_structure_sex_interaction_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_sex_interaction_all.csv",header=T)
+CP_MDD_structure_sex_interaction_all$sample <- "Sex Interaction"
+
+CP_MDD_structure_sex_interaction_all <- CP_MDD_structure_sex_interaction_all %>%
+  select(brain_phenotype, brain_structure_type, disorder, beta, sample)
+
+res_CP_MDD_brain_structure_female <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_females.csv",header=T)
 res_CP_MDD_brain_structure_female$sample <- "Female"
 
-res_CP_MDD_brain_structure_male <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/all_CP_MDD_structure_assoc_males.csv",header=T)
+res_CP_MDD_brain_structure_male <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_males.csv",header=T)
 res_CP_MDD_brain_structure_male$sample <- "Male"
 
 res_CP_MDD_brain_structure <- rbind(res_CP_MDD_brain_structure_all, res_CP_MDD_brain_structure_female, res_CP_MDD_brain_structure_male)
+
+res_CP_MDD_brain_structure <- res_CP_MDD_brain_structure %>%
+  select(brain_phenotype, brain_structure_type, disorder, beta, sample) %>%
+  rbind(CP_MDD_structure_sex_interaction_all)
 
 ## Create new columns to reformat brain phenotypes for plotting
 res_CP_MDD_brain_structure$brain_phenotype_plot <-  gsub("MD", "MD in", res_CP_MDD_brain_structure$brain_phenotype)
@@ -41,60 +47,60 @@ res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("thickness", "Thickness 
 res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("sub_cortical_Volume", "Subcortical volume", res_CP_MDD_brain_structure$brain_phenotype_plot)
 res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("_|[.]", " ", res_CP_MDD_brain_structure$brain_phenotype_plot)
 
-
-
-
 ## Get only indidual MD tract measures
-res_CP_MDD_brain_structure_regional_MD <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "MD Tracts") & (res_CP_MDD_brain_structure$disorder == "chronic_pain" | res_CP_MDD_brain_structure$disorder == "recurrent_depression"),]
+res_CP_MDD_brain_structure_regional_MD_MDD <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "MD Tracts") & (res_CP_MDD_brain_structure$disorder == "recurrent_depression"),]
+
+res_CP_MDD_brain_structure_regional_MD_CP <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "MD Tracts") & (res_CP_MDD_brain_structure$disorder == "chronic_pain"),]
 
 ## Get only individual FA tract measures
-res_CP_MDD_brain_structure_regional_FA <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "FA Tracts") & (res_CP_MDD_brain_structure$disorder == "chronic_pain" | res_CP_MDD_brain_structure$disorder == "recurrent_depression"),]
+res_CP_MDD_brain_structure_regional_FA_MDD <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "FA Tracts")  & (res_CP_MDD_brain_structure$disorder == "recurrent_depression"),]
 
-
+res_CP_MDD_brain_structure_regional_FA_CP <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "FA Tracts") & (res_CP_MDD_brain_structure$disorder == "chronic_pain"),]
 
 ## Get HEX colour to represent Beta scores of each tract in each sample
-## Get heatmap of MD and FA measures for individual DTI tracts
-p1 <- ggplot(res_CP_MDD_brain_structure_regional_MD, aes(x =brain_phenotype, y = sample, fill = beta)) +
-  geom_tile() +
-  scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red') +
-  facet_grid(. ~ disorder)
+## MD in MDD
+## Use n equally spaced breaks to assign each value to n-1 equal sized bins 
+ii <- cut(res_CP_MDD_brain_structure_regional_MD_MDD$beta, breaks = seq(-0.1, 0.1, len = length(res_CP_MDD_brain_structure_regional_MD_MDD$beta)), 
+          include.lowest = TRUE)
+## Use bin indices, ii, to select color from vector of n-1 equally spaced colors
+colours <- colorRampPalette(c("blue","white", "red"))(length(res_CP_MDD_brain_structure_regional_MD_MDD$beta))[ii]
 
-p2 <- ggplot(res_CP_MDD_brain_structure_regional_FA, aes(x =brain_phenotype, y = sample, fill = beta)) +
-  geom_tile() +
-  scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red')+
-  facet_grid(. ~ disorder)
+res_CP_MDD_brain_structure_regional_MD_MDD$colour <- colours
+res_CP_MDD_brain_structure_regional_MD_MDD <- res_CP_MDD_brain_structure_regional_MD_MDD %>%
+  select(brain_phenotype, colour, sample, disorder, beta)
 
 
-# get plot build
-build <- ggplot_build(p1)
-# select hex value and x-value data
-hex_df <- build$data[[1]][, c("fill", "PANEL", "y", "x")]
-# order hex value data
-hex_df_ordered_1 <- hex_df[with(hex_df, order(PANEL, y, x)), ]
+## MD in CP
+ii <- cut(res_CP_MDD_brain_structure_regional_MD_CP$beta, breaks = seq(-0.1, 0.1, len = length(res_CP_MDD_brain_structure_regional_MD_CP$beta)), 
+          include.lowest = TRUE)
+colours <- colorRampPalette(c("blue","white", "red"))(length(res_CP_MDD_brain_structure_regional_MD_CP$beta))[ii]
+res_CP_MDD_brain_structure_regional_MD_CP$colour <- colours
+res_CP_MDD_brain_structure_regional_MD_CP <- res_CP_MDD_brain_structure_regional_MD_CP %>%
+  select(brain_phenotype, colour, sample, disorder, beta)
 
-## Add tract, sample and disorder name
-hex_df_ordered_1$tract <- sort(unique(res_CP_MDD_brain_structure_regional_MD$brain_phenotype))
-hex_df_ordered_1$sample <- c(rep("All", 15), rep("Female",15), rep("Male", 15))
-hex_df_ordered_1$disorder <- c(rep("CP", 45), rep("MDD", 45))
+## FA in MDD
+ii <- cut(res_CP_MDD_brain_structure_regional_FA_MDD$beta, breaks = seq(-0.1, 0.1, len = length(res_CP_MDD_brain_structure_regional_FA_MDD$beta)), 
+          include.lowest = TRUE)
+colours <- colorRampPalette(c("blue","white", "red"))(length(res_CP_MDD_brain_structure_regional_FA_MDD$beta))[ii]
+res_CP_MDD_brain_structure_regional_FA_MDD$colour <- colours
+res_CP_MDD_brain_structure_regional_FA_MDD <- res_CP_MDD_brain_structure_regional_FA_MDD %>%
+  select(brain_phenotype, colour, sample, disorder, beta)
 
-# get plot build
-build <- ggplot_build(p2)
-# select hex value and x-value data
-hex_df <- build$data[[1]][, c("fill", "PANEL", "y", "x")]
-# order hex value data
-hex_df_ordered_2 <- hex_df[with(hex_df, order(PANEL, y, x)), ]
 
-## Add tract, sample and disorder name
-hex_df_ordered_2$tract <- sort(unique(res_CP_MDD_brain_structure_regional_FA$brain_phenotype))
-hex_df_ordered_2$sample <- c(rep("All", 15), rep("Female",15), rep("Male", 15))
-hex_df_ordered_2$disorder <- c(rep("CP", 45), rep("MDD", 45))
+## FA in CP
+ii <- cut(res_CP_MDD_brain_structure_regional_FA_CP$beta, breaks = seq(-0.1, 0.1, len = length(res_CP_MDD_brain_structure_regional_FA_CP$beta)), 
+          include.lowest = TRUE)
+colours <- colorRampPalette(c("blue","white", "red"))(length(res_CP_MDD_brain_structure_regional_FA_CP$beta))[ii]
+res_CP_MDD_brain_structure_regional_FA_CP$colour <- colours
+res_CP_MDD_brain_structure_regional_FA_CP <- res_CP_MDD_brain_structure_regional_FA_CP %>%
+  select(brain_phenotype, colour, sample, disorder, beta)
 
 ```
 
 ### Download AutoPtx v0.1.1 and ExBox6:
 
 [https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/AutoPtx](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/AutoPtx)
-
+[https://www.fmrib.ox.ac.uk/primers/intro_primer/ExBox6/IntroBox6.html](https://www.fmrib.ox.ac.uk/primers/intro_primer/ExBox6/IntroBox6.html)
 ### Run analysis 
 
 ### Display DTI tract effect sizes
