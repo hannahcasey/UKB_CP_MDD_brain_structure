@@ -29,6 +29,20 @@ Identify participants with neurological conditions, based on self-report, in UKB
        - Repeat in sex-stratified samples
 4. Sensitivity analysis: association analysis with equal number of males and females
 
-## 5_UKB_CP_MDD_brain_structure_present.Rmd
+## 5_UKB_CP_MDD_DTI_plot.Rmd
+
+1. Map standardized effect sizes to HEX colour codes
+2. Instructions to produce DTI plots using [Mango: Multi-image Analysis GUI](https://mangoviewer.com)
+
+
+## 6_UKB_CP_MDD_imaging_present.Rmd
 
 Plot results of association analysis.
+
+## 7_UKB_CP_MDD_imaging_flowchart.R
+
+Create flowchart of sample sizes.
+
+## 8_UKB_brain_structure_CP_MDD_supplementary.Rmd
+
+Create supplementary material DOCX file.
