@@ -1,0 +1,395 @@
+---
+title: "Brain Structure in Chronic Pain and Depression Supplementary Material"
+output: 
+  word_document:
+    reference_docx: ~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/writeup/RMD_template.docx
+---
+
+```{r setup, include=FALSE}
+library(kableExtra)
+library(dplyr)
+library(flextable)
+library(stringr)
+library(tidyr)
+```
+
+# Table of contents:
+
+## 1. Supplementary Methods
+
+### 1.1. Neurological disorders excluded
+
+### 1.2. Brain structures full details
+
+## 2. Supplementary Results
+
+### 2.1. Full results from main analysis
+
+\newpage
+
+# 1. Supplementary Methods
+
+\n
+
+\n
+
+## 1.1. Neurological disorders excluded
+
+Neurological disorder status was determined based on self-reported illnesses recorded in UK Biobank data fields 20001 and 20002.
+
+```{r Neurological, echo=F}
+
+UKB_neurological <- data.frame(Disorder = c("Benign neuroma", "Brain abscess/intracranial abscess", "Brain haemorrhage", "Cerebral aneurysm", "Cerebral palsy", "Chronic/degenerative neurological problem", "dementia/alzheimers/cognitive impairment", "Encephalitis", "Epilepsy", "Fracture skull/head", "Head injury", "Ischaemic stroke", "Meningitis", "Motor Neurone Disease", "Multiple Sclerosis", "Nervous system infection", "Neurological injury/trauma", "Other demyelinating disease (not Multiple Sclerosis)", "Other neurological problem", "Parkinson’s Disease", "Spina Bifida", "Stroke", "Subarachnoid haemorrhage", "Subdural haemorrhage/haematoma", "Transient ischaemic attack", "Meningioma/benign meningeal tumour"), `Data field` = c("1683", 1245, 1491, 1425, 1433, 1258, 1263, 1246, 1264, 1626, 1266, 1583, 1247, 1259, 1261, 1244, 1240, 1397, 1434, 1262, 1524, 1081, 1086, 1083, 1082, 1659))
+
+UKB_neurological_cancer <- data.frame(Disorder = c("Brain cancer/primary malignant brain tumour", "Meningeal cancer/malignant meningioma"), `Data field` = c("1032", 1031))
+
+flextable(UKB_neurological) %>%
+  autofit() %>%
+  fit_to_width(7) %>%
+  theme_booktabs()
+  
+```
+
+Supplementary Table 1 Non-cancer neurological conditions excluded for based on data field 20002.
+
+\newpage
+
+```{r Neurological cancer, echo=F}
+flextable(UKB_neurological_cancer) %>%
+  autofit() %>%
+  fit_to_width(7)
+```
+
+Supplementary Table 2 Cancer neurological conditions excluded for based on data field 20001.
+
+\newpage
+
+## 1.2. Brain structures full details
+
+Measures of cortical volume, thickness and surface area in UK Biobank
+
+```{r Cortical measures, echo=F, warning=F}
+frontal_lobe <- c("superior frontal gyrus" , "rostral middle frontal", "caudal middle frontal", "pars orbitalis", "pars triangularis", "pars opercularis", "frontal pole", "lateral orbitofrontal", "precentral gyrus", "paracentral cortex")
+temporal_lobe <- c("insula", "superior temporal", "transverse temporal", "banks STS", "middle temporal gyrus" , "iferior temporal gyrus" , "fusiform" , "parahippocampal" , "entorhinal")
+parietal_lobe <- c("postcentral gyrus", "paracentral cortex", "superior parietal cortex", "inferior parietal cortex", "supramarginal gyrus", "precuneus")
+occipital_lobe <- c("lateral occipital cortex", "cuneus" , "pericalcarine cortex" , "lingual gyrus")
+cingulate_lobe <- c("rostral ACC", "caudal ACC", "posterior cingulate cortex", "cingulate isthmus")
+
+cortical_measures <- data_frame(`Cortical Region` = c(frontal_lobe, temporal_lobe, parietal_lobe, occipital_lobe, cingulate_lobe), `Lobe` = c(rep("frontal", length(frontal_lobe)), rep("temporal", length(temporal_lobe)), rep("parietal", length(parietal_lobe)), rep("occipital", length(occipital_lobe)), rep("cingulate", length(cingulate_lobe))))
+
+flextable(cortical_measures) %>%
+  autofit() %>%
+  fit_to_width(7) 
+```
+
+Supplementary Table 3 Cortical regions in UK Biobank and cortical lobes derived from "Desikan-Killiany-Tourville" atlas
+
+\newpage
+
+```{r subcortical measures, echo=F,  warning=F}
+
+subcortical_volumes <- data_frame(`Subcortical Region` = c("thalamus", "caudate", "putamen", "pallidum", "hippocampus", "amygdala", "accumbens"))
+
+flextable(subcortical_volumes) %>%
+  autofit() %>%
+  fit_to_width(7) 
+```
+
+Supplementary Table 4 Subcortical volumes in UK Biobank derived using FIRST (FMRIB's Integrated Registration and Segmentation Tool)
+
+\newpage
+
+```{r WM measures, echo=F,  warning=F}
+
+association_fibres <- c("cingulate gyrus part of cingulum" , "inferior fronto-occipital fasciculus", "inferior longitudinal fasciculus", "parahippocampal part of cingulum", "superior longitudinal fasciculus", "uncinate fasciculus", "forceps major", "forceps minor")
+
+thalamic_radiations <- c("anterior thalamic radiation", "posterior thalamic radiation", "superior thalamic radiation")
+
+projection_fibres <- c("acoustic radiation", "corticospinal tract", "medial lemniscus" , "middle cerebellar peduncle")
+
+
+WM_measures <- data_frame(`White Matter Tract` = c(association_fibres, thalamic_radiations, projection_fibres), `General Measure` = c(rep("association fibre", length(association_fibres)), rep("thalamic radiations", length(thalamic_radiations)), rep("projection fibres", length(projection_fibres))))
+
+flextable(WM_measures) %>%
+  autofit() %>%
+  fit_to_width(7) 
+
+```
+
+Supplementary Table 5 White matter tracts in UK Biobank and general measures derived using AutoPtx.
+
+\newpage
+
+## 2. Supplementary Results
+
+\n
+
+\n
+
+### 2.1. Full results from analysis
+
+```{r All results, echo=F, warning=F}
+# Read in results 
+res_CP_MDD_brain_structure_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_all.csv",header=T)
+res_CP_MDD_brain_structure_all$sample <- "All"
+
+res_CP_MDD_structure_sex_interaction_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_sex_interaction_all.csv",header=T)
+res_CP_MDD_structure_sex_interaction_all$sample <- "Sex Interaction (Males - Females)"
+res_CP_MDD_structure_sex_interaction_all$p.adjust <- res_CP_MDD_structure_sex_interaction_all$p.value
+res_CP_MDD_structure_sex_interaction_all <- res_CP_MDD_structure_sex_interaction_all %>%
+  select(brain_phenotype, brain_structure_type, disorder, beta, p.adjust, sample)
+
+res_CP_MDD_brain_structure_female <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_females.csv",header=T)
+res_CP_MDD_brain_structure_female$sample <- "Female"
+
+res_CP_MDD_brain_structure_male <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_males.csv",header=T)
+res_CP_MDD_brain_structure_male$sample <- "Male"
+
+res_comorbidity_brain_structure_all <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_all.csv")
+res_comorbidity_brain_structure_all$sample <- "All"
+
+res_comorbidity_structure_sex_interaction_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_sex_interaction_all.csv",header=T)
+
+## Get CIs
+res_comorbidity_structure_sex_interaction_all$Lower_95CI <- res_comorbidity_structure_sex_interaction_all$beta - res_comorbidity_structure_sex_interaction_all$std * qnorm(0.975)
+res_comorbidity_structure_sex_interaction_all$Upper_95CI <- res_comorbidity_structure_sex_interaction_all$beta + res_comorbidity_structure_sex_interaction_all$std * qnorm(0.975)
+res_comorbidity_structure_sex_interaction_all$sample <- "Sex Interaction (Males - Females)"
+res_comorbidity_structure_sex_interaction_all$p.adjust <- res_comorbidity_structure_sex_interaction_all$p.value
+res_comorbidity_structure_sex_interaction_all <- res_comorbidity_structure_sex_interaction_all %>%
+  select(brain_phenotype, brain_structure_type, beta, p.adjust, Lower_95CI, Upper_95CI, sample, groups)
+
+res_comorbidity_brain_structure_female <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_females.csv")
+res_comorbidity_brain_structure_female$sample <- "Female"
+
+res_comorbidity_brain_structure_male <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_males.csv")
+res_comorbidity_brain_structure_male$sample <- "Male"
+
+
+## Combine results into single dataframes
+res_CP_MDD_brain_structure <- rbind(res_CP_MDD_brain_structure_all, res_CP_MDD_brain_structure_female, res_CP_MDD_brain_structure_male)
+res_CP_MDD_brain_structure <- res_CP_MDD_brain_structure %>%
+  select(brain_phenotype, brain_structure_type, disorder, beta, p.adjust, sample) %>%
+  rbind(res_CP_MDD_structure_sex_interaction_all)
+
+res_comorbidity_brain_structure <- rbind(res_comorbidity_brain_structure_all, res_comorbidity_brain_structure_female, res_comorbidity_brain_structure_male)
+res_comorbidity_brain_structure <- res_comorbidity_brain_structure %>%
+  select(brain_phenotype, brain_structure_type, beta, p.adjust, Lower_95CI, Upper_95CI, sample, groups) %>%
+  rbind(res_comorbidity_structure_sex_interaction_all)
+
+## Create new columns to reformat brain phenotypes for plotting
+res_CP_MDD_brain_structure$brain_phenotype_plot <-  gsub("MD", "MD in", res_CP_MDD_brain_structure$brain_phenotype)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("FA", "FA in", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("volume", "Volume of", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("area", "Area of", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("thickness", "Thickness of", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("sub_cortical_Volume", "Subcortical volume", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("_|[.]", " ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+
+res_comorbidity_brain_structure$brain_phenotype_plot <-  gsub("MD", "MD in", res_comorbidity_brain_structure$brain_phenotype)
+res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("FA", "FA in", res_comorbidity_brain_structure$brain_phenotype_plot)
+res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("volume", "Volume of", res_comorbidity_brain_structure$brain_phenotype_plot)
+res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("area", "Area of", res_comorbidity_brain_structure$brain_phenotype_plot)
+res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("thickness", "Thickness of", res_comorbidity_brain_structure$brain_phenotype_plot)
+res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("sub_cortical_Volume", "Subcortical volume", res_comorbidity_brain_structure$brain_phenotype_plot)
+res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("\\.[1-9]", "", res_comorbidity_brain_structure$brain_phenotype_plot)
+res_comorbidity_brain_structure$brain_phenotype_plot <-  gsub("_|[.]", " ", res_comorbidity_brain_structure$brain_phenotype_plot)
+
+
+## Reorder brain phenotype and subgroups for plotting
+res_CP_MDD_brain_structure$brain_structure_type  <- ordered(res_CP_MDD_brain_structure$brain_structure_type , levels = c("Subcortical Volume", "Cortical Regional Volume","Cortical Volume Global and Lobal Measures", "Cortical Regional Area", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+
+res_comorbidity_brain_structure$brain_structure_type  <- ordered(res_comorbidity_brain_structure$brain_structure_type , levels = c("Subcortical Volume", "Cortical Regional Volume","Cortical Volume Global and Lobal Measures", "Cortical Regional Area", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+
+res_CP_MDD_brain_structure_CP <- res_CP_MDD_brain_structure[res_CP_MDD_brain_structure$disorder == "chronic_pain",]
+res_CP_MDD_brain_structure_MDD <- res_CP_MDD_brain_structure[res_CP_MDD_brain_structure$disorder == "recurrent_depression",]
+
+## Chronic pain
+reshaped <- reshape(res_CP_MDD_brain_structure_CP, idvar = c("brain_phenotype_plot", "brain_structure_type"), timevar = "sample", direction = "wide")
+reshaped <- reshaped[grepl("brain_phenotype_plot|beta|p.adjust|brain_structure_type",names(reshaped))]
+
+## Add astriks to significant betas
+reshaped$beta.All <- round(reshaped$beta.All, 3)
+temp <- reshaped$beta.All
+reshaped$beta.All = ifelse(reshaped$p.adjust.All < 0.05, paste0(temp, "*"), reshaped$beta.All)
+reshaped$beta.All = ifelse(reshaped$p.adjust.All < 0.01, paste0(temp, "**"), reshaped$beta.All)
+reshaped$beta.All = ifelse(reshaped$p.adjust.All < 0.001, paste0(temp, "***"), reshaped$beta.All)
+
+reshaped$`beta.Sex Interaction (Males - Females)` <- round(reshaped$`beta.Sex Interaction (Males - Females)`, 3)
+temp <- reshaped$`beta.Sex Interaction (Males - Females)`
+reshaped$`beta.Sex Interaction (Males - Females)` = ifelse(reshaped$`p.adjust.Sex Interaction (Males - Females)` < 0.05, paste0(temp, "*"), reshaped$`beta.Sex Interaction (Males - Females)`)
+reshaped$`beta.Sex Interaction (Males - Females)` = ifelse(reshaped$`p.adjust.Sex Interaction (Males - Females)` < 0.01, paste0(temp, "**"), reshaped$`beta.Sex Interaction (Males - Females)`)
+reshaped$`beta.Sex Interaction (Males - Females)` = ifelse(reshaped$`p.adjust.Sex Interaction (Males - Females)` < 0.001, paste0(temp, "***"), reshaped$`beta.Sex Interaction (Males - Females)`)
+
+reshaped$beta.Female <- round(reshaped$beta.Female, 3)
+temp <- reshaped$beta.Female
+reshaped$beta.Female = ifelse(reshaped$p.adjust.Female < 0.05, paste0(temp, "*"), reshaped$beta.Female)
+reshaped$beta.Female = ifelse(reshaped$p.adjust.Female < 0.01, paste0(temp, "**"), reshaped$beta.Female)
+reshaped$beta.Female = ifelse(reshaped$p.adjust.Female < 0.001, paste0(temp, "***"), reshaped$beta.Female)
+
+reshaped$beta.Male <- round(reshaped$beta.Male, 3)
+temp <- reshaped$beta.Male
+reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.05, paste0(temp, "*"), reshaped$beta.Male)
+reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.01, paste0(temp, "**"), reshaped$beta.Male)
+reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.001, paste0(temp, "***"), reshaped$beta.Male)
+
+cat_order <- c("Subcortical Volume", "Cortical Regional Volume","Cortical Volume Global and Lobal Measures", "Cortical Regional Area", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "FA General Measures", "MD Tracts", "MD General Measures")
+
+
+reshaped <- reshaped %>% 
+  arrange(brain_phenotype_plot) %>%
+  arrange(factor(brain_structure_type, levels = cat_order))
+
+res_CP <- reshaped %>%
+  rename(`Brain Strucutre Phenotype` = brain_phenotype_plot,
+         `Full Sample Beta` = beta.All,
+         `Sex Interaction (Males - Females)` = `beta.Sex Interaction (Males - Females)`,
+         `Female Sample Beta` = beta.Female,
+         `Male Sample Beta` = beta.Male) %>%
+  select(`Brain Strucutre Phenotype`, `Full Sample Beta`, `Sex Interaction (Males - Females)`, `Female Sample Beta`, `Male Sample Beta`)
+
+## Depression
+reshaped <- reshape(res_CP_MDD_brain_structure_MDD, idvar = c("brain_phenotype_plot", "brain_structure_type"), timevar = "sample", direction = "wide")
+reshaped <- reshaped[grepl("brain_phenotype_plot|beta|p.adjust|brain_structure_type",names(reshaped))]
+
+## Add astriks to significant betas
+reshaped$beta.All <- round(reshaped$beta.All, 3)
+temp <- reshaped$beta.All
+reshaped$beta.All = ifelse(reshaped$p.adjust.All < 0.05, paste0(temp, "*"), reshaped$beta.All)
+reshaped$beta.All = ifelse(reshaped$p.adjust.All < 0.01, paste0(temp, "**"), reshaped$beta.All)
+reshaped$beta.All = ifelse(reshaped$p.adjust.All < 0.001, paste0(temp, "***"), reshaped$beta.All)
+
+reshaped$`beta.Sex Interaction (Males - Females)` <- round(reshaped$`beta.Sex Interaction (Males - Females)`, 3)
+temp <- reshaped$`beta.Sex Interaction (Males - Females)`
+reshaped$`beta.Sex Interaction (Males - Females)` = ifelse(reshaped$`p.adjust.Sex Interaction (Males - Females)` < 0.05, paste0(temp, "*"), reshaped$`beta.Sex Interaction (Males - Females)`)
+reshaped$`beta.Sex Interaction (Males - Females)` = ifelse(reshaped$`p.adjust.Sex Interaction (Males - Females)` < 0.01, paste0(temp, "**"), reshaped$`beta.Sex Interaction (Males - Females)`)
+reshaped$`beta.Sex Interaction (Males - Females)` = ifelse(reshaped$`p.adjust.Sex Interaction (Males - Females)` < 0.001, paste0(temp, "***"), reshaped$`beta.Sex Interaction (Males - Females)`)
+
+reshaped$beta.Female <- round(reshaped$beta.Female, 3)
+temp <- reshaped$beta.Female
+reshaped$beta.Female = ifelse(reshaped$p.adjust.Female < 0.05, paste0(temp, "*"), reshaped$beta.Female)
+reshaped$beta.Female = ifelse(reshaped$p.adjust.Female < 0.01, paste0(temp, "**"), reshaped$beta.Female)
+reshaped$beta.Female = ifelse(reshaped$p.adjust.Female < 0.001, paste0(temp, "***"), reshaped$beta.Female)
+
+reshaped$beta.Male <- round(reshaped$beta.Male, 3)
+temp <- reshaped$beta.Male
+reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.05, paste0(temp, "*"), reshaped$beta.Male)
+reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.01, paste0(temp, "**"), reshaped$beta.Male)
+reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.001, paste0(temp, "***"), reshaped$beta.Male)
+
+cat_order <- c("Subcortical Volume", "Cortical Regional Volume","Cortical Volume Global and Lobal Measures", "Cortical Regional Area", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "FA General Measures", "MD Tracts", "MD General Measures")
+
+reshaped <- reshaped %>% 
+  arrange(brain_phenotype_plot) %>%
+  arrange(factor(brain_structure_type, levels = cat_order))
+
+res_MDD <- reshaped %>%
+  rename(`Brain Strucutre Phenotype` = brain_phenotype_plot,
+         `Full Sample Beta` = beta.All,
+         `Sex Interaction (Males - Females)` = `beta.Sex Interaction (Males - Females)`,
+         `Female Sample Beta` = beta.Female,
+         `Male Sample Beta` = beta.Male) %>%
+  select(`Brain Strucutre Phenotype`, `Full Sample Beta`, `Sex Interaction (Males - Females)`, `Female Sample Beta`, `Male Sample Beta`)
+
+## Abbreviate groups
+res_comorbidity_brain_structure$groups <- res_comorbidity_brain_structure$groups %>%
+  recode("(No Probable Recurrent MDD + No Chronic Pain) - (No Probable Recurrent MDD + Chronic Pain)" = "CP-MDD- VS CP+MDD-",
+         "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + Chronic Pain)" = "CP-MDD- VS CP+MDD+",
+         "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)" = "CP-MDD- VS CP-MDD+",
+         "(No Probable Recurrent MDD + Chronic Pain) - (Probable Recurrent MDD + Chronic Pain)" = "CP+MDD- VS CP+MDD+",
+         "(No Probable Recurrent MDD + Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)" = "CP+MDD- VS CP-MDD+",
+         "(Probable Recurrent MDD + Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)" = "CP+MDD+ VS CP-MDD+")
+
+res_comorbidity_brain_structure <- res_comorbidity_brain_structure[order(res_comorbidity_brain_structure$groups),]
+
+reshaped <- reshape(res_comorbidity_brain_structure, idvar = c("brain_phenotype_plot", "groups", "brain_structure_type"), timevar = "sample", direction = "wide")
+reshaped <- reshaped[grepl("brain_phenotype_plot|beta|p.adjust|group|brain_structure_type",names(reshaped))]
+reshaped$Comparison <- reshaped$groups
+
+## Add astriks to significant betas
+reshaped$beta.All <- round(reshaped$beta.All, 3)
+temp <- reshaped$beta.All
+reshaped$beta.All = ifelse(reshaped$p.adjust.All < 0.05, paste0(temp, "*"), reshaped$beta.All)
+reshaped$beta.All = ifelse(reshaped$p.adjust.All < 0.01, paste0(temp, "**"), reshaped$beta.All)
+reshaped$beta.All = ifelse(reshaped$p.adjust.All < 0.001, paste0(temp, "***"), reshaped$beta.All)
+
+reshaped$`beta.Sex Interaction (Males - Females)` <- round(reshaped$`beta.Sex Interaction (Males - Females)`, 3)
+temp <- reshaped$`beta.Sex Interaction (Males - Females)`
+reshaped$`beta.Sex Interaction (Males - Females)` = ifelse(reshaped$`p.adjust.Sex Interaction (Males - Females)` < 0.05, paste0(temp, "*"), reshaped$`beta.Sex Interaction (Males - Females)`)
+reshaped$`beta.Sex Interaction (Males - Females)` = ifelse(reshaped$`p.adjust.Sex Interaction (Males - Females)` < 0.01, paste0(temp, "**"), reshaped$`beta.Sex Interaction (Males - Females)`)
+reshaped$`beta.Sex Interaction (Males - Females)` = ifelse(reshaped$`p.adjust.Sex Interaction (Males - Females)` < 0.001, paste0(temp, "***"), reshaped$`beta.Sex Interaction (Males - Females)`)
+
+reshaped$beta.Female <- round(reshaped$beta.Female, 3)
+temp <- reshaped$beta.Female
+reshaped$beta.Female = ifelse(reshaped$p.adjust.Female < 0.05, paste0(temp, "*"), reshaped$beta.Female)
+reshaped$beta.Female = ifelse(reshaped$p.adjust.Female < 0.01, paste0(temp, "**"), reshaped$beta.Female)
+reshaped$beta.Female = ifelse(reshaped$p.adjust.Female < 0.001, paste0(temp, "***"), reshaped$beta.Female)
+
+reshaped$beta.Male <- round(reshaped$beta.Male, 3)
+temp <- reshaped$beta.Male
+reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.05, paste0(temp, "*"), reshaped$beta.Male)
+reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.01, paste0(temp, "**"), reshaped$beta.Male)
+reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.001, paste0(temp, "***"), reshaped$beta.Male)
+
+cat_order <- c("Subcortical Volume", "Cortical Regional Volume","Cortical Volume Global and Lobal Measures", "Cortical Regional Area", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "FA General Measures", "MD Tracts", "MD General Measures")
+
+reshaped <- reshaped %>% 
+  arrange(brain_phenotype_plot) %>%
+  arrange(factor(brain_structure_type, levels = cat_order))
+
+res_comobidity <- reshaped %>%
+  rename(`Brain Strucutre Phenotype` = brain_phenotype_plot,
+         `Full Sample Beta` = beta.All,
+         `Sex Interaction (Males - Females)` = `beta.Sex Interaction (Males - Females)`,
+         `Female Sample Beta` = beta.Female,
+         `Male Sample Beta` = beta.Male) %>%
+  group_by(`Brain Strucutre Phenotype`) %>%
+  select(`Brain Strucutre Phenotype`, Comparison, `Full Sample Beta`, `Sex Interaction (Males - Females)`, `Female Sample Beta`, `Male Sample Beta`)
+
+```
+
+```{r chronic pain results, echo=F, warning=F}
+
+flextable(res_CP) %>%
+  autofit() %>%
+  fit_to_width(7) %>%
+  bold(i = ~ grepl("\\*", res_CP$`Full Sample Beta`), j = "Full Sample Beta") %>%
+  bold(i = ~ grepl("\\*", res_CP$`Sex Interaction (Males - Females)`), j = "Sex Interaction (Males - Females)") %>%
+  bold(~ grepl("\\*", res_CP$`Female Sample Beta`), j = "Female Sample Beta") %>%
+  bold(~ grepl("\\*", res_CP$`Male Sample Beta`), j = "Male Sample Beta")
+
+```
+
+Supplementary Table 6 Full results for association between brain structure and chronic pain in full, female and male sample. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
+
+\newpage
+
+```{r depression results, echo=F, warning=F}
+flextable(res_MDD) %>%
+  autofit() %>%
+  fit_to_width(7) %>%
+  bold(i = ~ grepl("\\*", res_MDD$`Full Sample Beta`), j = "Full Sample Beta") %>%
+  bold(i = ~ grepl("\\*", res_MDD$`Sex Interaction (Males - Females)`), j = "Sex Interaction (Males - Females)") %>%
+  bold(~ grepl("\\*", res_MDD$`Female Sample Beta`), j = "Female Sample Beta") %>%
+  bold(~ grepl("\\*", res_MDD$`Male Sample Beta`), j = "Male Sample Beta")
+
+```
+
+Supplementary Table 7 Full results for association between brain structure and depression in full, female and male sample. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
+
+\newpage
+
+```{r CPMDD results, echo=F, warning=F}
+flextable(res_comobidity) %>%
+  autofit() %>%
+  fit_to_width(7)  %>%
+  bold(i = ~ grepl("\\*", res_comobidity$`Full Sample Beta`), j = "Full Sample Beta") %>%
+  bold(i = ~ grepl("\\*", res_comobidity$`Sex Interaction (Males - Females)`), j = "Sex Interaction (Males - Females)") %>%
+  bold(~ grepl("\\*", res_comobidity$`Female Sample Beta`), j = "Female Sample Beta") %>%
+  bold(~ grepl("\\*", res_comobidity$`Male Sample Beta`), j = "Male Sample Beta")
+
+```
+
+Supplementary Table 8 Full results for association between brain structure and comorbidity groups in full, female and male sample. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
+\newpage
+
+

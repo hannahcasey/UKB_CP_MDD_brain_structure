@@ -16,6 +16,9 @@ This markdown will details the steps taken to plot DTI results in chronic pain a
 ### Map standardized effect sizes to HEX colour codes
 
 ```{r setup, include=FALSE}
+# Load in packages
+library(dplyr)
+
 # Read in results 
 res_CP_MDD_brain_structure_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_all.csv",header=T)
 res_CP_MDD_brain_structure_all$sample <- "All"

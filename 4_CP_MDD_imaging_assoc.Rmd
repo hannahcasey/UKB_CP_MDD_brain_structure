@@ -811,7 +811,7 @@ unilateral_sex_interaction_group <- function(dependent, independent, sex_variabl
       output[rep(i,6), "brain_phenotype"] <- i
       output[output$brain_phenotype == i,"groups"] <- as.data.frame(contrast1)$comorbidity_group_pairwise
       output[output$brain_phenotype == i,"contrast"] <- as.data.frame(contrast1)$sex_pairwise
-      output[output$brain_phenotype == i, "betal"] <- as.data.frame(contrast1)$estimate
+      output[output$brain_phenotype == i, "beta"] <- as.data.frame(contrast1)$estimate
       output[output$brain_phenotype == i, "std"] <- as.data.frame(contrast1)$SE
       output[output$brain_phenotype == i, "p.value"] <- as.data.frame(contrast1)$p.value
       
@@ -1973,8 +1973,6 @@ comorbidity_structure_sex_interaction_all <- do.call("rbind", list(subcortical_v
 
 
 ```
-
-
 
 ## Carry out sex-stratified association analysis
 ```{r sex-stratified association analysis}
