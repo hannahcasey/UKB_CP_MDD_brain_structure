@@ -634,7 +634,7 @@ p4 <- regional_subcortical_volume_ggseg %>%
   scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
   theme_void() +
   facet_wrap(~groups, nrow = 1) +
-  theme(panel.spacing.x = unit(10, "lines"))  + 
+  theme(panel.spacing.x = unit(8, "lines"))  + 
   theme(legend.position="none")
   
 
@@ -874,7 +874,7 @@ p4 <- regional_subcortical_volume_ggseg %>%
   scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
   theme_void() +
   facet_wrap(~groups, nrow = 1) +
-  theme(panel.spacing.x = unit(10, "lines"))  + 
+  theme(panel.spacing.x = unit(8, "lines"))  + 
   theme(legend.position="none")
   
 
