@@ -316,9 +316,28 @@ UKB_imaging_covariates_temp <- UKB_imaging_covariates[!is.na(UKB_imaging_covaria
 
 ## Run PCA in each general MD measure
 PC_res_MD_association_fibres <- princomp((UKB_imaging_covariates_temp[,MD_association_fibres]),scores = TRUE)$scores[,1]
+
+PC_res_MD_association_fibres_PCA <- princomp(UKB_imaging_covariates_temp[,MD_association_fibres])
+temp <- PC_res_MD_association_fibres_PCA$sdev^2 / sum(PC_res_MD_association_fibres_PCA$sdev^2)
+PC_res_MD_association_fibres_VE <- temp[1]
+                                             
 PC_res_MD_thalamic_radiations <- princomp(UKB_imaging_covariates_temp[,MD_thalamic_radiations],scores = TRUE)$scores[,1]
+
+PC_res_MD_thalamic_radiations_PCA <- princomp(UKB_imaging_covariates_temp[,MD_thalamic_radiations])
+temp <- PC_res_MD_thalamic_radiations_PCA$sdev^2 / sum(PC_res_MD_thalamic_radiations_PCA$sdev^2)
+PC_res_MD_thalamic_radiations_VE <- temp[1]
+
 PC_res_MD_projection_fibres <- princomp(UKB_imaging_covariates_temp[,MD_projection_fibres],scores = TRUE)$scores[,1]
+
+PC_res_MD_projection_fibres_PCA <- princomp(UKB_imaging_covariates_temp[,MD_projection_fibres])
+temp <- PC_res_MD_projection_fibres_PCA$sdev^2 / sum(PC_res_MD_projection_fibres_PCA$sdev^2)
+PC_res_MD_projection_fibres_VE <- temp[1]
+
 PC_res_MD_global <- princomp(UKB_imaging_covariates_temp[,MD_global],scores = TRUE)$scores[,1]
+
+PC_res_MD_global_PCA <- princomp(UKB_imaging_covariates_temp[,MD_global])
+temp <- PC_res_MD_global_PCA$sdev^2 / sum(PC_res_MD_global_PCA$sdev^2)
+PC_res_MD_global_VE <- temp[1]
 
 ## Add 1st PC to temporary dataframe
 UKB_imaging_covariates_temp <- cbind(as.data.frame(UKB_imaging_covariates_temp[,"f.eid"]), PC_res_MD_association_fibres, PC_res_MD_thalamic_radiations, PC_res_MD_projection_fibres, PC_res_MD_global)
@@ -395,10 +414,29 @@ FA_global <- c(FA_association_fibres, FA_thalamic_radiations, FA_projection_fibr
 UKB_imaging_covariates_temp <- UKB_imaging_covariates[!is.na(UKB_imaging_covariates$f.25516.2.0),]
 
 ## Run PCA in each general FA measure
-PC_res_FA_association_fibres <- princomp(UKB_imaging_covariates_temp[,FA_association_fibres],scores = TRUE)$scores[,1]
+PC_res_FA_association_fibres <- princomp((UKB_imaging_covariates_temp[,FA_association_fibres]),scores = TRUE)$scores[,1]
+
+PC_res_FA_association_fibres_PCA <- princomp(UKB_imaging_covariates_temp[,FA_association_fibres])
+temp <- PC_res_FA_association_fibres_PCA$sdev^2 / sum(PC_res_FA_association_fibres_PCA$sdev^2)
+PC_res_FA_association_fibres_VE <- temp[1]
+                                             
 PC_res_FA_thalamic_radiations <- princomp(UKB_imaging_covariates_temp[,FA_thalamic_radiations],scores = TRUE)$scores[,1]
+
+PC_res_FA_thalamic_radiations_PCA <- princomp(UKB_imaging_covariates_temp[,FA_thalamic_radiations])
+temp <- PC_res_FA_thalamic_radiations_PCA$sdev^2 / sum(PC_res_FA_thalamic_radiations_PCA$sdev^2)
+PC_res_FA_thalamic_radiations_VE <- temp[1]
+
 PC_res_FA_projection_fibres <- princomp(UKB_imaging_covariates_temp[,FA_projection_fibres],scores = TRUE)$scores[,1]
+
+PC_res_FA_projection_fibres_PCA <- princomp(UKB_imaging_covariates_temp[,FA_projection_fibres])
+temp <- PC_res_FA_projection_fibres_PCA$sdev^2 / sum(PC_res_FA_projection_fibres_PCA$sdev^2)
+PC_res_FA_projection_fibres_VE <- temp[1]
+
 PC_res_FA_global <- princomp(UKB_imaging_covariates_temp[,FA_global],scores = TRUE)$scores[,1]
+
+PC_res_FA_global_PCA <- princomp(UKB_imaging_covariates_temp[,FA_global])
+temp <- PC_res_FA_global_PCA$sdev^2 / sum(PC_res_FA_global_PCA$sdev^2)
+PC_res_FA_global_VE <- temp[1]
 
 ## Add 1st PC to temporary dataframe
 UKB_imaging_covariates_temp <- cbind(as.data.frame(UKB_imaging_covariates_temp$f.eid), PC_res_FA_association_fibres, PC_res_FA_thalamic_radiations, PC_res_FA_projection_fibres, PC_res_FA_global)
@@ -415,6 +453,15 @@ UKB_imaging_covariates_temp <- UKB_imaging_covariates_temp %>%
 
 ## Merge with full dataframe 
 UKB_imaging_covariates <- left_join(UKB_imaging_covariates, UKB_imaging_covariates_temp, by = "f.eid")
+
+## Save variance explained
+
+DTI_VE_df <- data.frame(
+  "DTI_measure" = c("MD global", "MD association fibres", "MD projection fibres", "MD thalamic associations", "FA global", "FA association fibres", "FA projection fibres", "FA thalamic associations"),
+  "variance_explained" = c(PC_res_MD_global_VE, PC_res_MD_association_fibres_VE, PC_res_MD_projection_fibres_VE, PC_res_MD_thalamic_radiations_VE, PC_res_FA_global_VE, PC_res_FA_association_fibres_VE, PC_res_FA_projection_fibres_VE, PC_res_FA_thalamic_radiations_VE)
+)
+
+write.csv(DTI_VE_df, "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/DTI_PCA_variance_explained.csv", row.names = F)
 
 ```
 

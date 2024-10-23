@@ -57,6 +57,9 @@ Multiple comparision correction: FDR
 res_CP_MDD_brain_structure_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_all.csv",header=T)
 res_CP_MDD_brain_structure_all$sample <- "All\n"
 
+n_MD_all <- range(res_CP_MDD_brain_structure_all$n[res_CP_MDD_brain_structure_all$disorder == "recurrent_depression"])
+n_CP_all <- range(res_CP_MDD_brain_structure_all$n[res_CP_MDD_brain_structure_all$disorder == "chronic_pain"])
+
 res_CP_MDD_structure_sex_interaction_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_sex_interaction_all.csv",header=T)
 res_CP_MDD_structure_sex_interaction_all$sample <- "Sex Interaction\n(Males - Females)"
 res_CP_MDD_structure_sex_interaction_all$p.adjust <- res_CP_MDD_structure_sex_interaction_all$p.value
@@ -66,8 +69,14 @@ res_CP_MDD_structure_sex_interaction_all <- res_CP_MDD_structure_sex_interaction
 res_CP_MDD_brain_structure_female <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_females.csv",header=T)
 res_CP_MDD_brain_structure_female$sample <- "Female\n"
 
+n_MD_female <- range(res_CP_MDD_brain_structure_female$n[res_CP_MDD_brain_structure_female$disorder == "recurrent_depression"])
+n_CP_female <- range(res_CP_MDD_brain_structure_female$n[res_CP_MDD_brain_structure_female$disorder == "chronic_pain"])
+
 res_CP_MDD_brain_structure_male <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_males.csv",header=T)
 res_CP_MDD_brain_structure_male$sample <- "Male\n"
+
+n_MD_male <- range(res_CP_MDD_brain_structure_male$n[res_CP_MDD_brain_structure_male$disorder == "recurrent_depression"])
+n_CP_male <- range(res_CP_MDD_brain_structure_male$n[res_CP_MDD_brain_structure_male$disorder == "chronic_pain"])
 
 res_comorbidity_brain_structure_all <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_all.csv")
 res_comorbidity_brain_structure_all$sample <- "All\n"
@@ -211,7 +220,7 @@ rm(temp)
 pal_discrete <- wes_palette("Zissou1", 100, type = "continuous")
 
 ## Create discrete colour palette
-pal_continuous <- wes_palette("Darjeeling1",5, type = "discrete")[2:4]
+pal_continuous <- c("#D81B60","#1E88E5", "#FFC107" )
 
 ```
 
@@ -463,7 +472,7 @@ p1 <- regional_cortical_volumes_ggseg %>%
              aes(fill = `Standardized β`)) +
   facet_wrap(~groups, nrow = 1) +
   scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_minimal() + 
+  theme_void() + 
   theme(legend.position="none")
 
 ```
@@ -511,7 +520,7 @@ p2 <- regional_cortical_areas_ggseg %>%
              aes(fill = `Standardized β`)) +
   facet_wrap(~groups, nrow = 1) +
   scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_minimal() + 
+  theme_void() + 
   theme(legend.position="none")
 
 ```
@@ -574,7 +583,7 @@ p3 <- regional_cortical_thickness_ggseg %>%
              aes(fill = `Standardized β`)) +
   facet_wrap(~groups, nrow = 1) +
   scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_minimal() + 
+  theme_void() + 
   theme(legend.position="none")
 
 ```
@@ -623,7 +632,7 @@ p4 <- regional_subcortical_volume_ggseg %>%
              position = position_brain("horizontal")) +
   facet_wrap(~groups) +
   scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_minimal() +
+  theme_void() +
   facet_wrap(~groups, nrow = 1) +
   theme(panel.spacing.x = unit(10, "lines"))  + 
   theme(legend.position="none")
@@ -704,7 +713,7 @@ p1 <- regional_cortical_volumes_ggseg %>%
              aes(fill = `Standardized β`)) +
   facet_wrap(~groups, nrow = 1) +
   scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_minimal() + 
+  theme_void() + 
   theme(legend.position="none")
 
 ```
@@ -763,7 +772,7 @@ p2 <- regional_cortical_areas_ggseg %>%
              aes(fill = `Standardized β`)) +
   facet_wrap(~groups, nrow = 1) +
   scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_minimal() + 
+  theme_void() + 
   theme(legend.position="none")
 
 ```
@@ -814,7 +823,7 @@ p3 <- regional_cortical_thickness_ggseg %>%
              aes(fill = `Standardized β`)) +
   facet_wrap(~groups, nrow = 1) +
   scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_minimal() + 
+  theme_void() + 
   theme(legend.position="none")
 
 
@@ -863,7 +872,7 @@ p4 <- regional_subcortical_volume_ggseg %>%
              position = position_brain("horizontal")) +
   facet_wrap(~groups) +
   scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_minimal() +
+  theme_void() +
   facet_wrap(~groups, nrow = 1) +
   theme(panel.spacing.x = unit(10, "lines"))  + 
   theme(legend.position="none")
@@ -897,6 +906,22 @@ random_plot <- ggplot(mtcars, aes(x=wt, y=mpg, color=`Standardized β`)) +
   
 grid.draw(cowplot::get_legend(random_plot)) 
 
+```
+
+##### Sample size ranges
+
+```{r Sample sizes, echo = FALSE, warning=FALSE}
+cat(paste0("Chronic Pain:\nAll:"), n_CP_all, "\n")
+
+cat(paste0("Female:"), n_CP_female, "\n")
+
+cat(paste0("Male:"), n_CP_male, "\n\n")
+
+cat(paste0("Depression:\nAll:"), n_MD_all, "\n")
+
+cat(paste0("Female:"), n_MD_female, "\n")
+
+cat(paste0("Male:"), n_MD_male, "\n\n")
 ```
 
 

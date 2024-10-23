@@ -120,6 +120,26 @@ Supplementary Table 5 White matter tracts in UK Biobank and general measures der
 
 \newpage
 
+```{r PCA DTI, echo=F,  warning=F}
+
+PCA_DTI_VE <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/DTI_PCA_variance_explained.csv")
+
+PCA_DTI_VE$variance_explained <- round(PCA_DTI_VE$variance_explained, digits = 3)
+
+PCA_DTI_VE <- PCA_DTI_VE %>%
+  rename("Variance Explained" = variance_explained,
+         "White Matter General Measures" = DTI_measure)
+
+flextable(PCA_DTI_VE) %>%
+  autofit() %>%
+  fit_to_width(7) 
+
+
+```
+Supplementary Table 6 Variance explained by the first principal component analysis (PCA) component for each global and general measure of white matter tracts.
+
+\newpage
+
 ## 2. Supplementary Results
 
 \n
@@ -359,7 +379,7 @@ flextable(res_CP) %>%
 
 ```
 
-Supplementary Table 6 Full results for association between brain structure and chronic pain in full, female and male sample. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
+Supplementary Table 7 Full results for association between brain structure and chronic pain in full, female and male sample. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
 
 \newpage
 
@@ -374,7 +394,7 @@ flextable(res_MDD) %>%
 
 ```
 
-Supplementary Table 7 Full results for association between brain structure and depression in full, female and male sample. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
+Supplementary Table 8 Full results for association between brain structure and depression in full, female and male sample. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
 
 \newpage
 
@@ -389,7 +409,7 @@ flextable(res_comobidity) %>%
 
 ```
 
-Supplementary Table 8 Full results for association between brain structure and comorbidity groups in full, female and male sample. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
+Supplementary Table 9 Full results for association between brain structure and comorbidity groups in full, female and male sample. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
 \newpage
 
 
