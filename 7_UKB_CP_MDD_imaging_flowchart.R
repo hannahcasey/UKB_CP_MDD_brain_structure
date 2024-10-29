@@ -20,11 +20,11 @@ UKB_british_irish_with_imaging <- UKB_with_imaging[!UKB_with_imaging %in% non_br
 UKB_british_irish_with_imaging_non_neurological <- UKB_british_irish_with_imaging[!UKB_british_irish_with_imaging %in% UKB_neurological$f_eid] ## IDs non neurological british/irish with imaging
 
 UKB_non_british_irish_with_imaging <- UKB_with_imaging[UKB_with_imaging %in% non_british_irish$x] ## IDs non british/irish in imaging sample
-UKB_neurological_british_irish_with_imaging <- UKB_non_british_irish_with_imaging[UKB_non_british_irish_with_imaging %in% UKB_neurological$f_eid] ## IDs neurological British/Irish in imaging sample
+UKB_neurological_british_irish_with_imaging <- UKB_british_irish_with_imaging[UKB_british_irish_with_imaging %in% UKB_neurological$f_eid] ## IDs neurological British/Irish in imaging sample
 
 UKB_non_british_irish_with_imaging_non_neurological_CP <- UKB_CP$n_eid[(UKB_CP$n_eid %in% UKB_british_irish_with_imaging_non_neurological) & !is.na(UKB_CP$chronic_pain_status)] ## IDs british/irish in imaging sample with CP phenotyping
 UKB_non_british_irish_with_imaging_non_neurological_MDD <- UKB_MDD$f_eid[(UKB_MDD$f_eid %in% UKB_british_irish_with_imaging_non_neurological) & !is.na(UKB_MDD$recurrent_depression)] ## IDs british/irish in imaging sample with MDD phenotyping
-UKB_non_british_irish_with_imaging_non_neurological_CPMDD <- UKB_non_british_irish_with_imaging_non_neurological_MDD[UKB_british_irish_with_imaging_non_neurological %in% UKB_non_british_irish_with_imaging_non_neurological_CP]
+UKB_non_british_irish_with_imaging_non_neurological_CPMDD <- UKB_non_british_irish_with_imaging_non_neurological_MDD[UKB_non_british_irish_with_imaging_non_neurological_MDD %in% UKB_non_british_irish_with_imaging_non_neurological_CP]
 
 
 UKB_pop <- boxGrob(glue("UK Biobank Sample",
@@ -75,7 +75,7 @@ CPMDD_pop <- boxGrob(glue("Both Chronic Pain and Depression Phenotyping",
                    just = "centre")
 
 grid.newpage()
-jpeg("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/flowchart.jpg", width = 700, height = 900)
+jpeg("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/flowchart.jpg", width = 900, height = 900)
 
 UKB_pop
 eligible_pop
