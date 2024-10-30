@@ -2754,6 +2754,38 @@ for (sex in c("females", "males")){
 
 }
 
+## Remove sex-stratified analysis where no interaction was found in specific 
+## Females
+comorbidity_structure_assoc_females_sig_sex_x <- comorbidity_structure_sex_interaction_all[comorbidity_structure_sex_interaction_all$p.value < 0.05, c("brain_phenotype","groups")]
+
+comorbidity_structure_assoc_females_sig_sex_x$brain_phenotype_filter <- gsub("_right|_left", "", comorbidity_structure_assoc_females_sig_sex_x$brain_phenotype)
+comorbidity_structure_assoc_females$brain_phenotype_filter <- gsub("_right|_left", "", comorbidity_structure_assoc_females$brain_phenotype)
+
+comorbidity_structure_assoc_females <- merge(comorbidity_structure_assoc_females, comorbidity_structure_assoc_females_sig_sex_x, by = c("brain_phenotype_filter", "groups"))
+comorbidity_structure_assoc_females <- comorbidity_structure_assoc_females %>%
+  select(-c(brain_phenotype.y, brain_phenotype_filter)) %>%
+  rename(brain_phenotype= brain_phenotype.x)
+
+## Redo p-value adjustment
+comorbidity_structure_assoc_females$p.adjust[comorbidity_structure_assoc_females$brain_structure_type == "Cortical Regional Thickness"] <- p.adjust(comorbidity_structure_assoc_females$p.value[comorbidity_structure_assoc_females$brain_structure_type == "Cortical Regional Thickness"], method = "fdr")
+
+comorbidity_structure_assoc_females$p.adjust[comorbidity_structure_assoc_females$brain_structure_type == "Cortical Regional Volume"] <- p.adjust(comorbidity_structure_assoc_females$p.value[comorbidity_structure_assoc_females$brain_structure_type == "Cortical Regional Volume"], method = "fdr")
+
+
+## Males
+comorbidity_structure_assoc_males_sig_sex_x <- comorbidity_structure_sex_interaction_all[comorbidity_structure_sex_interaction_all$p.value < 0.05, c("brain_phenotype","groups")]
+
+comorbidity_structure_assoc_males_sig_sex_x$brain_phenotype_filter <- gsub("_right|_left", "", comorbidity_structure_assoc_males_sig_sex_x$brain_phenotype)
+comorbidity_structure_assoc_males$brain_phenotype_filter <- gsub("_right|_left", "", comorbidity_structure_assoc_males$brain_phenotype)
+
+comorbidity_structure_assoc_males <- merge(comorbidity_structure_assoc_males, comorbidity_structure_assoc_males_sig_sex_x, by = c("brain_phenotype_filter", "groups"))
+comorbidity_structure_assoc_males <- comorbidity_structure_assoc_males %>%
+  select(-c(brain_phenotype.y, brain_phenotype_filter)) %>%
+  rename(brain_phenotype= brain_phenotype.x)
+
+## Redo p-value adjustment
+comorbidity_structure_assoc_males$p.adjust <- comorbidity_structure_assoc_males$p.value
+
 ## Add column indicating disorder
 comorbidity_structure_assoc_females$disorder<- "comorbidity"
 comorbidity_structure_assoc_males$disorder<- "comorbidity"

@@ -57,7 +57,7 @@ Multiple comparision correction: FDR
 res_CP_MDD_brain_structure_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_all.csv",header=T)
 res_CP_MDD_brain_structure_all$sample <- "All\n"
 
-n_MD_all <- range(res_CP_MDD_brain_structure_all$n[res_CP_MDD_brain_structure_all$disorder == "recurrent_depression"])
+n_MDD_all <- range(res_CP_MDD_brain_structure_all$n[res_CP_MDD_brain_structure_all$disorder == "recurrent_depression"])
 n_CP_all <- range(res_CP_MDD_brain_structure_all$n[res_CP_MDD_brain_structure_all$disorder == "chronic_pain"])
 
 res_CP_MDD_structure_sex_interaction_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_sex_interaction_all.csv",header=T)
@@ -69,17 +69,19 @@ res_CP_MDD_structure_sex_interaction_all <- res_CP_MDD_structure_sex_interaction
 res_CP_MDD_brain_structure_female <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_females.csv",header=T)
 res_CP_MDD_brain_structure_female$sample <- "Female\n"
 
-n_MD_female <- range(res_CP_MDD_brain_structure_female$n[res_CP_MDD_brain_structure_female$disorder == "recurrent_depression"])
+n_MDD_female <- range(res_CP_MDD_brain_structure_female$n[res_CP_MDD_brain_structure_female$disorder == "recurrent_depression"])
 n_CP_female <- range(res_CP_MDD_brain_structure_female$n[res_CP_MDD_brain_structure_female$disorder == "chronic_pain"])
 
 res_CP_MDD_brain_structure_male <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_males.csv",header=T)
 res_CP_MDD_brain_structure_male$sample <- "Male\n"
 
-n_MD_male <- range(res_CP_MDD_brain_structure_male$n[res_CP_MDD_brain_structure_male$disorder == "recurrent_depression"])
+n_MDD_male <- range(res_CP_MDD_brain_structure_male$n[res_CP_MDD_brain_structure_male$disorder == "recurrent_depression"])
 n_CP_male <- range(res_CP_MDD_brain_structure_male$n[res_CP_MDD_brain_structure_male$disorder == "chronic_pain"])
 
 res_comorbidity_brain_structure_all <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_all.csv")
 res_comorbidity_brain_structure_all$sample <- "All\n"
+
+n_CPMDD_all <- range(res_comorbidity_brain_structure_all$n)
 
 res_comorbidity_structure_sex_interaction_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_sex_interaction_all.csv",header=T)
 ## Get CIs
@@ -93,9 +95,12 @@ res_comorbidity_structure_sex_interaction_all <- res_comorbidity_structure_sex_i
 res_comorbidity_brain_structure_female <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_females.csv")
 res_comorbidity_brain_structure_female$sample <- "Female\n"
 
+n_CPMDD_female <- range(res_comorbidity_brain_structure_female$n)
+
 res_comorbidity_brain_structure_male <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_males.csv")
 res_comorbidity_brain_structure_male$sample <- "Male\n"
 
+n_CPMDD_male <- range(res_comorbidity_brain_structure_male$n)
 
 ## Combine results into single dataframes
 res_CP_MDD_brain_structure <- rbind(res_CP_MDD_brain_structure_all, res_CP_MDD_brain_structure_female, res_CP_MDD_brain_structure_male)
@@ -917,11 +922,18 @@ cat(paste0("Female:"), n_CP_female, "\n")
 
 cat(paste0("Male:"), n_CP_male, "\n\n")
 
-cat(paste0("Depression:\nAll:"), n_MD_all, "\n")
+cat(paste0("Depression:\nAll:"), n_MDD_all, "\n")
 
-cat(paste0("Female:"), n_MD_female, "\n")
+cat(paste0("Female:"), n_MDD_female, "\n")
 
-cat(paste0("Male:"), n_MD_male, "\n\n")
+cat(paste0("Male:"), n_MDD_male, "\n\n")
+
+
+cat(paste0("Comorbidity:\nAll:"), n_CPMDD_all, "\n")
+
+cat(paste0("Female:"), n_CPMDD_female, "\n")
+
+cat(paste0("Male:"), n_CPMDD_male, "\n\n")
 ```
 
 
