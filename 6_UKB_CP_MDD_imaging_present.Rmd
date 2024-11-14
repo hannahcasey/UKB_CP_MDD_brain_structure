@@ -298,7 +298,7 @@ res_comorbidity_brain_structure_CP_MDD_plot <- res_comorbidity_brain_structure_C
   
 ## Plot resutls
 ## Reference: CP+MDD-
-plot_comorbidity_CP_noMDD = ggplot(res_comorbidity_brain_structure_noCP_noMDD, aes(x=brain_phenotype_plot, y=beta, shape=significant,colour=as.factor(groups))) +
+plot_comorbidity_noCP_noMDD = ggplot(res_comorbidity_brain_structure_noCP_noMDD, aes(x=brain_phenotype_plot, y=beta, shape=significant,colour=as.factor(groups))) +
   geom_point(aes(y=beta),size=3, alpha = 0.5) +
   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
   theme_minimal() +
