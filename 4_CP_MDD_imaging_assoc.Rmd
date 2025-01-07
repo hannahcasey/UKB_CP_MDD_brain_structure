@@ -15,6 +15,7 @@ library(tidyr)
 library(Hmisc)
 library(emmeans)
 library(lme4)
+library(lmerTest)
 set.seed(151097)
 ```
 
@@ -1714,7 +1715,6 @@ for (disorder in c("chronic_pain", "recurrent_depression")){
 
 ```
 
-
 ## Carry out sex interaction for comorbidity groups
 ```{r association in comorbidity groups}
 
@@ -2077,7 +2077,7 @@ for (sex in c("females", "males")){
       cortical_volume_assoc <- data.frame()
     }
     
-        sig_sex_interaction_general <- cortical_volume_general[cortical_volume_general %in% unique(df_sex_interactions$brain_phenotype[df_sex_interactions$brain_structure_type == "Cortical Regional Volume" & df_sex_interactions$p < 0.05])]
+        sig_sex_interaction_general <- cortical_volume_general[cortical_volume_general %in% unique(df_sex_interactions$brain_phenotype[df_sex_interactions$brain_structure_type == "Cortical Volume Global and Lobal Measures" & df_sex_interactions$p < 0.05])]
     
     if (length(sig_sex_interaction_general) > 0){
       
@@ -2135,7 +2135,7 @@ for (sex in c("females", "males")){
       cortical_thickness_assoc <- data.frame()
     }
     
-        sig_sex_interaction_general <- cortical_thickness_general[cortical_thickness_general %in% unique(df_sex_interactions$brain_phenotype[df_sex_interactions$brain_structure_type == "Cortical Regional Thickness" & df_sex_interactions$p < 0.05])]
+        sig_sex_interaction_general <- cortical_thickness_general[cortical_thickness_general %in% unique(df_sex_interactions$brain_phenotype[df_sex_interactions$brain_structure_type == "Cortical Thickness Global and Lobal Measures" & df_sex_interactions$p < 0.05])]
     
     if (length(sig_sex_interaction_general) > 0){
       
@@ -2195,7 +2195,7 @@ for (sex in c("females", "males")){
       cortical_area_assoc <- data.frame()
     }
     
-        sig_sex_interaction_general <- cortical_area_general[cortical_area_general %in% unique(df_sex_interactions$brain_phenotype[df_sex_interactions$brain_structure_type == "Cortical Regional Area" & df_sex_interactions$p < 0.05])]
+        sig_sex_interaction_general <- cortical_area_general[cortical_area_general %in% unique(df_sex_interactions$brain_phenotype[df_sex_interactions$brain_structure_type == "Cortical Area Global and Lobal Measures" & df_sex_interactions$p < 0.05])]
     
     if (length(sig_sex_interaction_general) > 0){
       
@@ -2476,7 +2476,7 @@ for (sex in c("females", "males")){
     }
   }
 
-  sig_sex_interaction_general <- cortical_volume_general[cortical_volume_general %in% unique(comorbidity_structure_sex_interaction_all$brain_phenotype[comorbidity_structure_sex_interaction_all$brain_structure_type == "Cortical Regional Volume" & comorbidity_structure_sex_interaction_all$p < 0.05])]
+  sig_sex_interaction_general <- cortical_volume_general[cortical_volume_general %in% unique(comorbidity_structure_sex_interaction_all$brain_phenotype[comorbidity_structure_sex_interaction_all$brain_structure_type == "Cortical Volume Global and Lobal Measures" & comorbidity_structure_sex_interaction_all$p < 0.05])]
 
   if (length(sig_sex_interaction_general) > 0){
   cortical_volume_general_assoc <- unilateral_structure_assoc_group(
@@ -2535,7 +2535,7 @@ for (sex in c("females", "males")){
     }
   }
 
-  sig_sex_interaction_general <- cortical_thickness_general[cortical_thickness_general %in% unique(comorbidity_structure_sex_interaction_all$brain_phenotype[comorbidity_structure_sex_interaction_all$brain_structure_type == "Cortical Regional Thickness" & comorbidity_structure_sex_interaction_all$p < 0.05])]
+  sig_sex_interaction_general <- cortical_thickness_general[cortical_thickness_general %in% unique(comorbidity_structure_sex_interaction_all$brain_phenotype[comorbidity_structure_sex_interaction_all$brain_structure_type == "Cortical Thickness Global and Lobal Measures" & comorbidity_structure_sex_interaction_all$p < 0.05])]
 
   if (length(sig_sex_interaction_general) > 0){
   cortical_thickness_general_assoc <- unilateral_structure_assoc_group(
@@ -2592,7 +2592,7 @@ for (sex in c("females", "males")){
     }
   }
 
-  sig_sex_interaction_general <- cortical_area_general[cortical_area_general %in% unique(comorbidity_structure_sex_interaction_all$brain_phenotype[comorbidity_structure_sex_interaction_all$brain_structure_type == "Cortical Regional Area" & comorbidity_structure_sex_interaction_all$p < 0.05])]
+  sig_sex_interaction_general <- cortical_area_general[cortical_area_general %in% unique(comorbidity_structure_sex_interaction_all$brain_phenotype[comorbidity_structure_sex_interaction_all$brain_structure_type == "Cortical Area Global and Lobal Measures" & comorbidity_structure_sex_interaction_all$p < 0.05])]
 
   if (length(sig_sex_interaction_general) > 0){
   cortical_area_general_assoc <- unilateral_structure_assoc_group(

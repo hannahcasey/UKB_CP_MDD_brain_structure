@@ -407,6 +407,21 @@ plot_comorbidity_CP_MDD = ggplot(res_comorbidity_brain_structure_CP_MDD_plot, ae
         legend.position="bottom")
 
 plot_comorbidity_CP_MDD
+# 
+# ggsave(
+#   "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/writeup/Brain_journal_submission/display_images/figure_5.pdf",
+#   plot = plot_comorbidity_CP_MDD,
+#   device = NULL,
+#   path = NULL,
+#   scale = 1,
+#   width = 10,
+#   height = 10,
+#   units = c("in", "cm", "mm", "px"),
+#   dpi = 600,
+#   bg = NULL,
+#   create.dir = FALSE
+# )
+
 ```
 
 
@@ -652,10 +667,27 @@ design <- c(
 )
 
 
-(p1 / p2 / p3 / p4) + 
+plot_CP <- (p1 / p2 / p3 / p4) + 
   plot_layout(design = design)
   plot_annotation(tag_levels = 'A') & 
   theme(strip.text.x = element_text(size = 15), legend.text = element_text(size = 10), legend.title = element_text(size = 15), plot.tag = element_text(size = 10))
+  
+plot_CP
+  
+ggsave(
+  "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/writeup/Brain_journal_submission/display_images/figure_1.pdf",
+  plot = plot_CP,
+  device = NULL,
+  path = NULL,
+  scale = 1,
+  width = 10,
+  height = 10,
+  units = c("in", "cm", "mm", "px"),
+  dpi = 600,
+  bg = NULL,
+  create.dir = FALSE
+  )  
+
 ```
 
 
@@ -892,10 +924,25 @@ design <- c(
 )
 
 
-(p1 / p2 / p3 / p4) + 
+plot_MDD <- (p1 / p2 / p3 / p4) + 
   plot_layout(design = design)
   plot_annotation(tag_levels = 'A') & 
   theme(strip.text.x = element_text(size = 15), legend.text = element_text(size = 10), legend.title = element_text(size = 15), plot.tag = element_text(size = 10))
+  
+  
+ggsave(
+  "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/writeup/Brain_journal_submission/display_images/figure_3.pdf",
+  plot = plot_MDD,
+  device = NULL,
+  path = NULL,
+  scale = 1,
+  width = 10,
+  height = 10,
+  units = c("in", "cm", "mm", "px"),
+  dpi = 600,
+  bg = NULL,
+  create.dir = FALSE
+)  
   
 ```
 
@@ -909,7 +956,21 @@ random_plot <- ggplot(mtcars, aes(x=wt, y=mpg, color=`Standardized β`)) +
     geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
   scale_color_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red')
   
-grid.draw(cowplot::get_legend(random_plot)) 
+plot_range <- grid.draw(cowplot::get_legend(random_plot)) 
+
+ggsave(
+  "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/writeup/Brain_journal_submission/display_images/plot_range.pdf",
+  plot = plot_range,
+  device = NULL,
+  path = NULL,
+  scale = 1,
+  width = 10,
+  height = 10,
+  units = c("in", "cm", "mm", "px"),
+  dpi = 600,
+  bg = NULL,
+  create.dir = FALSE
+  ) 
 
 ```
 
