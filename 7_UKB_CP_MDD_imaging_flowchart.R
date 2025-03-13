@@ -7,75 +7,107 @@ library(dplyr)
 library(ggh4x)
 
 ## Load in data ----
-full_data <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates.csv")
-non_british_irish <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/non_british_irish.csv")
+full_data <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates_qc.csv")
+UKB_exclude <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/w4844_20241216.csv", header = F)
+UKB_imaging_outliers <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/imaging_outliers.csv")
 UKB_neurological <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_neurological.csv")
-UKB_neurological <- subset(UKB_neurological, neurological == 1)
 UKB_CP <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_chronic_pain_phenotype/output/UKB_chronic_pain_phenotype_imaging.csv")
-UKB_MDD <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_depression_phenotype/output/UKB_depression_phenotype.csv")
+UKB_MDD <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_current_depression_imaging.csv")
 
-## Sample flow chart ----
-UKB_with_imaging <- full_data$f.eid[!is.na(full_data$ICV)] ## IDs with imaging - outliers removes on a case by case basis
-UKB_british_irish_with_imaging <- UKB_with_imaging[!UKB_with_imaging %in% non_british_irish$x] ## IDs british/irish with imaging
-UKB_british_irish_with_imaging_non_neurological <- UKB_british_irish_with_imaging[!UKB_british_irish_with_imaging %in% UKB_neurological$f_eid] ## IDs non neurological british/irish with imaging
+## Remove excluded
+full_data <- full_data[!full_data$f.eid %in% UKB_exclude$V1,]
 
-UKB_non_british_irish_with_imaging <- UKB_with_imaging[UKB_with_imaging %in% non_british_irish$x] ## IDs non british/irish in imaging sample
-UKB_neurological_british_irish_with_imaging <- UKB_british_irish_with_imaging[UKB_british_irish_with_imaging %in% UKB_neurological$f_eid] ## IDs neurological British/Irish in imaging sample
+## Get sample sizes for each group ----
+## Total
+n_UKB <- nrow(full_data)
 
-UKB_non_british_irish_with_imaging_non_neurological_CP <- UKB_CP$n_eid[(UKB_CP$n_eid %in% UKB_british_irish_with_imaging_non_neurological) & !is.na(UKB_CP$chronic_pain_status)] ## IDs british/irish in imaging sample with CP phenotyping
-UKB_non_british_irish_with_imaging_non_neurological_MDD <- UKB_MDD$f_eid[(UKB_MDD$f_eid %in% UKB_british_irish_with_imaging_non_neurological) & !is.na(UKB_MDD$recurrent_depression)] ## IDs british/irish in imaging sample with MDD phenotyping
-UKB_non_british_irish_with_imaging_non_neurological_CPMDD <- UKB_non_british_irish_with_imaging_non_neurological_MDD[UKB_non_british_irish_with_imaging_non_neurological_MDD %in% UKB_non_british_irish_with_imaging_non_neurological_CP]
+## With imaging data
+## Remove rows with majority missing data and no ICV - this indicates no available brain structures
+majority_threshold <- ncol(full_data) / 2
+imaging_data <- full_data %>%
+  filter(rowSums(is.na(.)) < majority_threshold) %>%
+  filter(!is.na(ICV))
 
+n_imaging <- nrow(imaging_data)
+n_no_imaging <- n_UKB - nrow(imaging_data)
 
-UKB_pop <- boxGrob(glue("UK Biobank Sample",
+## With neurological
+neurological_IDs <- UKB_neurological$f_eid[UKB_neurological$neurological == 1]
+imaging_non_neurological_data <- imaging_data[!imaging_data$f.eid %in% neurological_IDs,]
+n_non_neurological_in_imaging <-  nrow(imaging_non_neurological_data)
+n_neurological_in_imaging <- n_imaging - nrow(imaging_non_neurological_data)
+
+## With imaging outliers
+outlier_IDs <- UKB_imaging_outliers$outlier_ids
+eligible_data <- imaging_non_neurological_data[!imaging_non_neurological_data$f.eid %in% outlier_IDs,]
+n_eligible <-  nrow(eligible_data)
+n_excluded <- n_UKB - n_eligible
+n_outliers_non_neurological_in_imaging <- n_non_neurological_in_imaging - nrow(eligible_data)
+
+## With chronic pain phenotyping
+UKB_CP <- UKB_CP[UKB_CP$n_eid %in% eligible_data$f.eid,]
+n_CP <- length(na.omit(UKB_CP$chronic_pain_sites))
+CP_IDs <- UKB_CP$n_eid[!is.na(UKB_CP$chronic_pain_sites)]
+
+## With depression phenotyping
+UKB_MDD <- UKB_MDD[UKB_MDD$f.eid %in% eligible_data$f.eid,]
+n_MDD <- length(na.omit(UKB_MDD$current_depression))
+MDD_IDs <- UKB_MDD$f.eid[!is.na(UKB_MDD$current_depression)]
+
+## With chronic pain and depression phenotyping
+n_MDD_CP <- length(intersect(MDD_IDs, CP_IDs))
+
+## Create flowchart ----
+UKB_pop <- boxGrob(glue("UK Biobank Sample:",
                         "n = {pop}",
-                        pop = txtInt(nrow(full_data)),
+                        pop = txtInt(n_UKB),
                         .sep = "\n"), 
                    y = 0.9, x = 0.5, bjust = c(0.5, 0.5),
                    just = "centre")
 
-eligible_pop <- boxGrob(glue("British/Irish with Imaging and no Neurological Conditions",
+eligible_pop <- boxGrob(glue("Eligible Sample:",
                              "n = {pop}",
-                             pop = txtInt(length(UKB_british_irish_with_imaging_non_neurological)),
+                             pop = txtInt(n_eligible),
                              .sep = "\n"), 
                         y = 0.6, x = 0.5, bjust = c(0.5, 0.5),
                         just = "centre")
 
 exclude_pop <- boxGrob(glue("Excluded (n = {tot}):",
                             " - No Imaging: {no_imaging}",
-                            " - Non-British/Irish (in no imaging sample): {non_british_irish}",
-                            " - Neurological condition (in no imaging non British/Irish sample): {neurolocial}",
-                            tot = txtInt(nrow(full_data) - length(UKB_british_irish_with_imaging_non_neurological)),
-                            no_imaging = txtInt(nrow(full_data) - length(UKB_with_imaging)),
-                            non_british_irish = txtInt(length(UKB_non_british_irish_with_imaging)),
-                            neurolocial = txtInt(length(UKB_neurological_british_irish_with_imaging)),
+                            " - Neurological condition (in imaging sample): {neurologicial}",
+                            " - Outliers (in non-neurological imaging sample): {imaging_outlier}",
+                            tot = txtInt(n_excluded),
+                            no_imaging = txtInt(n_no_imaging),
+                            neurologicial = txtInt(n_neurological_in_imaging),
+                            imaging_outlier = txtInt(n_outliers_non_neurological_in_imaging),
                             .sep = "\n"), 
                        y = 0.75, x = 0.75, bjust = c(0.5, 0.5),
                        just = "left")
 
-CP_pop <- boxGrob(glue("Chronic Pain Phenotyping",
+CP_pop <- boxGrob(glue("Chronic Pain Phenotyping:",
                        "n = {pop}",
-                       pop = txtInt(length(UKB_non_british_irish_with_imaging_non_neurological_CP)),
+                       pop = txtInt(n_CP),
                        .sep = "\n"), 
-                  y = 0.3, x = 0.3, bjust = c(0.5, 0.5),
+                  y = 0.4, x = 0.3, bjust = c(0.5, 0.5),
                   just = "centre")
 
-MDD_pop <- boxGrob(glue("Depression Phenotyping",
+MDD_pop <- boxGrob(glue("Depression Phenotyping:",
                        "n = {pop}",
-                       pop = txtInt(length(UKB_non_british_irish_with_imaging_non_neurological_MDD)),
+                       pop = txtInt(n_MDD),
                        .sep = "\n"), 
-                  y = 0.3, x = 0.7, bjust = c(0.5, 0.5),
+                  y = 0.4, x = 0.7, bjust = c(0.5, 0.5),
                   just = "centre")
 
-CPMDD_pop <- boxGrob(glue("Both Chronic Pain and Depression Phenotyping",
+CPMDD_pop <- boxGrob(glue("Both Chronic Pain and Depression Phenotyping:",
                         "n = {pop}",
-                        pop = txtInt(length(UKB_non_british_irish_with_imaging_non_neurological_CPMDD)),
+                        pop = txtInt(n_MDD_CP),
                         .sep = "\n"), 
                    y = 0.2, x = 0.5, bjust = c(0.5, 0.5),
                    just = "centre")
 
 grid.newpage()
-jpeg("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/flowchart.jpg", width = 900, height = 900)
+jpeg("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/flowchart.jpg", width = 10000, height = 8000, res = 1000)
+
 
 UKB_pop
 eligible_pop
@@ -93,4 +125,6 @@ connectGrob(CP_pop, CPMDD_pop, "N")
 
 dev.off()
 
+## Save IDs of eligible participants
+write.csv(eligible_data$f.eid, "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/eligible.csv", quote = F, row.names = F)
 

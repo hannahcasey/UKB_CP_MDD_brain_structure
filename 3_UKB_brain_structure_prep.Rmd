@@ -26,10 +26,21 @@ UKB_imaging_covariates <- read.csv("/Volumes/GenScotDepression/users/hcasey/UKB_
 UKB_imaging_covariates <- UKB_imaging_covariates %>% select(-contains('.3.0'))
 
 ## Recode imaging sites
-UKB_imaging_covariates$assessment_centre_first_imaging[UKB_imaging_covariates$assessment_centre_first_imaging == 11027] <- "Newcastle"
-UKB_imaging_covariates$assessment_centre_first_imaging[UKB_imaging_covariates$assessment_centre_first_imaging == 11025] <- "Cheadle"
-UKB_imaging_covariates$assessment_centre_first_imaging[UKB_imaging_covariates$assessment_centre_first_imaging == 11026] <- "Reading"
-UKB_imaging_covariates$assessment_centre_first_imaging[UKB_imaging_covariates$assessment_centre_first_imaging == 11028] <- "Bristol"
+UKB_imaging_covariates <- UKB_imaging_covariates %>%
+  mutate(assessment_centre_first_imaging = recode(assessment_centre_first_imaging,
+    `11027` = "Newcastle",
+    `11025` = "Cheadle",
+    `11026` = "Reading",
+    `11028` = "Bristol"
+  ))
+
+## Recode sex
+UKB_imaging_covariates <- UKB_imaging_covariates %>%
+  mutate(sex = recode(sex,
+    Male = 0,
+    Female = 1
+  ))
+
 ```
 
 ## Calculate Global and lobar meaurments for imaging features
@@ -629,51 +640,31 @@ for (i in 1:length(sub_cortical_volume_FIDs)){
 }
 ```
 
-## Remove outliers - remove any imaging structre value with SD <5 from mean
+## Remove outliers - remove any imaging structre value with SD <3 from mean
 
 ```{r Remove outliers}
-all_brain_structure_names <- grep("FA|MD|volume|area|thickness", names(UKB_imaging_covariates), value = TRUE)
+DTI_brain_structure_names <- grep("FA|MD", names(UKB_imaging_covariates), value = TRUE)
+T1_brain_structure_names <- grep("volume|area|thickness", names(UKB_imaging_covariates), value = TRUE)
 
 ## Get a dataframe only containing brain structures for outlier removal - will be used to calculate zscores
-all_brain_structure_df <- UKB_imaging_covariates[,all_brain_structure_names]
+DTI_brain_structure_df <- UKB_imaging_covariates[,DTI_brain_structure_names]
+T1_brain_structure_df <- UKB_imaging_covariates[,T1_brain_structure_names]
 
 ## Calculate Z score for each imaging measure
-z_scores <- as.data.frame(sapply(all_brain_structure_df, function(all_brain_structure_df) (abs(all_brain_structure_df-mean(all_brain_structure_df, na.rm = TRUE))/sd(all_brain_structure_df, na.rm = TRUE))))    
+DTI_z_scores <- as.data.frame(sapply(DTI_brain_structure_df, function(DTI_brain_structure_df) (abs(DTI_brain_structure_df-mean(DTI_brain_structure_df, na.rm = TRUE))/sd(DTI_brain_structure_df, na.rm = TRUE))))    
 
-n_outliers = 0
+T1_z_scores <- as.data.frame(sapply(T1_brain_structure_df, function(T1_brain_structure_df) (abs(T1_brain_structure_df-mean(T1_brain_structure_df, na.rm = TRUE))/sd(T1_brain_structure_df, na.rm = TRUE))))    
 
-## Set up progress bar to track progress of for loop below
-pb <- txtProgressBar(min = 0, max = ncol(UKB_imaging_covariates[,all_brain_structure_names]) * nrow(UKB_imaging_covariates[,all_brain_structure_names]),
-                     style = 3)
-k<-0
+## Get ID of those with at least one brain structure > 5SD from mean
+DTI_outlier_ids <- unique(UKB_imaging_covariates$f.eid[rowSums(DTI_z_scores>5, na.rm = T) > 0])
+T1_outlier_ids <- unique(UKB_imaging_covariates$f.eid[rowSums(T1_z_scores>5, na.rm = T) > 0])
 
-## iterate through columns and then rows row to deal with each df cell individually
-for (col in 1:ncol(UKB_imaging_covariates[,all_brain_structure_names])){
-  for (row in 1:nrow(UKB_imaging_covariates[,all_brain_structure_names])){
-    ## Update progress bar
-    k<-k+1
-    setTxtProgressBar(pb, k)
-    
-    ## if NA then ignore
-    if (is.na(z_scores[row,col])){
-    }
-    ## If zscore > 5, replace measurement with NA to remove from analysis
-    else if (z_scores[row,col] > 5){
-      ## Tally number of outliers
-      n_outliers <- n_outliers + 1
-      UKB_imaging_covariates[row,all_brain_structure_names[col]] <- NA
-    }
-  }
-}
+outlier_ids <- unique(c(DTI_outlier_ids, T1_outlier_ids))
 
-## Save copy of df
-write.csv(UKB_imaging_covariates, "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates_temp.csv", quote = F)
-## UKB_imaging_covariates <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates_temp.csv", header = T)
-
-n_outliers
-## 3300 brain structure measurements excluded in total
-## Get number of outliers for individual brain structures
-n_detailed_outliers <- (colSums(!is.na(z_scores)) - colSums(!is.na(UKB_imaging_covariates[,all_brain_structure_names])))
+## Save list of outliers
+write.csv(as.data.frame(DTI_outlier_ids), "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/DTI_imaging_outliers.csv", quote = F)
+write.csv(as.data.frame(T1_outlier_ids), "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/T1_imaging_outliers.csv", quote = F)
+write.csv(as.data.frame(outlier_ids), "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/imaging_outliers.csv", quote = F)
 ```
 ## Scale all brain structures and continuous covariates
 
@@ -684,17 +675,7 @@ UKB_imaging_covariates$BMI_raw <- UKB_imaging_covariates$BMI
 
 UKB_imaging_covariates[,c(all_brain_structure_names, "age", "age_squared", "BMI", "ICV", "X_position", "Y_position", "Z_position")] <- as.data.frame(scale(UKB_imaging_covariates[,c(all_brain_structure_names, "age", "age_squared", "BMI", "ICV", "X_position", "Y_position", "Z_position")]))
 
-
 ```
-
-## Remove those of non-British/Irish ancestry
-```{r Remove non-british/irish}
-non_british_irish <- UKB_imaging_covariates$f.eid[!UKB_imaging_covariates$ethnicity == "British" | UKB_imaging_covariates$ethnicity == "Irish"]
-
-UKB_imaging_covariates <- UKB_imaging_covariates %>% 
-  filter(ethnicity %in% c("British", "Irish"))
-```
-
 
 ## Create long-formatted dataframe with bilateral data (needed for LME)
 
@@ -771,13 +752,8 @@ dim(UKB_imaging_covariates_long)
 ## Save short and long-formatted preprocessed brain structure data
 
 ```{r Save to project folder}
-
-write.csv(UKB_imaging_covariates, "/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_qc.csv", quote = F)
-write.csv(UKB_imaging_covariates_long, "/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/UKB_imaging_covariates_long_qc.csv", quote = F)
-write.csv(n_detailed_outliers,
-"/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/n_detailed_outliers.csv", quote = F)
-write.csv(non_british_irish,
-"/Volumes/GenScotDepression/users/hcasey/UKB_brain_structure_CP_MDD/non_british_irish.csv", quote = F)
+write.csv(UKB_imaging_covariates, "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates_qc.csv", quote = F)
+write.csv(UKB_imaging_covariates_long, "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates_long_qc.csv", quote = F)
 ```
 
 

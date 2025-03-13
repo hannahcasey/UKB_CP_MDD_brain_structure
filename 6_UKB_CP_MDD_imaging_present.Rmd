@@ -53,54 +53,38 @@ Multiple comparision correction: FDR
 #### Get results
 
 ```{r Load in and format data, echo=FALSE,  fig.height=50}
-# Read in results 
+# Read in results
 res_CP_MDD_brain_structure_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_all.csv",header=T)
 res_CP_MDD_brain_structure_all$sample <- "All\n"
 
-n_MDD_all <- range(res_CP_MDD_brain_structure_all$n[res_CP_MDD_brain_structure_all$disorder == "recurrent_depression"])
-n_CP_all <- range(res_CP_MDD_brain_structure_all$n[res_CP_MDD_brain_structure_all$disorder == "chronic_pain"])
-
 res_CP_MDD_structure_sex_interaction_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_sex_interaction_all.csv",header=T)
-res_CP_MDD_structure_sex_interaction_all$sample <- "Sex Interaction\n(Males - Females)"
+res_CP_MDD_structure_sex_interaction_all$sample <- "Sex Interaction\n(Male - Female)"
 res_CP_MDD_structure_sex_interaction_all$p.adjust <- res_CP_MDD_structure_sex_interaction_all$p.value
 res_CP_MDD_structure_sex_interaction_all <- res_CP_MDD_structure_sex_interaction_all %>%
   select(brain_phenotype, brain_structure_type, disorder, beta, p.adjust, sample)
 
-res_CP_MDD_brain_structure_female <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_females.csv",header=T)
+res_CP_MDD_brain_structure_female <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_female.csv",header=T)
 res_CP_MDD_brain_structure_female$sample <- "Female\n"
 
-n_MDD_female <- range(res_CP_MDD_brain_structure_female$n[res_CP_MDD_brain_structure_female$disorder == "recurrent_depression"])
-n_CP_female <- range(res_CP_MDD_brain_structure_female$n[res_CP_MDD_brain_structure_female$disorder == "chronic_pain"])
-
-res_CP_MDD_brain_structure_male <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_males.csv",header=T)
+res_CP_MDD_brain_structure_male <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_assoc_male.csv",header=T)
 res_CP_MDD_brain_structure_male$sample <- "Male\n"
 
-n_MDD_male <- range(res_CP_MDD_brain_structure_male$n[res_CP_MDD_brain_structure_male$disorder == "recurrent_depression"])
-n_CP_male <- range(res_CP_MDD_brain_structure_male$n[res_CP_MDD_brain_structure_male$disorder == "chronic_pain"])
 
-res_comorbidity_brain_structure_all <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_all.csv")
-res_comorbidity_brain_structure_all$sample <- "All\n"
+res_CP_MDD_structure_disorder_interaction_all <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_disorder_interaction_all.csv")
+res_CP_MDD_structure_disorder_interaction_all$sample <- "All\n"
 
-n_CPMDD_all <- range(res_comorbidity_brain_structure_all$n)
+res_CP_MDD_structure_disorder_sex_interaction_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_disorder_sex_interaction_all.csv",header=T)
+res_CP_MDD_structure_disorder_sex_interaction_all$sample <- "Sex Interaction\n(Male - Female)"
+res_CP_MDD_structure_disorder_sex_interaction_all$p.adjust <- res_CP_MDD_structure_disorder_sex_interaction_all$p.value
+res_CP_MDD_structure_disorder_sex_interaction_all <- res_CP_MDD_structure_disorder_sex_interaction_all %>%
+  select(brain_phenotype, brain_structure_type, disorder, beta, p.adjust, sample)
 
-res_comorbidity_structure_sex_interaction_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_sex_interaction_all.csv",header=T)
-## Get CIs
-res_comorbidity_structure_sex_interaction_all$Lower_95CI <- res_comorbidity_structure_sex_interaction_all$beta - res_comorbidity_structure_sex_interaction_all$std * qnorm(0.975)
-res_comorbidity_structure_sex_interaction_all$Upper_95CI <- res_comorbidity_structure_sex_interaction_all$beta + res_comorbidity_structure_sex_interaction_all$std * qnorm(0.975)
-res_comorbidity_structure_sex_interaction_all$sample <- "Sex Interaction\n(Males - Females)"
-res_comorbidity_structure_sex_interaction_all$p.adjust <- res_comorbidity_structure_sex_interaction_all$p.value
-res_comorbidity_structure_sex_interaction_all <- res_comorbidity_structure_sex_interaction_all %>%
-  select(brain_phenotype, brain_structure_type, beta, p.adjust, Lower_95CI, Upper_95CI, sample, groups)
+res_CP_MDD_structure_disorder_interaction_male <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_disorder_interaction_male.csv")
+res_CP_MDD_structure_disorder_interaction_male$sample <- "Male\n"
 
-res_comorbidity_brain_structure_female <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_females.csv")
-res_comorbidity_brain_structure_female$sample <- "Female\n"
+res_CP_MDD_structure_disorder_interaction_female <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_disorder_interaction_female.csv")
+res_CP_MDD_structure_disorder_interaction_female$sample <- "Female\n"
 
-n_CPMDD_female <- range(res_comorbidity_brain_structure_female$n)
-
-res_comorbidity_brain_structure_male <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/comorbidity_structure_assoc_males.csv")
-res_comorbidity_brain_structure_male$sample <- "Male\n"
-
-n_CPMDD_male <- range(res_comorbidity_brain_structure_male$n)
 
 ## Combine results into single dataframes
 res_CP_MDD_brain_structure <- rbind(res_CP_MDD_brain_structure_all, res_CP_MDD_brain_structure_female, res_CP_MDD_brain_structure_male)
@@ -108,141 +92,74 @@ res_CP_MDD_brain_structure <- res_CP_MDD_brain_structure %>%
   select(brain_phenotype, brain_structure_type, disorder, beta, p.adjust, sample) %>%
   rbind(res_CP_MDD_structure_sex_interaction_all)
 
-res_comorbidity_brain_structure <- rbind(res_comorbidity_brain_structure_all, res_comorbidity_brain_structure_female, res_comorbidity_brain_structure_male)
-res_comorbidity_brain_structure <- res_comorbidity_brain_structure %>%
-  select(brain_phenotype, brain_structure_type, beta, p.adjust, Lower_95CI, Upper_95CI, sample, groups) %>%
-  rbind(res_comorbidity_structure_sex_interaction_all)
+res_CP_MDD_structure_disorder_interaction <- rbind(res_CP_MDD_structure_disorder_interaction_all, res_CP_MDD_structure_disorder_interaction_male, res_CP_MDD_structure_disorder_interaction_female)
+res_CP_MDD_structure_disorder_interaction <- res_CP_MDD_structure_disorder_interaction %>%
+  select(brain_phenotype, brain_structure_type, disorder, beta, p.adjust, sample) %>%
+  rbind(res_CP_MDD_structure_disorder_sex_interaction_all)
 
 ## Create new columns to reformat brain phenotypes for plotting
-res_CP_MDD_brain_structure$brain_phenotype_plot <-  gsub("MD", "MD in", res_CP_MDD_brain_structure$brain_phenotype)
-res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("FA", "FA in", res_CP_MDD_brain_structure$brain_phenotype_plot)
-res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("volume", "Volume of", res_CP_MDD_brain_structure$brain_phenotype_plot)
-res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("area", "Area of", res_CP_MDD_brain_structure$brain_phenotype_plot)
-res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("thickness", "Thickness of", res_CP_MDD_brain_structure$brain_phenotype_plot)
-res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("sub_cortical_Volume", "Subcortical volume", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <-  gsub("MD", "", res_CP_MDD_brain_structure$brain_phenotype)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("FA", "", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("volume", "", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("area", "", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("thickness", "", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("sub_cortical_", "", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("inferior", "inferior ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("superior", "superior ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("anterior", "anterior ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("caudal", "caudal ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("middle", "middle ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("lateral", "lateral ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("isthmus", "isthmus ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("posterior", "posterior ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("rostral", "rostral ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("pars", "pars ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("medial", "medial ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("\\s+", " ", res_CP_MDD_brain_structure$brain_phenotype_plot)
 res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("_|[.]", " ", res_CP_MDD_brain_structure$brain_phenotype_plot)
+res_CP_MDD_brain_structure$brain_phenotype_plot <- gsub("fronto ", "fronto-", res_CP_MDD_brain_structure$brain_phenotype_plot)
 
-res_comorbidity_brain_structure$brain_phenotype_plot <-  gsub("MD", "MD in", res_comorbidity_brain_structure$brain_phenotype)
-res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("FA", "FA in", res_comorbidity_brain_structure$brain_phenotype_plot)
-res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("volume", "Volume of", res_comorbidity_brain_structure$brain_phenotype_plot)
-res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("area", "Area of", res_comorbidity_brain_structure$brain_phenotype_plot)
-res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("thickness", "Thickness of", res_comorbidity_brain_structure$brain_phenotype_plot)
-res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("sub_cortical_Volume", "Subcortical volume", res_comorbidity_brain_structure$brain_phenotype_plot)
-res_comorbidity_brain_structure$brain_phenotype_plot <- gsub("\\.[1-9]", "", res_comorbidity_brain_structure$brain_phenotype_plot)
-res_comorbidity_brain_structure$brain_phenotype_plot <-  gsub("_|[.]", " ", res_comorbidity_brain_structure$brain_phenotype_plot)
+
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <-  gsub("MD", "", res_CP_MDD_structure_disorder_interaction$brain_phenotype)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("FA", "", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("volume", "", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("area", "", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("thickness", "", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("sub_cortical_", "", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("inferior", "inferior ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("superior", "superior ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("anterior", "anterior ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("caudal", "caudal ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("middle", "middle ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("lateral", "lateral ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("isthmus", "isthmus ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("posterior", "posterior ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("rostral", "rostral ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("pars", "pars ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("medial", "medial ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("\\s+", " ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("_|[.]", " ", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
+res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot <- gsub("fronto ", "fronto-", res_CP_MDD_structure_disorder_interaction$brain_phenotype_plot)
 
 ## Reorder brain phenotype and subgroups for plotting
-res_CP_MDD_brain_structure$brain_structure_type  <- ordered(res_CP_MDD_brain_structure$brain_structure_type , levels = c("Subcortical Volume", "Cortical Regional Volume","Cortical Volume Global and Lobal Measures", "Cortical Regional Area", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+res_CP_MDD_brain_structure$brain_structure_type  <- ordered(res_CP_MDD_brain_structure$brain_structure_type , levels = c("Regional Subcortical Volume", "Regional Cortical Volume","Global and Lobal Cortical Volume", "Regional Cortical Area", "Global and Lobal Cortical Area", "Regional Cortical Thickness","Global and Lobal Cortical Thickness", "Fractional Anisotropy", "General Fractional Anisotropy","Mean Diffusivity", "General Mean Diffusivity"))
 
-res_comorbidity_brain_structure$brain_structure_type  <- ordered(res_comorbidity_brain_structure$brain_structure_type , levels = c("Subcortical Volume", "Cortical Regional Volume","Cortical Volume Global and Lobal Measures", "Cortical Regional Area", "Cortical Area Global and Lobal Measures", "Cortical Regional Thickness","Cortical Thickness Global and Lobal Measures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
+res_CP_MDD_structure_disorder_interaction$brain_structure_type  <- ordered(res_CP_MDD_structure_disorder_interaction$brain_structure_type , levels = c("Regional Subcortical Volume", "Regional Cortical Volume","Global and Lobal Cortical Volume", "Regional Cortical Area", "Global and Lobal Cortical Area", "Regional Cortical Thickness","Global and Lobal Cortical Thickness", "Fractional Anisotropy", "General Fractional Anisotropy","Mean Diffusivity", "General Mean Diffusivity"))
 
 # Include yes/no column to determine shape based on p-value
-res_CP_MDD_brain_structure$`P-value (adjusted/not adjusted*) < 0.05` = ifelse(res_CP_MDD_brain_structure$p.adjust < 0.05, "Yes","No")
-res_comorbidity_brain_structure$significant <- ifelse(res_comorbidity_brain_structure$p.adjust < 0.05,"Yes" , "No")
-
-# Divide comorbidity results by comparison
-res_comorbidity_brain_structure_noCP_noMDD <- res_comorbidity_brain_structure[grepl("No Probable Recurrent MDD \\+ No Chronic Pain",res_comorbidity_brain_structure$groups),]
-
-res_comorbidity_brain_structure_CP_noMDD <- res_comorbidity_brain_structure[grepl("No Probable Recurrent MDD \\+ Chronic Pain",res_comorbidity_brain_structure$groups),]
-
-res_comorbidity_brain_structure_noCP_MDD <- res_comorbidity_brain_structure[grepl("\\(Probable Recurrent MDD \\+ No Chronic Pain",res_comorbidity_brain_structure$groups),]
-
-res_comorbidity_brain_structure_CP_MDD <- res_comorbidity_brain_structure[grepl("\\(Probable Recurrent MDD \\+ Chronic Pain",res_comorbidity_brain_structure$groups),]
-
-## Rename comorbidity groups for simplicity
-## CP-MDD-
-res_comorbidity_brain_structure_noCP_noMDD$groups[res_comorbidity_brain_structure_noCP_noMDD$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (No Probable Recurrent MDD + Chronic Pain)"] <- "CP+MDD-"
-res_comorbidity_brain_structure_noCP_noMDD$groups[res_comorbidity_brain_structure_noCP_noMDD$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)"] <- "CP-MDD+"
-res_comorbidity_brain_structure_noCP_noMDD$groups[res_comorbidity_brain_structure_noCP_noMDD$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + Chronic Pain)"] <- "CP+MDD+"
-
-## CP+MDD-
-res_comorbidity_brain_structure_CP_noMDD$groups[res_comorbidity_brain_structure_CP_noMDD$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (No Probable Recurrent MDD + Chronic Pain)"] <- "CP-MDD-"
-res_comorbidity_brain_structure_CP_noMDD$groups[res_comorbidity_brain_structure_CP_noMDD$groups == "(No Probable Recurrent MDD + Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)"] <- "CP-MDD+"
-res_comorbidity_brain_structure_CP_noMDD$groups[res_comorbidity_brain_structure_CP_noMDD$groups == "(No Probable Recurrent MDD + Chronic Pain) - (Probable Recurrent MDD + Chronic Pain)"] <- "CP+MDD+"
-
-## CP-MDD+
-res_comorbidity_brain_structure_noCP_MDD$groups[res_comorbidity_brain_structure_noCP_MDD$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)"] <- "CP-MDD-"
-res_comorbidity_brain_structure_noCP_MDD$groups[res_comorbidity_brain_structure_noCP_MDD$groups == "(No Probable Recurrent MDD + Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)"] <- "CP+MDD-"
-res_comorbidity_brain_structure_noCP_MDD$groups[res_comorbidity_brain_structure_noCP_MDD$groups == "(Probable Recurrent MDD + Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)"] <- "CP+MDD+"
-
-## CP+MDD+
-res_comorbidity_brain_structure_CP_MDD$groups[res_comorbidity_brain_structure_CP_MDD$groups == "(No Probable Recurrent MDD + No Chronic Pain) - (Probable Recurrent MDD + Chronic Pain)"] <- "CP-MDD-"
-res_comorbidity_brain_structure_CP_MDD$groups[res_comorbidity_brain_structure_CP_MDD$groups == "(No Probable Recurrent MDD + Chronic Pain) - (Probable Recurrent MDD + Chronic Pain)"] <- "CP+MDD-"
-res_comorbidity_brain_structure_CP_MDD$groups[res_comorbidity_brain_structure_CP_MDD$groups == "(Probable Recurrent MDD + Chronic Pain) - (Probable Recurrent MDD + No Chronic Pain)"] <- "CP-MDD+"
-
-## Flip beta and CIs to match reference comorbid groups
-## CP-MDD-
-temp <- res_comorbidity_brain_structure_noCP_noMDD
-res_comorbidity_brain_structure_noCP_noMDD$beta[temp$groups == "CP+MDD-"] <- temp$beta[temp$groups == "CP+MDD-"] * -1
-res_comorbidity_brain_structure_noCP_noMDD$Lower_95CI[temp$groups == "CP+MDD-"] <- temp$Upper_95CI[temp$groups == "CP+MDD-"] * -1
-res_comorbidity_brain_structure_noCP_noMDD$Upper_95CI[temp$groups == "CP+MDD-"] <- temp$Lower_95CI[temp$groups == "CP+MDD-"] * -1
-res_comorbidity_brain_structure_noCP_noMDD$beta[temp$groups == "CP-MDD+"] <- temp$beta[temp$groups == "CP-MDD+"] * -1
-res_comorbidity_brain_structure_noCP_noMDD$Lower_95CI[temp$groups == "CP-MDD+"] <- temp$Upper_95CI[temp$groups == "CP-MDD+"] * -1
-res_comorbidity_brain_structure_noCP_noMDD$Upper_95CI[temp$groups == "CP-MDD+"] <- temp$Lower_95CI[temp$groups == "CP-MDD+"] * -1
-res_comorbidity_brain_structure_noCP_noMDD$beta[temp$groups == "CP+MDD+"] <- temp$beta[temp$groups == "CP+MDD+"] * -1
-res_comorbidity_brain_structure_noCP_noMDD$Lower_95CI[temp$groups == "CP+MDD+"] <- temp$Upper_95CI[temp$groups == "CP+MDD+"] * -1
-res_comorbidity_brain_structure_noCP_noMDD$Upper_95CI[temp$groups == "CP+MDD+"] <- temp$Lower_95CI[temp$groups == "CP+MDD+"] * -1
-
-## CP+MDD-
-temp <- res_comorbidity_brain_structure_CP_noMDD
-res_comorbidity_brain_structure_CP_noMDD$beta[temp$groups == "CP-MDD+"] <- temp$beta[temp$groups == "CP-MDD+"] * -1
-res_comorbidity_brain_structure_CP_noMDD$Lower_95CI[temp$groups == "CP-MDD+"] <- temp$Upper_95CI[temp$groups == "CP-MDD+"] * -1
-res_comorbidity_brain_structure_CP_noMDD$Upper_95CI[temp$groups == "CP-MDD+"] <- temp$Lower_95CI[temp$groups == "CP-MDD+"] * -1
-res_comorbidity_brain_structure_CP_noMDD$beta[temp$groups == "CP+MDD+"] <- temp$beta[temp$groups == "CP+MDD+"] * -1
-res_comorbidity_brain_structure_CP_noMDD$Lower_95CI[temp$groups == "CP+MDD+"] <- temp$Upper_95CI[temp$groups == "CP+MDD+"] * -1
-res_comorbidity_brain_structure_CP_noMDD$Upper_95CI[temp$groups == "CP+MDD+"] <- temp$Lower_95CI[temp$groups == "CP+MDD+"] * -1
-
-## CP-MDD+
-temp <- res_comorbidity_brain_structure_noCP_MDD
-res_comorbidity_brain_structure_noCP_MDD$beta[temp$groups == "CP+MDD+"] <- temp$beta[temp$groups == "CP+MDD+"] * -1
-res_comorbidity_brain_structure_noCP_MDD$Lower_95CI[temp$groups == "CP+MDD+"] <- temp$Upper_95CI[temp$groups == "CP+MDD+"] * -1
-res_comorbidity_brain_structure_noCP_MDD$Upper_95CI[temp$groups == "CP+MDD+"] <- temp$Lower_95CI[temp$groups == "CP+MDD+"] * -1
-
-## CP+MDD+
-temp <- res_comorbidity_brain_structure_CP_MDD
-res_comorbidity_brain_structure_CP_MDD$beta[temp$groups == "CP-MDD+"] <- temp$beta[temp$groups == "CP-MDD+"] * -1
-res_comorbidity_brain_structure_CP_MDD$Lower_95CI[temp$groups == "CP-MDD+"] <- temp$Upper_95CI[temp$groups == "CP-MDD+"] * -1
-res_comorbidity_brain_structure_CP_MDD$Upper_95CI[temp$groups == "CP-MDD+"] <- temp$Lower_95CI[temp$groups == "CP-MDD+"] * -1
+res_CP_MDD_brain_structure$`P-value (adjusted/not adjusted*) < 0.01` = ifelse(res_CP_MDD_brain_structure$p.adjust < 0.05, "Yes","No")
+res_CP_MDD_structure_disorder_interaction$significant <- ifelse(res_CP_MDD_structure_disorder_interaction$p.adjust < 0.05,"Yes" , "No")
 
 ## Add column indicating if results are positive or negative (will be used in p-value graph later)
-res_CP_MDD_brain_structure$Direction <- ifelse(sign(res_CP_MDD_brain_structure$beta) < 1,"Negative" , "Positive")
-
-## Remove small dfs to clean up environment
-rm(res_CP_MDD_brain_structure_all)
-rm(res_CP_MDD_brain_structure_female)
-rm(res_CP_MDD_brain_structure_male)
-rm(res_comorbidity_brain_structure_all)
-rm(res_comorbidity_brain_structure_female)
-rm(res_comorbidity_brain_structure_male)
-rm(res_comorbidity_structure_sex_interaction_all)
-rm(temp)
-```
-
-----------------------------------------------------------------------------------------------------------------------------
-#### Create palettes
-```{r Create palettes, include=FALSE}
-## Get continuous colour palette
-pal_discrete <- wes_palette("Zissou1", 100, type = "continuous")
-
-## Create discrete colour palette
-pal_continuous <- c("#D81B60","#1E88E5", "#FFC107" )
-
+res_CP_MDD_brain_structure$Direction <- ifelse(sign(res_CP_MDD_brain_structure$beta) < 0,"Negative" , "Positive")
+res_CP_MDD_structure_disorder_interaction$Direction <- ifelse(sign(res_CP_MDD_structure_disorder_interaction$beta) < 0,"Negative" , "Positive")
 ```
 
 #### Sample demographics
 
 ```{r, echo=FALSE, results="asis", comment=NA}
 ## Load in file with summary demographics
-demographics <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/UKB_CP_MDD_demographics.csv", header = T)
-
-## rename columns for displaying
-demographics <- demographics %>%
-  rename("Participants with complete data (n females/males) (proportion female)" = n_female_male_prop_female,
-  "Cases (n females/males) (proportion female)" = n_cases_female_male_prop_female,
-  "Mean age in female cases/controls (Years)" = age_female_case_control,
-  "Mean age in male cases/controls (Years)" = age_male_case_control,
-  "Mean BMI in female cases/controls (Years)" = BMI_female_case_control,
-  "Mean BMI in male cases/controls (Years)" = BMI_male_case_control)
+demographics <- read.csv("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/descriptives.csv", header = T)
 
 flextable(demographics) %>%
   autofit() %>%
@@ -251,1235 +168,1003 @@ flextable(demographics) %>%
 
 #### Main Results - Brain structures {.tabset}
 
-##### Effect size graph - Comorbidity in full sample 
-```{r Effect size graph Comorbidity - full sample, fig.width= 7, fig.height= 10, echo=FALSE}
-## Make labels fit plot
-# Default 20 character target width.
-swr = function(string, nwrap=20) {
-  paste(strwrap(string, width=nwrap), collapse="\n")
-}
-swr = Vectorize(swr)
+#### Depression association analysis
+```{r, echo=FALSE, results="asis", comment=NA}
+## Transform p.adjsut to use as y-axis
+res_CP_MDD_brain_structure$p.adjust.minus.log <- -log10(res_CP_MDD_brain_structure$p.adjust)
 
-res_comorbidity_brain_structure_noCP_noMDD$brain_structure_type_plot  = swr(res_comorbidity_brain_structure_noCP_noMDD$brain_structure_type)
-res_comorbidity_brain_structure_CP_noMDD$brain_structure_type_plot  = swr(res_comorbidity_brain_structure_CP_noMDD$brain_structure_type)
-res_comorbidity_brain_structure_noCP_MDD$brain_structure_type_plot  = swr(res_comorbidity_brain_structure_noCP_MDD$brain_structure_type)
-res_comorbidity_brain_structure_CP_MDD$brain_structure_type_plot  = swr(res_comorbidity_brain_structure_CP_MDD$brain_structure_type)
-
-
-## Order brain structure catagories for plotting
-res_comorbidity_brain_structure_noCP_noMDD$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_noCP_noMDD$brain_structure_type_plot , levels = c("Subcortical Volume", "Cortical Regional\nVolume","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nArea", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
-
-res_comorbidity_brain_structure_CP_noMDD$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_CP_noMDD$brain_structure_type_plot , levels = c("Subcortical Volume", "Cortical Regional\nVolume","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nArea", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
-
-res_comorbidity_brain_structure_noCP_MDD$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_noCP_MDD$brain_structure_type_plot , levels = c("Subcortical Volume", "Cortical Regional\nVolume","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nArea", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
-
-res_comorbidity_brain_structure_CP_MDD$brain_structure_type_plot <- ordered(res_comorbidity_brain_structure_CP_MDD$brain_structure_type_plot , levels = c("Subcortical Volume", "Cortical Regional\nVolume","Cortical Volume\nGlobal and Lobal\nMeasures", "Cortical Regional\nArea", "Cortical Area\nGlobal and Lobal\nMeasures", "Cortical Regional\nThickness","Cortical Thickness\nGlobal and Lobal\nMeasures", "FA Tracts", "MD Tracts","FA General Measures", "MD General Measures"))
-
-## Reduce results to only significant findings
-res_comorbidity_brain_structure_noCP_noMDD <-   res_comorbidity_brain_structure_noCP_noMDD %>%
-    group_by(brain_phenotype) %>% 
-    filter(any(significant == "Yes"))
-
-res_comorbidity_brain_structure_CP_noMDD <-   res_comorbidity_brain_structure_CP_noMDD %>%
-    group_by(brain_phenotype) %>% 
-    filter(any(significant == "Yes"))
-
-res_comorbidity_brain_structure_noCP_MDD <-   res_comorbidity_brain_structure_noCP_MDD %>%
-    group_by(brain_phenotype) %>% 
-    filter(any(significant == "Yes"))
-
-res_comorbidity_brain_structure_CP_MDD <-   res_comorbidity_brain_structure_CP_MDD %>%
-    group_by(brain_phenotype) %>% 
-    filter(any(significant == "Yes"))
-
-## Remove results from sensitivity analysis (balanced datasets)
-
-res_comorbidity_brain_structure_CP_MDD_plot <- res_comorbidity_brain_structure_CP_MDD[!grepl("Balanced", res_comorbidity_brain_structure_CP_MDD$sample),]
-  
-## Plot resutls
-## Reference: CP+MDD-
-plot_comorbidity_noCP_noMDD = ggplot(res_comorbidity_brain_structure_noCP_noMDD, aes(x=brain_phenotype_plot, y=beta, shape=significant,colour=as.factor(groups))) +
-  geom_point(aes(y=beta),size=3, alpha = 0.5) +
-  geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
-  theme_minimal() +
-  geom_hline(yintercept=0, linetype="dashed", color = "black") +
-  coord_flip() +
-  labs(x = "",
-       y = "Standardised effect size",
-       title = "",
-       colour = "Comorbidity Group",
-       shape = "P-value (adjusted/not adjusted*) < 0.05") +
-  scale_color_manual(values = pal_continuous) +
-  facet_grid2(vars(brain_structure_type_plot), vars(sample), scales = "free_y", space = "free_y") +
-  theme(plot.title = element_text(hjust = 0), 
-        axis.text.y=element_text(size=12),
-        axis.text.x=element_text(size=10),
-         axis.title.x=element_text(size=12),
-        strip.text = element_text(size=12), 
-        panel.spacing = unit(0.5, "cm"), 
-        strip.text.x = element_text(vjust = 3, hjust = 0.53), 
-        strip.text.y = element_text(angle = 0))
-
-## Reference: CP-MDD+
-plot_comorbidity_noCP_MDD = ggplot(res_comorbidity_brain_structure_noCP_MDD, aes(x=brain_phenotype_plot, y=beta, shape=significant,colour=as.factor(groups))) +
-  geom_point(aes(y=beta),size=3, alpha = 0.5) +
-  geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
-  theme_minimal() +
-  geom_hline(yintercept=0, linetype="dashed", color = "black") +
-  coord_flip() +
-  labs(x = "",
-       y = "Standardised effect size",
-       title = "",
-       colour = "Comorbidity Group",
-       shape = "P-value (adjusted/not adjusted*) < 0.05") +
-  scale_color_manual(values = pal_continuous) +
-  facet_grid2(vars(brain_structure_type_plot), vars(sample), scales = "free_y", space = "free_y") +
-  theme(plot.title = element_text(hjust = 0), 
-        axis.text.y=element_text(size=12),
-        axis.text.x=element_text(size=10),
-         axis.title.x=element_text(size=12),
-        strip.text = element_text(size=12), 
-        panel.spacing = unit(0.5, "cm"), 
-        strip.text.x = element_text(vjust = 3, hjust = 0.53), 
-        strip.text.y = element_text(angle = 0))
-
-## Reference: CP+MDD-
-plot_comorbidity_CP_noMDD = ggplot(res_comorbidity_brain_structure_CP_noMDD, aes(x=brain_phenotype_plot, y=beta, shape=significant,colour=as.factor(groups))) +
-  geom_point(aes(y=beta),size=3, alpha = 0.5) +
-  geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
-  theme_minimal() +
-  geom_hline(yintercept=0, linetype="dashed", color = "black") +
-  coord_flip() +
-  labs(x = "",
-       y = "Standardised effect size",
-       title = "",
-       colour = "Comorbidity Group",
-       shape = "P-value (adjusted/not adjusted*) < 0.05") +
-  scale_color_manual(values = pal_continuous) +
-  facet_grid2(vars(brain_structure_type_plot), vars(sample), scales = "free_y", space = "free_y") +
-  theme(plot.title = element_text(hjust = 0), 
-        axis.text.y=element_text(size=12),
-        axis.text.x=element_text(size=10),
-         axis.title.x=element_text(size=12),
-        strip.text = element_text(size=12), 
-        panel.spacing = unit(0.5, "cm"), 
-        strip.text.x = element_text(vjust = 3, hjust = 0.53), 
-        strip.text.y = element_text(angle = 0))
-
-
-## Reference: CP+MDD+
-levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot) == "Cortical Volume\nGlobal and Lobal\nMeasures"] <- "Cortical Volume Global and\nLobal Measures"
-
-levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot) == "Cortical Area\nGlobal and Lobal\nMeasures"] <- "Cortical Area Global and\nLobal Measures"
-
-levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot) == "Cortical Thickness\nGlobal and Lobal\nMeasures"] <- "Cortical Thickness Global and\nLobal Measures"
-
-levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot) == "Cortical Regional\nVolume"] <- "Cortical Regional Volume"
-
-levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot) == "Cortical Regional\nArea"] <- "Cortical Regional Area"
-
-levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot)[levels(res_comorbidity_brain_structure_CP_MDD_plot$brain_structure_type_plot) == "Cortical Regional\nThickness"] <- "Cortical Regional Thickness"
-
-## Order samples
-res_comorbidity_brain_structure_CP_MDD_plot$sample <- ordered(res_comorbidity_brain_structure_CP_MDD_plot$sample, levels = c("All\n", "Sex Interaction\n(Males - Females)", "Female\n", "Male\n"))
-
-plot_comorbidity_CP_MDD = ggplot(res_comorbidity_brain_structure_CP_MDD_plot, aes(x=brain_phenotype_plot, y=beta, shape=significant,colour=as.factor(groups))) +
-  geom_point(aes(y=beta),size=3, alpha = 0.5) +
-  geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) +
-  theme_minimal() +
-  geom_hline(yintercept=0, linetype="dashed", color = "black") +
-  coord_flip() +
-  labs(x = "",
-       y = "Standardised effect size",
-       title = "",
-       colour = "Comorbidity Group:",
-       shape = "P-value (adjusted/not adjusted*) < 0.05:") +
-  scale_color_manual(values = pal_continuous) +
-  facet_grid2(vars(brain_structure_type_plot), vars(sample), scales = "free_y", space = "free_y") +
-  theme(plot.title = element_text(hjust = 0), 
-        axis.text.y=element_text(size=10),
-        axis.text.x=element_text(size=5),
-         axis.title.x=element_text(size=10),
-        strip.text = element_text(size=10), 
-        panel.spacing = unit(0.5, "cm"), 
-        strip.text.x = element_text(vjust = 3, hjust = 0.53), 
-        strip.text.y = element_text(angle = 0),
-        legend.position="bottom")
-
-plot_comorbidity_CP_MDD
-# 
-# ggsave(
-#   "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/writeup/Brain_journal_submission/display_images/figure_5.pdf",
-#   plot = plot_comorbidity_CP_MDD,
-#   device = NULL,
-#   path = NULL,
-#   scale = 1,
-#   width = 10,
-#   height = 10,
-#   units = c("in", "cm", "mm", "px"),
-#   dpi = 600,
-#   bg = NULL,
-#   create.dir = FALSE
-# )
-
-```
-
-
-##### Cortex atlas map
-```{r Cortex atlas, echo = FALSE}
-
-ggplot() +
-  geom_brain(atlas = dk,
-  hemi = "right") +  
-   scale_fill_brain2(wes_palette("Darjeeling1",35,type = "continuous")) +
-  theme_minimal()
-
-```
-
-##### Subcortical atlas map
-```{r Subcortical atlas map, echo = FALSE}
-
-ggplot() +
-  geom_brain(atlas = aseg,
-             hemi = "right") +
-  scale_fill_brain2(wes_palette("Darjeeling1",8,type = "continuous")) +
-  theme_minimal()
-
-
-```
-
-##### Brain map: chronic pain
-```{r Coritcal volumn: chronic pain status, echo = FALSE}
-
-## Get only regional cortical volumes in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_volumes <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "Cortical Regional Volume") & (res_CP_MDD_brain_structure$disorder == "chronic_pain"),]
-
-dk_cortical_regions <- dk$palette
-
-## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
-dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
-res_CP_MDD_brain_structure_regional_cortical_volumes$regions_ggseg <- c(dk_cortical_regions, 
-                                                                        rep("rostral anterior cingulate", 4),
-                                                                        dk_cortical_regions)
-
-## Compare name columns as sanity check
-#res_CP_MDD_brain_structure_regional_cortical_volumes[c("regions_ggseg", "brain_phenotype")]
-
-## Create informative groups
-res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "All\n")] <- "All\n"
-
-res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "Sex Interaction\n(Males - Females)")] <- "Sex Interaction\n(Males - Females)"
-
-res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "Female\n")] <- "Female\n"
-
-res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "Male\n")] <- "Male\n"
-
-regional_cortical_volumes_ggseg <- tibble(
-  region = res_CP_MDD_brain_structure_regional_cortical_volumes$regions_ggseg, 
-  "Standardized β" = res_CP_MDD_brain_structure_regional_cortical_volumes$beta,
-  groups = res_CP_MDD_brain_structure_regional_cortical_volumes$group
+## Recode brain strucutre subtypes with abbreviations
+brain_structure_abbreviations <- c(
+  "Regional Subcortical Volume" = "SCV",
+  "Regional Cortical Volume" = "RCV",
+  "Global and Local Cortical Volume" = "GCV",
+  "Regional Cortical Area" = "RCA",
+  "Global and Local Cortical Area" = "GCA",
+  "Regional Cortical Thickness" = "RCT",
+  "Global and Local Cortical Thickness" = "GCT",
+  "Fractional Anisotropy" = "FA",
+  "General Fractional Anisotropy" = "GFA",
+  "Mean Diffusivity" = "MD",
+  "General Mean Diffusivity" = "GMD"
 )
 
-## Order groups
-regional_cortical_volumes_ggseg$groups <- ordered(regional_cortical_volumes_ggseg$groups, levels = c("All\n", "Sex Interaction\n(Males - Females)","Female\n", "Male\n"))
+## Get unique brain structure types
+brain_structure_types <- levels(res_CP_MDD_brain_structure$brain_structure_type)
+brain_structure_positions <- seq_along(brain_structure_types)
 
-p1 <- regional_cortical_volumes_ggseg %>%
-  group_by(groups) %>%
-  ggplot() +
-  geom_brain(atlas = dk, 
-             hemi = "right",  
-             position = position_brain("horizontal"),
-             aes(fill = `Standardized β`)) +
-  facet_wrap(~groups, nrow = 1) +
-  scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_void() + 
-  theme(legend.position="none")
+# Define custom colors
+custom_colors <- c("Above Threshold" = "darkblue", "Below Threshold" = "darkgrey")
+threshold <- -log10(0.05)
 
-```
+## Depression full sample----
 
-```{r Cortex area: chronic pain status, echo = FALSE}
-
-## Get only regional cortical areas in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_areas <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "Cortical Regional Area") & (res_CP_MDD_brain_structure$disorder == "chronic_pain"),]
-
-dk_cortical_regions <- dk$palette
-
-## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
-dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
-res_CP_MDD_brain_structure_regional_cortical_areas$regions_ggseg <- rep(dk_cortical_regions, 2)
-
-## Compare name columns as sanity check
-#res_CP_MDD_brain_structure_regional_cortical_areas[c("regions_ggseg", "brain_phenotype")]
-
-## Create informative groups
-res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "All\n")] <- "All\n"
-
-res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "Sex Interaction\n(Males - Females)")] <- "Sex Interaction\n(Males - Females)"
-
-
-# res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "Female\n")] <- "Female\n"
-# 
-# res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "Male\n")] <- "Male\n"
-
-
-regional_cortical_areas_ggseg <- tibble(
-  region = res_CP_MDD_brain_structure_regional_cortical_areas$regions_ggseg, 
-  "Standardized β" = res_CP_MDD_brain_structure_regional_cortical_areas$beta,
-  groups = res_CP_MDD_brain_structure_regional_cortical_areas$group
+## Create shading data for background
+shading_all_df <- data.frame(
+  xmin = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] - 0.5,
+  xmax = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] + 0.5,
+  ymin = -Inf,
+  ymax = Inf
 )
 
-## Order groups
-regional_cortical_areas_ggseg$groups <- ordered(regional_cortical_areas_ggseg$groups, levels = c("All\n", "Sex Interaction\n(Males - Females)","Female\n", "Male\n"))
+## Define jitter settings
+set.seed(1997)  # Ensure reproducibility
+jitter_width <- 0.2  # Adjust as needed
 
-p2 <- regional_cortical_areas_ggseg %>%
-  group_by(groups) %>%
-  ggplot() +
-  geom_brain(atlas = dk, 
-             hemi = "right",  
-             position = position_brain("horizontal"),
-             aes(fill = `Standardized β`)) +
-  facet_wrap(~groups, nrow = 1) +
-  scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_void() + 
-  theme(legend.position="none")
+## Merge shading data with the main dataset
+depression_all_df <- res_CP_MDD_brain_structure %>%
+  filter(disorder == "current_depression" & sample == "All\n") %>%
+  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_brain_structure$brain_structure_type))) %>% ## Set order
+  arrange(brain_structure_type) %>%
+  mutate( ## Apply jitter manually to x-axis (brain structure type)
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  )
 
-```
+depression_all_plot <- ggplot(
+  depression_all_df,
+  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
+  ## Shading
+  geom_rect(data = shading_all_df, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+            fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
+  scale_shape_manual(values = c(25, 24)) + 
+  ## Apply color based on threshold
+  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
+             size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
+  ## Labels
+  # geom_text_repel(
+  #   aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
+  #   size = 6,  
+  #   box.padding = 0.5,   
+  #   point.padding = 0.5,
+  #   segment.color = 'black',
+  #   color = 'black',
+  #   segment.size = 0.3,
+  #   alpha = 0.7, 
+  #   max.overlaps = Inf,
+  #   nudge_y = 0.3, 
+  #   direction = "both",
+  #   min.segment.length = 0.5, 
+  #   force = 10,
+  #   force_pull = 0,
+  #   show.legend = FALSE
+  # ) +
+    scale_x_continuous(
+    breaks = unique(depression_all_df$brain_structure_numeric),  # Keep original positions
+    labels = brain_structure_abbreviations # Show corresponding names
+    ) +
+  scale_y_continuous(
+    limits = c(0, 11)
+  ) +
+  theme_classic() +
+  theme(
+    text = element_text(size=17),
+    axis.text.x = element_text(size=17), 
+    legend.position = "none"  # Remove legend
+  ) +
+  xlab("") + 
+  ylab("-log10(p)") +
+  scale_fill_manual(values = custom_colors) +  
+  scale_color_manual(values = custom_colors) +  
+  guides(color = "none", shape = "none") + 
+  ggtitle('Full Sample')
 
-```{r Cortex thickness: chronic pain status, echo = FALSE}
+## Depression sex interaction ----
 
-## Get only regional cortical thickness in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_thickness <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "Cortical Regional Thickness") & (res_CP_MDD_brain_structure$disorder == "chronic_pain"),]
+## Merge shading data with the main dataset
+depression_sex_interaction_df <- res_CP_MDD_brain_structure %>%
+  filter(disorder == "current_depression" & sample == "Sex Interaction\n(Male - Female)") %>%
+  group_by(brain_structure_type) %>%
+  filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups without any significant findings
+  ungroup() %>%
+  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_brain_structure$brain_structure_type))) %>% ## Set order
+  arrange(brain_structure_type) %>%
+  mutate( ## Apply jitter manually to x-axis (brain structure type)
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  )
 
-dk_cortical_regions <- dk$palette
+## Get unique brain structure types
+brain_structure_types <- unique(depression_sex_interaction_df$brain_structure_type)
+brain_structure_positions <- seq_along(brain_structure_types)
+brain_structure_abbreviations_filtered <- brain_structure_abbreviations[names(brain_structure_abbreviations) %in% brain_structure_types]
 
-## Check if any hemispheres have been analysed seperately 
-seperate_hemispheres <- grep("right", res_CP_MDD_brain_structure_regional_cortical_thickness$brain_phenotype, value = T)
-
-## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
-dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
-## Remove "inferior temporal"
-dk_cortical_regions_no_IT <- dk_cortical_regions[!dk_cortical_regions == "inferior temporal"]
-
-res_CP_MDD_brain_structure_regional_cortical_thickness$regions_ggseg <- c(dk_cortical_regions_no_IT, 
-                                                                          "inferior temporal", 
-                                                                          "inferior temporal", 
-                                                                          "rostral anterior cingulate",
-                                                                          "rostral anterior cingulate",
-                                                                          "rostral anterior cingulate",
-                                                                          "rostral anterior cingulate",
-                                                                          dk_cortical_regions_no_IT,
-                                                                          "inferior temporal", 
-                                                                          "inferior temporal")
-
-## Compare name columns as sanity check
-#res_CP_MDD_brain_structure_regional_cortical_thickness[c("regions_ggseg", "brain_phenotype")]
-
-## Create informative groups
-res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "All\n")] <- "All\n"
-
-res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "Sex Interaction\n(Males - Females)")] <- "Sex Interaction\n(Males - Females)"
-
-
-res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "Female\n")] <- "Female\n"
-
-res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "Male\n")] <- "Male\n"
-
-
-regional_cortical_thickness_ggseg <- tibble(
-  region = res_CP_MDD_brain_structure_regional_cortical_thickness$regions_ggseg, 
-  "Standardized β" = res_CP_MDD_brain_structure_regional_cortical_thickness$beta,
-  groups = res_CP_MDD_brain_structure_regional_cortical_thickness$group
+## Create shading data for background
+shading_all_df <- data.frame(
+  xmin = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] - 0.5,
+  xmax = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] + 0.5,
+  ymin = -Inf,
+  ymax = Inf
 )
 
-## Order groups
-regional_cortical_thickness_ggseg$groups <- ordered(regional_cortical_thickness_ggseg$groups, levels = c("All\n", "Sex Interaction\n(Males - Females)","Female\n", "Male\n"))
+depression_sex_interaction_plot <- ggplot(
+  depression_sex_interaction_df,
+  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
+  ## Shading
+  geom_rect(data = shading_all_df, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+            fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
+  scale_shape_manual(values = c(25, 24)) + 
+  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
+             size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
+  ## Labels
+  geom_text_repel(
+    aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
+    size = 6,
+    box.padding = 0.5,
+    point.padding = 0.5,
+    segment.color = 'black',
+    color = 'black',
+    segment.size = 0.3,
+    alpha = 0.7,
+    max.overlaps = Inf,
+    nudge_y = 0.3,
+    direction = "both",
+    min.segment.length = 0.5,
+    force = 10,
+    force_pull = 0,
+    show.legend = FALSE
+  ) +
+    scale_x_continuous(
+    breaks = unique(depression_sex_interaction_df$brain_structure_numeric),  # Keep original positions
+    labels = brain_structure_abbreviations_filtered  # Show corresponding names
+  ) +
+    scale_y_continuous(
+    limits = c(0, 11)
+  ) +
+  theme_classic() +
+  theme(
+    text = element_text(size=17),
+    axis.text.x = element_text(size=17), 
+    legend.position = "none"  # Remove legend
+  ) +
+  xlab("") + 
+  ylab("-log10(p)") +
+  scale_fill_manual(values = custom_colors) +  
+  scale_color_manual(values = custom_colors) +  
+  guides(color = "none", shape = "none") + 
+  ggtitle('Sex Interaction (Male - Female)')
 
-p3 <- regional_cortical_thickness_ggseg %>%
-  group_by(groups) %>%
-  ggplot() +
-  geom_brain(atlas = dk, 
-             hemi = "right",  
-             position = position_brain("horizontal"),
-             aes(fill = `Standardized β`)) +
-  facet_wrap(~groups, nrow = 1) +
-  scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_void() + 
-  theme(legend.position="none")
+## Depression male sample ----
 
-```
+## Merge shading data with the main dataset
+depression_male_df <- res_CP_MDD_brain_structure %>%
+  filter(disorder == "current_depression" & (sample == "Sex Interaction\n(Male - Female)" | sample == "Male\n")) %>%
+  group_by(brain_structure_type) %>%
+  filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups not included in interaction analysis
+  ungroup() %>%
+  filter(disorder == "current_depression" & sample == "Male\n") %>%
+  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_brain_structure$brain_structure_type))) %>% ## Set order
+  arrange(brain_structure_type) %>%
+  mutate( ## Apply jitter manually to x-axis (brain structure type)
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  )
 
-```{r Subcortical volume: chronic pain status, echo = FALSE, warning=FALSE}
+## Get unique brain structure types
+brain_structure_types <- unique(depression_male_df$brain_structure_type)
+brain_structure_positions <- seq_along(brain_structure_types)
+brain_structure_abbreviations_filtered <- brain_structure_abbreviations[names(brain_structure_abbreviations) %in% brain_structure_types]
 
-## Get only regional sub cortical volume
-res_CP_MDD_brain_structure_regional_subcortical_volume <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "Subcortical Volume") & (res_CP_MDD_brain_structure$disorder == "chronic_pain"),]
-
-sub_cortical_regions <- c("thalamus proper","caudate", "putamen", "pallidum", "hippocampus", "amygdala", "accumbens area")
-
-res_CP_MDD_brain_structure_regional_subcortical_volume$regions_ggseg <- c(sub_cortical_regions,
-                                                                          "amygdala",
-                                                                          "amygdala",
-                                                                          "amygdala",
-                                                                          sub_cortical_regions)
-
-## Compare name columns as sanity check
-#res_CP_MDD_brain_structure_regional_subcortical_volume[c("regions_ggseg", "brain_phenotype")]
-
-## Create informative groups
-res_CP_MDD_brain_structure_regional_subcortical_volume$group[(res_CP_MDD_brain_structure_regional_subcortical_volume$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_subcortical_volume$sample == "All\n")] <- "All\n"
-
-res_CP_MDD_brain_structure_regional_subcortical_volume$group[(res_CP_MDD_brain_structure_regional_subcortical_volume$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_subcortical_volume$sample == "Sex Interaction\n(Males - Females)")] <- "Sex Interaction\n(Males - Females)"
-
-res_CP_MDD_brain_structure_regional_subcortical_volume$group[(res_CP_MDD_brain_structure_regional_subcortical_volume$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_subcortical_volume$sample == "Female\n")] <- "Female\n"
-
-res_CP_MDD_brain_structure_regional_subcortical_volume$group[(res_CP_MDD_brain_structure_regional_subcortical_volume$disorder == "chronic_pain") & (res_CP_MDD_brain_structure_regional_subcortical_volume$sample == "Male\n")] <- "Male\n"
-
-regional_subcortical_volume_ggseg <- tibble(
-  region = res_CP_MDD_brain_structure_regional_subcortical_volume$regions_ggseg, 
-  "Standardized β" = res_CP_MDD_brain_structure_regional_subcortical_volume$beta,
-  groups = res_CP_MDD_brain_structure_regional_subcortical_volume$group
+## Create shading data for background
+shading_all_df <- data.frame(
+  xmin = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] - 0.5,
+  xmax = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] + 0.5,
+  ymin = -Inf,
+  ymax = Inf
 )
 
-## Order groups
-regional_subcortical_volume_ggseg$groups <- ordered(regional_subcortical_volume_ggseg$groups, levels = c("All\n", "Sex Interaction\n(Males - Females)","Female\n", "Male\n"))
+depression_male_plot <- ggplot(
+  depression_male_df,
+  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
+  ## Shading
+  geom_rect(data = shading_all_df, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+            fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
+  scale_shape_manual(values = c(25, 24)) + 
+  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
+             size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
+  ## Labels
+  geom_text_repel(
+    aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
+    size = 6,
+    box.padding = 0.5,
+    point.padding = 0.5,
+    segment.color = 'black',
+    color = 'black',
+    segment.size = 0.3,
+    alpha = 0.7,
+    max.overlaps = Inf,
+    nudge_y = 0.3,
+    direction = "both",
+    min.segment.length = 0.5,
+    force = 10,
+    force_pull = 0,
+    show.legend = FALSE
+  ) +
+    scale_x_continuous(
+    breaks = unique(depression_male_df$brain_structure_numeric),  # Keep original positions
+    labels = brain_structure_abbreviations_filtered  # Show corresponding names
+  ) +
+    scale_y_continuous(
+    limits = c(0, 11)
+  ) +
+  theme_classic() +
+  theme(
+    text = element_text(size=17),
+    axis.text.x = element_text(size=17), 
+    legend.position = "none"  # Remove legend
+  ) +
+  xlab("") + 
+  ylab("-log10(p)") +
+  scale_fill_manual(values = custom_colors) +  
+  scale_color_manual(values = custom_colors) +  
+  guides(color = "none", shape = "none") + 
+  ggtitle('Male Sample')
 
+## Depression female sample ----
 
-p4 <- regional_subcortical_volume_ggseg %>%
-  group_by(groups) %>%
-  ggplot() +
-  geom_brain(atlas = aseg,
-             aes(fill = `Standardized β`),
-             hemi = "right",
-             position = position_brain("horizontal")) +
-  facet_wrap(~groups) +
-  scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_void() +
-  facet_wrap(~groups, nrow = 1) +
-  theme(panel.spacing.x = unit(8, "lines"))  + 
-  theme(legend.position="none")
-  
+## Merge shading data with the main dataset
+depression_female_df <- res_CP_MDD_brain_structure %>%
+  filter(disorder == "current_depression" & (sample == "Sex Interaction\n(Male - Female)" | sample == "Female\n")) %>%
+  group_by(brain_structure_type) %>%
+  filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups without any significant findings
+  ungroup() %>%
+  filter(disorder == "current_depression" & sample == "Female\n") %>%
+  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_brain_structure$brain_structure_type))) %>% ## Set order
+  arrange(brain_structure_type) %>%
+  mutate( ## Apply jitter manually to x-axis (brain structure type)
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  )
 
-## t, l, b, r
-design <- c(
-  area(1,1,1,4),
-  area(2,1,2,2),
-  area(3,1,3,4),
-  area(4,1,4,4)
+## Get unique brain structure types
+brain_structure_types <- unique(depression_female_df$brain_structure_type)
+brain_structure_positions <- seq_along(brain_structure_types)
+brain_structure_abbreviations_filtered <- brain_structure_abbreviations[names(brain_structure_abbreviations) %in% brain_structure_types]
+
+## Create shading data for background
+shading_all_df <- data.frame(
+  xmin = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] - 0.5,
+  xmax = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] + 0.5,
+  ymin = -Inf,
+  ymax = Inf
 )
 
+depression_female_plot <- ggplot(
+  depression_female_df,
+  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
+  ## Shading
+  geom_rect(data = shading_all_df, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+            fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
+  scale_shape_manual(values = c(25, 24)) + 
+  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
+             size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
+  # Labels
+  geom_text_repel(
+    aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
+    size = 6,
+    box.padding = 0.5,
+    point.padding = 0.5,
+    segment.color = 'black',
+    color = 'black',
+    segment.size = 0.3,
+    alpha = 0.7,
+    max.overlaps = Inf,
+    nudge_y = 0.3,
+    direction = "both",
+    min.segment.length = 0.5,
+    force = 10,
+    force_pull = 0,
+    show.legend = FALSE
+  ) +
+    scale_x_continuous(
+    breaks = unique(depression_female_df$brain_structure_numeric),  # Keep original positions
+    labels = brain_structure_abbreviations_filtered  # Show corresponding names
+  ) +
+  scale_y_continuous(
+    limits = c(0, 11)
+  ) +
+  theme_classic() +
+  theme(
+    text = element_text(size=17),
+    axis.text.x = element_text(size=17),
+    legend.position = "none"  # Remove legend
+  ) +
+  xlab("") + 
+  ylab("-log10(p)") +
+  scale_fill_manual(values = custom_colors) +  
+  scale_color_manual(values = custom_colors) +  
+  guides(color = "none", shape = "none") + 
+  ggtitle('Female Sample')
 
-plot_CP <- (p1 / p2 / p3 / p4) + 
-  plot_layout(design = design)
-  plot_annotation(tag_levels = 'A') & 
-  theme(strip.text.x = element_text(size = 15), legend.text = element_text(size = 10), legend.title = element_text(size = 15), plot.tag = element_text(size = 10))
-  
-plot_CP
-  
-ggsave(
-  "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/writeup/Brain_journal_submission/display_images/figure_1.pdf",
-  plot = plot_CP,
-  device = NULL,
-  path = NULL,
-  scale = 1,
-  width = 10,
-  height = 10,
-  units = c("in", "cm", "mm", "px"),
-  dpi = 600,
-  bg = NULL,
-  create.dir = FALSE
-  )  
+tiff("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/depression.tiff", units="in", width=15, height=15, res=300)
 
+depression_all_plot / (depression_sex_interaction_plot + depression_male_plot + depression_female_plot) +
+   plot_layout(heights = unit(c(25, 1), c('cm', 'null')))
+
+dev.off()
 ```
 
+####  Chronic Pain association analysis
+```{r, echo=FALSE, results="asis", comment=NA}
+## Transform p.adjsut to use as y-axis
+res_CP_MDD_brain_structure$p.adjust.minus.log <- -log10(res_CP_MDD_brain_structure$p.adjust)
 
-##### Brain map: depression
+## Get unique brain structure types
+brain_structure_types <- levels(res_CP_MDD_brain_structure$brain_structure_type)
+brain_structure_positions <- seq_along(brain_structure_types)
 
-```{r Cortex volume: depression status, echo = FALSE}
-## Get only regional cortical volumes in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_volumes <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "Cortical Regional Volume") & (res_CP_MDD_brain_structure$disorder == "recurrent_depression"),]
+## Chronic Pain full sample----
 
-dk_cortical_regions <- dk$palette
-
-## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
-dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
-
-
-
-## Remove "inferior temporal"
-dk_cortical_regions_no_IP_ST_SM <- dk_cortical_regions[!dk_cortical_regions %in% c("inferior parietal", 
-                                                                                   "superior temporal",
-                                                                                   "supramarginal")]
-
-res_CP_MDD_brain_structure_regional_cortical_volumes$regions_ggseg <- c(dk_cortical_regions_no_IP_ST_SM,
-                                                                        rep(c("inferior parietal", "superior temporal", "supramarginal"), 2),
-                                                                        "lateral occipital",
-                                                                        "insula",
-                                                                        "lateral occipital",
-                                                                        "insula",
-                                                                        dk_cortical_regions_no_IP_ST_SM,
-                                                                        rep(c("inferior parietal", "superior temporal", "supramarginal"), 2)
-                                                                        )
-
-## Compare name columns as sanity check
-#res_CP_MDD_brain_structure_regional_cortical_volumes[c("regions_ggseg", "brain_phenotype")]
-
-## Create informative groups
-res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "All\n")] <- "All\n"
-
-res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "Sex Interaction\n(Males - Females)")] <- "Sex Interaction\n(Males - Females)"
-
-res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "Female\n")] <- "Female\n"
-
-res_CP_MDD_brain_structure_regional_cortical_volumes$group[(res_CP_MDD_brain_structure_regional_cortical_volumes$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_volumes$sample == "Male\n")] <- "Male\n"
-
-
-regional_cortical_volumes_ggseg <- tibble(
-  region = res_CP_MDD_brain_structure_regional_cortical_volumes$regions_ggseg, 
-  "Standardized β" = res_CP_MDD_brain_structure_regional_cortical_volumes$beta,
-  groups = res_CP_MDD_brain_structure_regional_cortical_volumes$group
+## Create shading data for background
+shading_all_df <- data.frame(
+  xmin = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] - 0.5,
+  xmax = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] + 0.5,
+  ymin = -Inf,
+  ymax = Inf
 )
 
-## Order groups
-regional_cortical_volumes_ggseg$groups <- ordered(regional_cortical_volumes_ggseg$groups, levels = c("All\n", "Sex Interaction\n(Males - Females)", "Female\n", "Male\n"))
+## Define jitter settings
+set.seed(1997)  # Ensure reproducibility
+jitter_width <- 0.2  # Adjust as needed
 
-p1 <- regional_cortical_volumes_ggseg %>%
-  group_by(groups) %>%
-  ggplot() +
-  geom_brain(atlas = dk, 
-             hemi = "right",  
-             position = position_brain("horizontal"),
-             aes(fill = `Standardized β`)) +
-  facet_wrap(~groups, nrow = 1) +
-  scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_void() + 
-  theme(legend.position="none")
+## Merge shading data with the main dataset
+chronic_pain_all_df <- res_CP_MDD_brain_structure %>%
+  filter(disorder == "chronic_pain_status" & sample == "All\n") %>%
+  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_brain_structure$brain_structure_type))) %>% ## Set order
+  arrange(brain_structure_type) %>%
+  mutate( ## Apply jitter manually to x-axis (brain structure type)
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  )
 
-```
+chronic_pain_all_plot <- ggplot(
+  chronic_pain_all_df,
+  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
+  ## Shading
+  geom_rect(data = shading_all_df, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+            fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
+  scale_shape_manual(values = c(25, 24)) + 
+  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
+             size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
+  ## Labels
+  # geom_text_repel(
+  #   aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
+  #   size = 6,
+  #   box.padding = 0.5,
+  #   point.padding = 0.5,
+  #   segment.color = 'black',
+  #   color = 'black',
+  #   segment.size = 0.3,
+  #   alpha = 0.7,
+  #   max.overlaps = Inf,
+  #   nudge_y = 0.3,
+  #   direction = "both",
+  #   min.segment.length = 0.5,
+  #   force = 10,
+  #   force_pull = 0,
+  #   show.legend = FALSE
+  # ) +
+    scale_x_continuous(
+    breaks = unique(chronic_pain_all_df$brain_structure_numeric),  # Keep original positions
+    labels = brain_structure_abbreviations  # Show corresponding names
+    ) +
+  scale_y_continuous(
+    limits = c(0, 17)
+  ) +
+  theme_classic() +
+  theme(
+    text = element_text(size=17),
+    axis.text.x = element_text(size=17), 
+    legend.position = "none"  # Remove legend
+  ) +
+  xlab("") + 
+  ylab("-log10(p)") +
+  scale_fill_manual(values = custom_colors) +  
+  scale_color_manual(values = custom_colors) +  
+  guides(color = "none", shape = "none") + 
+  ggtitle('Full Sample')
 
-```{r Cortex area: depression status, echo = FALSE}
+## Chronic Pain sex interaction ----
 
-## Get only regional cortical areas in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_areas <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "Cortical Regional Area") & (res_CP_MDD_brain_structure$disorder == "recurrent_depression"),]
+## Merge shading data with the main dataset
+chronic_pain_sex_interaction_df <- res_CP_MDD_brain_structure %>%
+  filter(disorder == "chronic_pain_status" & sample == "Sex Interaction\n(Male - Female)") %>%
+  group_by(brain_structure_type) %>%
+  filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups without any significant findings
+  ungroup() %>%
+  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_brain_structure$brain_structure_type))) %>% ## Set order
+  arrange(brain_structure_type) %>%
+  mutate( ## Apply jitter manually to x-axis (brain structure type)
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  )
 
-dk_cortical_regions <- dk$palette
+## Get unique brain structure types
+brain_structure_types <- unique(chronic_pain_sex_interaction_df$brain_structure_type)
+brain_structure_positions <- seq_along(brain_structure_types)
+brain_structure_abbreviations_filtered <- brain_structure_abbreviations[names(brain_structure_abbreviations) %in% brain_structure_types]
 
-## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
-dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
-
-
-
-## Remove "inferior temporal"
-dk_cortical_regions_no_IP<- dk_cortical_regions[!dk_cortical_regions %in% c("inferior parietal")]
-
-res_CP_MDD_brain_structure_regional_cortical_areas$regions_ggseg <- c(dk_cortical_regions_no_IP,
-                                                                      "inferior parietal", 
-                                                                      "inferior parietal",
-                                                                       rep("fusiform", 4),
-                                                                       dk_cortical_regions_no_IP,
-                                                                      "inferior parietal", 
-                                                                      "inferior parietal")
-
-## Compare name columns as sanity check
-#res_CP_MDD_brain_structure_regional_cortical_areas[c("regions_ggseg", "brain_phenotype")]
-
-## Create informative groups
-res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "All\n")] <- "All\n"
-
-res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "Sex Interaction\n(Males - Females)")] <- "Sex Interaction\n(Males - Females)"
-
-res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "Female\n")] <- "Female\n"
-
-res_CP_MDD_brain_structure_regional_cortical_areas$group[(res_CP_MDD_brain_structure_regional_cortical_areas$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_areas$sample == "Male\n")] <- "Male\n"
-
-
-regional_cortical_areas_ggseg <- tibble(
-  region = res_CP_MDD_brain_structure_regional_cortical_areas$regions_ggseg, 
-  "Standardized β" = res_CP_MDD_brain_structure_regional_cortical_areas$beta,
-  groups = res_CP_MDD_brain_structure_regional_cortical_areas$group
+## Create shading data for background
+shading_all_df <- data.frame(
+  xmin = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] - 0.5,
+  xmax = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] + 0.5,
+  ymin = -Inf,
+  ymax = Inf
 )
 
-## Order groups
-regional_cortical_areas_ggseg$groups <- ordered(regional_cortical_areas_ggseg$groups, levels = c("All\n", "Sex Interaction\n(Males - Females)", "Female\n", "Male\n"))
+chronic_pain_sex_interaction_plot <- ggplot(
+  chronic_pain_sex_interaction_df,
+  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
+  ## Shading
+  geom_rect(data = shading_all_df, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+            fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
+  scale_shape_manual(values = c(25, 24)) + 
+  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
+             size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
+  ## Labels
+  geom_text_repel(
+    aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
+    size = 6,
+    box.padding = 0.5,
+    point.padding = 0.5,
+    segment.color = 'black',
+    color = 'black',
+    segment.size = 0.3,
+    alpha = 0.7,
+    max.overlaps = Inf,
+    nudge_y = 0.3,
+    direction = "both",
+    min.segment.length = 0.5,
+    force = 10,
+    force_pull = 0,
+    show.legend = FALSE
+  ) +
+    scale_x_continuous(
+    breaks = unique(chronic_pain_sex_interaction_df$brain_structure_numeric),  # Keep original positions
+    labels = brain_structure_abbreviations_filtered  # Show corresponding names
+  ) +
+    scale_y_continuous(
+    limits = c(0, 17)
+  ) +
+  theme_classic() +
+  theme(
+    text = element_text(size=17),
+    axis.text.x = element_text(size=17), 
+    legend.position = "none"  # Remove legend
+  ) +
+  xlab("") + 
+  ylab("-log10(p)") +
+  scale_fill_manual(values = custom_colors) +  
+  scale_color_manual(values = custom_colors) +  
+  guides(color = "none", shape = "none") + 
+  ggtitle('Sex Interaction (Male - Female)')
 
-p2 <- regional_cortical_areas_ggseg %>%
-  group_by(groups) %>%
-  ggplot() +
-  geom_brain(atlas = dk, 
-             hemi = "right",  
-             position = position_brain("horizontal"),
-             aes(fill = `Standardized β`)) +
-  facet_wrap(~groups, nrow = 1) +
-  scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_void() + 
-  theme(legend.position="none")
+## Chronic Pain male sample ----
 
-```
+## Merge shading data with the main dataset
+chronic_pain_male_df <- res_CP_MDD_brain_structure %>%
+  filter(disorder == "chronic_pain_status" & (sample == "Sex Interaction\n(Male - Female)" | sample == "Male\n")) %>%
+  group_by(brain_structure_type) %>%
+  filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups not included in interaction analysis
+  ungroup() %>%
+  filter(disorder == "chronic_pain_status" & sample == "Male\n") %>%
+  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_brain_structure$brain_structure_type))) %>% ## Set order
+  arrange(brain_structure_type) %>%
+  mutate( ## Apply jitter manually to x-axis (brain structure type)
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  )
 
-```{r Cortex thickness: depression status, echo = FALSE}
+## Get unique brain structure types
+brain_structure_types <- unique(chronic_pain_male_df$brain_structure_type)
+brain_structure_positions <- seq_along(brain_structure_types)
+brain_structure_abbreviations_filtered <- brain_structure_abbreviations[names(brain_structure_abbreviations) %in% brain_structure_types]
 
-## Get only regional cortical thickness in chronic pain 
-res_CP_MDD_brain_structure_regional_cortical_thickness <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "Cortical Regional Thickness") & (res_CP_MDD_brain_structure$disorder == "recurrent_depression"),]
-
-dk_cortical_regions <- dk$palette
-
-## Remove "corpus callosum" and "temporal pole" as they are not availalbe on UKB
-dk_cortical_regions <- names(dk_cortical_regions)[!names(dk_cortical_regions) %in% c("corpus callosum", "temporal pole")]
-
-
-res_CP_MDD_brain_structure_regional_cortical_thickness$regions_ggseg <- c(dk_cortical_regions,
-                                                                       rep("lateral occipital", 2),
-                                                                       dk_cortical_regions)
-
-## Compare name columns as sanity check
-#res_CP_MDD_brain_structure_regional_cortical_thickness[c("regions_ggseg", "brain_phenotype")]
-
-## Create informative groups
-res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "All\n")] <- "All\n"
-
-res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "Sex Interaction\n(Males - Females)")] <- "Sex Interaction\n(Males - Females)"
-
-res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "Female\n")] <- "Female\n"
-
-res_CP_MDD_brain_structure_regional_cortical_thickness$group[(res_CP_MDD_brain_structure_regional_cortical_thickness$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_cortical_thickness$sample == "Male\n")] <- "Male\n"
-
-
-regional_cortical_thickness_ggseg <- tibble(
-  region = res_CP_MDD_brain_structure_regional_cortical_thickness$regions_ggseg, 
-  "Standardized β" = res_CP_MDD_brain_structure_regional_cortical_thickness$beta,
-  groups = res_CP_MDD_brain_structure_regional_cortical_thickness$group
+## Create shading data for background
+shading_all_df <- data.frame(
+  xmin = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] - 0.5,
+  xmax = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] + 0.5,
+  ymin = -Inf,
+  ymax = Inf
 )
 
-## Order groups
-regional_cortical_thickness_ggseg$groups <- ordered(regional_cortical_thickness_ggseg$groups, levels = c("All\n", "Sex Interaction\n(Males - Females)", "Female\n", "Male\n"))
+chronic_pain_male_plot <- ggplot(
+  chronic_pain_male_df,
+  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
+  ## Shading
+  geom_rect(data = shading_all_df, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+            fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
+  scale_shape_manual(values = c(25, 24)) + 
+  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
+             size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
+  ## Labels
+  geom_text_repel(
+    aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
+    size = 6,
+    box.padding = 0.5,
+    point.padding = 0.5,
+    segment.color = 'black',
+    color = 'black',
+    segment.size = 0.3,
+    alpha = 0.7,
+    max.overlaps = Inf,
+    nudge_y = 0.3,
+    direction = "both",
+    min.segment.length = 0.5,
+    force = 10,
+    force_pull = 0,
+    show.legend = FALSE
+  ) +
+    scale_x_continuous(
+    breaks = unique(chronic_pain_male_df$brain_structure_numeric),  # Keep original positions
+    labels = brain_structure_abbreviations_filtered  # Show corresponding names
+  ) +
+    scale_y_continuous(
+    limits = c(0, 17)
+  ) +
+  theme_classic() +
+  theme(
+    text = element_text(size=17),
+    axis.text.x = element_text(size=17), 
+    legend.position = "none"  # Remove legend
+  ) +
+  xlab("") + 
+  ylab("-log10(p)") +
+  scale_fill_manual(values = custom_colors) +  
+  scale_color_manual(values = custom_colors) +  
+  guides(color = "none", shape = "none") + 
+  ggtitle('Male Sample')
 
-p3 <- regional_cortical_thickness_ggseg %>%
-  group_by(groups) %>%
-  ggplot() +
-  geom_brain(atlas = dk, 
-             hemi = "right",  
-             position = position_brain("horizontal"),
-             aes(fill = `Standardized β`)) +
-  facet_wrap(~groups, nrow = 1) +
-  scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_void() + 
-  theme(legend.position="none")
+## Chronic Pain female sample ----
 
+## Merge shading data with the main dataset
+chronic_pain_female_df <- res_CP_MDD_brain_structure %>%
+  filter(disorder == "chronic_pain_status" & (sample == "Sex Interaction\n(Male - Female)" | sample == "Female\n")) %>%
+  group_by(brain_structure_type) %>%
+  filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups without any significant findings
+  ungroup() %>%
+  filter(disorder == "chronic_pain_status" & sample == "Female\n") %>%
+  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_brain_structure$brain_structure_type))) %>% ## Set order
+  arrange(brain_structure_type) %>%
+  mutate( ## Apply jitter manually to x-axis (brain structure type)
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  )
 
-patchwork_cortical_MDD <- p1/p2/p3 
+## Get unique brain structure types
+brain_structure_types <- unique(chronic_pain_female_df$brain_structure_type)
+brain_structure_positions <- seq_along(brain_structure_types)
+brain_structure_abbreviations_filtered <- brain_structure_abbreviations[names(brain_structure_abbreviations) %in% brain_structure_types]
 
-```
-
-```{r Subcortical volume: depression status, echo = FALSE, warning=FALSE}
-
-## Get only regional sub cortical volume
-res_CP_MDD_brain_structure_regional_subcortical_volume <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$brain_structure_type == "Subcortical Volume") & (res_CP_MDD_brain_structure$disorder == "recurrent_depression"),]
-
-sub_cortical_regions <- c("thalamus proper","caudate", "putamen", "pallidum", "hippocampus", "amygdala", "accumbens area")
-
-res_CP_MDD_brain_structure_regional_subcortical_volume$regions_ggseg <- c(sub_cortical_regions,
-                                                                          sub_cortical_regions)
-
-## Compare name columns as sanity check
-#res_CP_MDD_brain_structure_regional_subcortical_volume[c("regions_ggseg", "brain_phenotype")]
-
-## Create informative groups
-res_CP_MDD_brain_structure_regional_subcortical_volume$group[(res_CP_MDD_brain_structure_regional_subcortical_volume$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_subcortical_volume$sample == "All\n")] <- "All\n"
-
-res_CP_MDD_brain_structure_regional_subcortical_volume$group[(res_CP_MDD_brain_structure_regional_subcortical_volume$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_subcortical_volume$sample == "Sex Interaction\n(Males - Females)")] <- "Sex Interaction\n(Males - Females)"
-
-res_CP_MDD_brain_structure_regional_subcortical_volume$group[(res_CP_MDD_brain_structure_regional_subcortical_volume$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_subcortical_volume$sample == "Female\n")] <- "Female\n"
-
-res_CP_MDD_brain_structure_regional_subcortical_volume$group[(res_CP_MDD_brain_structure_regional_subcortical_volume$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure_regional_subcortical_volume$sample == "Male\n")] <- "Male\n"
-
-regional_subcortical_volume_ggseg <- tibble(
-  region = res_CP_MDD_brain_structure_regional_subcortical_volume$regions_ggseg, 
-  "Standardized β" = res_CP_MDD_brain_structure_regional_subcortical_volume$beta,
-  groups = res_CP_MDD_brain_structure_regional_subcortical_volume$group
+## Create shading data for background
+shading_all_df <- data.frame(
+  xmin = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] - 0.5,
+  xmax = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] + 0.5,
+  ymin = -Inf,
+  ymax = Inf
 )
 
-## Order groups
-regional_subcortical_volume_ggseg$groups <- ordered(regional_subcortical_volume_ggseg$groups, levels = c("All\n", "Sex Interaction\n(Males - Females)","Female\n", "Male\n"))
+chronic_pain_female_plot <- ggplot(
+  chronic_pain_female_df,
+  aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)) +
+  ## Shading
+  geom_rect(data = shading_all_df, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+            fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
+  scale_shape_manual(values = c(25, 24)) + 
+  geom_point(aes(color = p.adjust.minus.log > -log10(0.05)), size = 2) +
+  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
+             size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
+  ## Labels
+  geom_text_repel(
+    aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
+    size = 6,
+    box.padding = 0.5,
+    point.padding = 0.5,
+    segment.color = 'black',
+    color = 'black',
+    segment.size = 0.3,
+    alpha = 0.7,
+    max.overlaps = Inf,
+    nudge_y = 0.3,
+    direction = "both",
+    min.segment.length = 0.5,
+    force = 10,
+    force_pull = 0,
+    show.legend = FALSE
+  ) +
+    scale_x_continuous(
+    breaks = unique(chronic_pain_female_df$brain_structure_numeric),  # Keep original positions
+    labels = brain_structure_abbreviations_filtered  # Show corresponding names
+  ) +
+  scale_y_continuous(
+    limits = c(0, 17)
+  ) +
+  theme_classic() +
+  theme(
+    text = element_text(size=17),
+    axis.text.x = element_text(size=17),
+    legend.position = "none"  # Remove legend
+  ) +
+  xlab("") + 
+  ylab("-log10(p)") +
+  scale_fill_manual(values = custom_colors) +  
+  scale_color_manual(values = custom_colors) +  
+  guides(color = "none", shape = "none") + 
+  ggtitle('Female Sample')
 
+tiff("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/chronic_pain.tiff", units="in", width=15, height=15, res=300)
 
-p4 <- regional_subcortical_volume_ggseg %>%
-  group_by(groups) %>%
-  ggplot() +
-  geom_brain(atlas = aseg,
-             aes(fill = `Standardized β`),
-             hemi = "right",
-             position = position_brain("horizontal")) +
-  facet_wrap(~groups) +
-  scale_fill_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red') +
-  theme_void() +
-  facet_wrap(~groups, nrow = 1) +
-  theme(panel.spacing.x = unit(8, "lines"))  + 
-  theme(legend.position="none")
-  
+chronic_pain_all_plot / (chronic_pain_sex_interaction_plot + chronic_pain_male_plot + chronic_pain_female_plot) +
+   plot_layout(heights = unit(c(22, 1), c('cm', 'null')))
 
-## t, l, b, r
-design <- c(
-  area(1,1,1,4),
-  area(2,1,2,4),
-  area(3,1,3,4),
-  area(4,1,4,2)
+dev.off()
+```
+
+####  Disorder interaction analysis
+```{r, echo=FALSE, results="asis", comment=NA}
+## Transform p.adjsut to use as y-axis
+res_CP_MDD_structure_disorder_interaction$p.adjust.minus.log <- -log10(res_CP_MDD_structure_disorder_interaction$p.adjust)
+
+## Get unique brain structure types
+brain_structure_types <- levels(res_CP_MDD_structure_disorder_interaction$brain_structure_type)
+brain_structure_positions <- seq_along(brain_structure_types)
+
+## Disorder Interaction full sample----
+
+## Create shading data for background
+shading_all_df <- data.frame(
+  xmin = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] - 0.5,
+  xmax = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] + 0.5,
+  ymin = -Inf,
+  ymax = Inf
 )
 
+## Define jitter settings
+set.seed(1997)  # Ensure reproducibility
+jitter_width <- 0.2  # Adjust as needed
 
-plot_MDD <- (p1 / p2 / p3 / p4) + 
-  plot_layout(design = design)
-  plot_annotation(tag_levels = 'A') & 
-  theme(strip.text.x = element_text(size = 15), legend.text = element_text(size = 10), legend.title = element_text(size = 15), plot.tag = element_text(size = 10))
-  
-  
-ggsave(
-  "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/writeup/Brain_journal_submission/display_images/figure_3.pdf",
-  plot = plot_MDD,
-  device = NULL,
-  path = NULL,
-  scale = 1,
-  width = 10,
-  height = 10,
-  units = c("in", "cm", "mm", "px"),
-  dpi = 600,
-  bg = NULL,
-  create.dir = FALSE
-)  
-  
+## Merge shading data with the main dataset
+disorder_interaction_all_df <- res_CP_MDD_structure_disorder_interaction %>%
+  filter(sample == "All\n") %>%
+  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_structure_disorder_interaction$brain_structure_type))) %>% ## Set order
+  arrange(brain_structure_type) %>%
+  mutate( ## Apply jitter manually to x-axis (brain structure type)
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  )
+
+disorder_interaction_all_plot <- ggplot(
+  disorder_interaction_all_df,
+  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
+  ## Shading
+  geom_rect(data = shading_all_df, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+            fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
+  scale_shape_manual(values = c(25, 24)) + 
+  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
+             size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
+  ## Labels
+  geom_text_repel(
+    aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
+    size = 5,
+    box.padding = 0.5,
+    point.padding = 0.5,
+    segment.color = 'black',
+    color = 'black',
+    segment.size = 0.3,
+    alpha = 0.7,
+    max.overlaps = Inf,
+    nudge_y = 0.3,
+    direction = "both",
+    min.segment.length = 0.5,
+    force = 10,
+    force_pull = 0,
+    show.legend = FALSE
+  ) +
+    scale_x_continuous(
+    breaks = unique(depression_all_df$brain_structure_numeric)  # Keep original positions
+    #labels = depression_all_df$brain_structure_type # Show corresponding names
+    ) +
+  scale_y_continuous(
+    limits = c(0, 3.5)
+  ) +
+  theme_classic() +
+  theme(
+    text = element_text(size=17),
+    axis.text.x = element_text(size=17), 
+    legend.position = "none"  # Remove legend
+  ) +
+  xlab("") + 
+  ylab("-log10(p)") +
+  scale_fill_manual(values = custom_colors) +  
+  scale_color_manual(values = custom_colors) +  
+  guides(color = "none", shape = "none") + 
+  ggtitle('Full Sample')
+
+## Disorder-sex interaction ----
+
+## Merge shading data with the main dataset
+disorder_sex_interaction_df <- res_CP_MDD_structure_disorder_interaction %>%
+  filter(sample == "Sex Interaction\n(Male - Female)") %>%
+  group_by(brain_structure_type) %>%
+  filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups without any significant findings
+  ungroup() %>%
+  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_structure_disorder_interaction$brain_structure_type))) %>% ## Set order
+  arrange(brain_structure_type) %>%
+  mutate( ## Apply jitter manually to x-axis (brain structure type)
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  )
+
+## Get unique brain structure types
+brain_structure_types <- unique(disorder_sex_interaction_df$brain_structure_type)
+brain_structure_positions <- seq_along(brain_structure_types)
+brain_structure_abbreviations_filtered <- brain_structure_abbreviations[names(brain_structure_abbreviations) %in% brain_structure_types]
+
+## Create shading data for background
+shading_all_df <- data.frame(
+  xmin = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] - 0.5,
+  xmax = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] + 0.5,
+  ymin = -Inf,
+  ymax = Inf
+)
+
+disorder_sex_interaction_plot <- ggplot(
+  disorder_sex_interaction_df,
+  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
+  ## Shading
+  geom_rect(data = shading_all_df, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+            fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
+  scale_shape_manual(values = c(25, 24)) + 
+  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
+             size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
+  ## Labels
+  geom_text_repel(
+    aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
+    size = 5,
+    box.padding = 0.5,
+    point.padding = 0.5,
+    segment.color = 'black',
+    color = 'black',
+    segment.size = 0.3,
+    alpha = 0.7,
+    max.overlaps = Inf,
+    nudge_y = 0.3,
+    direction = "both",
+    min.segment.length = 0.5,
+    force = 10,
+    force_pull = 0,
+    show.legend = FALSE
+  ) +
+    scale_x_continuous(
+    breaks = unique(disorder_sex_interaction_df$brain_structure_numeric),  # Keep original positions
+    labels = brain_structure_abbreviations_filtered  # Show corresponding names
+  ) +
+    scale_y_continuous(
+    limits = c(0, 3.5)
+  ) +
+  theme_classic() +
+  theme(
+    text = element_text(size=17),
+    axis.text.x = element_text(size=17), 
+    legend.position = "none"  # Remove legend
+  ) +
+  xlab("") + 
+  ylab("-log10(p)") +
+  scale_fill_manual(values = custom_colors) +  
+  scale_color_manual(values = custom_colors) +  
+  guides(color = "none", shape = "none") + 
+  ggtitle('Sex Interaction (Male - Female)')
+
+## Disorder interaction male sample ----
+
+## Merge shading data with the main dataset
+disorder_interaction_male_df <- res_CP_MDD_structure_disorder_interaction %>%
+  filter(sample == "Sex Interaction\n(Male - Female)" | sample == "Male\n") %>%
+  group_by(brain_structure_type) %>%
+  filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups not included in interaction analysis
+  ungroup() %>%
+  filter(sample == "Male\n") %>%
+  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_structure_disorder_interaction$brain_structure_type))) %>% ## Set order
+  arrange(brain_structure_type) %>%
+  mutate( ## Apply jitter manually to x-axis (brain structure type)
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  )
+
+## Get unique brain structure types
+brain_structure_types <- unique(disorder_interaction_male_df$brain_structure_type)
+brain_structure_positions <- seq_along(brain_structure_types)
+brain_structure_abbreviations_filtered <- brain_structure_abbreviations[names(brain_structure_abbreviations) %in% brain_structure_types]
+
+## Create shading data for background
+shading_all_df <- data.frame(
+  xmin = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] - 0.5,
+  xmax = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] + 0.5,
+  ymin = -Inf,
+  ymax = Inf
+)
+
+disorder_interaction_male_plot <- ggplot(
+  disorder_interaction_male_df,
+  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
+  ## Shading
+  geom_rect(data = shading_all_df, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+            fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
+  scale_shape_manual(values = c(25, 24)) + 
+  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
+             size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
+  ## Labels
+  geom_text_repel(
+    aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
+    size = 5,
+    box.padding = 0.5,
+    point.padding = 0.5,
+    segment.color = 'black',
+    color = 'black',
+    segment.size = 0.3,
+    alpha = 0.7,
+    max.overlaps = Inf,
+    nudge_y = 0.3,
+    direction = "both",
+    min.segment.length = 0.5,
+    force = 10,
+    force_pull = 0,
+    show.legend = FALSE
+  ) +
+    scale_x_continuous(
+    breaks = unique(disorder_interaction_male_df$brain_structure_numeric),  # Keep original positions
+    labels = brain_structure_abbreviations_filtered  # Show corresponding names
+  ) +
+    scale_y_continuous(
+    limits = c(0, 3.5)
+  ) +
+  theme_classic() +
+  theme(
+    text = element_text(size=17),
+    axis.text.x = element_text(size=17), 
+    legend.position = "none"  # Remove legend
+  ) +
+  xlab("") + 
+  ylab("-log10(p)") +
+  scale_fill_manual(values = custom_colors) +  
+  scale_color_manual(values = custom_colors) +  
+  guides(color = "none", shape = "none") + 
+  ggtitle('Male Sample')
+
+## Disorder interaction female sample ----
+
+## Merge shading data with the main dataset
+disorder_interaction_female_df <- res_CP_MDD_structure_disorder_interaction %>%
+  filter(sample == "Sex Interaction\n(Male - Female)" | sample == "Female\n") %>%
+  group_by(brain_structure_type) %>%
+  filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups not included in interaction analysis
+  ungroup() %>%
+  filter(sample == "Female\n") %>%
+  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_structure_disorder_interaction$brain_structure_type))) %>% ## Set order
+  arrange(brain_structure_type) %>%
+  mutate( ## Apply jitter manually to x-axis (brain structure type)
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  )
+
+## Get unique brain structure types
+brain_structure_types <- unique(disorder_interaction_female_df$brain_structure_type)
+brain_structure_positions <- seq_along(brain_structure_types)
+brain_structure_abbreviations_filtered <- brain_structure_abbreviations[names(brain_structure_abbreviations) %in% brain_structure_types]
+
+## Create shading data for background
+shading_all_df <- data.frame(
+  xmin = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] - 0.5,
+  xmax = brain_structure_positions[seq(1, length(brain_structure_positions), by = 2)] + 0.5,
+  ymin = -Inf,
+  ymax = Inf
+)
+
+disorder_interaction_female_plot <- ggplot(
+  disorder_interaction_female_df,
+  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
+  ## Shading
+  geom_rect(data = shading_all_df, 
+            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+            fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
+  scale_shape_manual(values = c(25, 24)) + 
+  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
+                 alpha = 0.5),
+             size = 2) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
+  ## Labels
+  geom_text_repel(
+    aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
+    size = 5,
+    box.padding = 0.5,
+    point.padding = 0.5,
+    segment.color = 'black',
+    color = 'black',
+    segment.size = 0.3,
+    alpha = 0.7,
+    max.overlaps = Inf,
+    nudge_y = 0.3,
+    direction = "both",
+    min.segment.length = 0.5,
+    force = 10,
+    force_pull = 0,
+    show.legend = FALSE
+  ) +
+    scale_x_continuous(
+    breaks = unique(disorder_interaction_female_df$brain_structure_numeric),  # Keep original positions
+    labels = brain_structure_abbreviations_filtered  # Show corresponding names
+  ) +
+    scale_y_continuous(
+    limits = c(0, 3.5)
+  ) +
+  theme_classic() +
+  theme(
+    text = element_text(size=17),
+    axis.text.x = element_text(size=17), 
+    legend.position = "none"  # Remove legend
+  ) +
+  xlab("") + 
+  ylab("-log10(p)") +
+  scale_fill_manual(values = custom_colors) +  
+  scale_color_manual(values = custom_colors) +  
+  guides(color = "none", shape = "none") + 
+  ggtitle('Female Sample')
+
+tiff("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/disorder_interaction.tiff", units="in", width=15, height=10, res=300)
+(disorder_sex_interaction_plot + disorder_interaction_male_plot + disorder_interaction_female_plot)
+dev.off()
 ```
-
-##### Brain map: legend
-
-```{r Brain map legend, echo = FALSE, warning=FALSE}
-## Make random plot to extract legend
-mtcars$`Standardized β` <- sample(-100:100/100, nrow(mtcars))
-random_plot <- ggplot(mtcars, aes(x=wt, y=mpg, color=`Standardized β`)) +
-    geom_point() + 
-    geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
-  scale_color_gradient2(limits = c(-0.1, 0.1), low = 'blue', mid = 'white', high = 'red')
-  
-plot_range <- grid.draw(cowplot::get_legend(random_plot)) 
-
-ggsave(
-  "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/writeup/Brain_journal_submission/display_images/plot_range.pdf",
-  plot = plot_range,
-  device = NULL,
-  path = NULL,
-  scale = 1,
-  width = 10,
-  height = 10,
-  units = c("in", "cm", "mm", "px"),
-  dpi = 600,
-  bg = NULL,
-  create.dir = FALSE
-  ) 
-
-```
-
-##### Sample size ranges
-
-```{r Sample sizes, echo = FALSE, warning=FALSE}
-cat(paste0("Chronic Pain:\nAll:"), n_CP_all, "\n")
-
-cat(paste0("Female:"), n_CP_female, "\n")
-
-cat(paste0("Male:"), n_CP_male, "\n\n")
-
-cat(paste0("Depression:\nAll:"), n_MDD_all, "\n")
-
-cat(paste0("Female:"), n_MDD_female, "\n")
-
-cat(paste0("Male:"), n_MDD_male, "\n\n")
-
-
-cat(paste0("Comorbidity:\nAll:"), n_CPMDD_all, "\n")
-
-cat(paste0("Female:"), n_CPMDD_female, "\n")
-
-cat(paste0("Male:"), n_CPMDD_male, "\n\n")
-```
-
-
-<!-- #### Supplementary Results {.tabset} -->
-
-<!-- ##### Effect size graph - Chronic pain status in full sample -->
-<!-- ```{r Effect size graph chronic pain status - full sample, echo=FALSE,  fig.height=50} -->
-
-<!-- ## Plot resutls -->
-<!-- brain_structure_gg = ggplot(brain_structure_CP_all, aes(x=brain_phenotype_plot, y=beta, shape=`P-value (adjusted/not adjusted*) < 0.05`)) +  -->
-<!--   geom_point(aes(y=beta),size=2) + -->
-<!--   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0) + -->
-<!--   theme_minimal() + -->
-<!--   geom_hline(yintercept=0, linetype="dashed", color = "black") + -->
-<!--   coord_flip() + -->
-<!--   scale_colour_gradientn(colours = pal_discrete) + -->
-<!--   labs(x = "Brain Structure Phenotype",  -->
-<!--        y = "Standardised effect size",  -->
-<!--        title = "Chronic pain and brain structures in UK Biobank", -->
-<!--        colour = "Nominal P-value", -->
-<!--        shape = "P-value (adjusted/not adjusted*) < 0.05") + -->
-<!--   theme(plot.title = element_text(hjust = 0.5)) + -->
-<!--   ggforce::facet_col(facets = vars(brain_structure_type),  -->
-<!--                      scales = "free_y",  -->
-<!--                      space = "free") -->
-
-<!-- brain_structure_gg -->
-
-<!-- ``` -->
-
-<!-- ##### Effect size graph - Chronic pain status in sex-stratified samples -->
-<!-- ```{r Effect size graph chronic pain status - sex-stratified samples, echo=FALSE,  fig.height=50} -->
-<!-- ## Plot resutls -->
-<!-- brain_structure_gg = ggplot(subset(res_CP_MDD_brain_structure[res_CP_MDD_brain_structure$disorder == "chronic_pain",], sample %in% c("Male", "Female", "All")), aes(x=brain_phenotype_plot, y=beta, shape=`P-value (adjusted/not adjusted*) < 0.05`,colour=sample)) +  -->
-<!--   geom_point(aes(y=beta),size=3, alpha = 0.5) + -->
-<!--   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) + -->
-<!--   theme_minimal() + -->
-<!--   geom_hline(yintercept=0, linetype="dashed", color = "black") + -->
-<!--   coord_flip() + -->
-<!--   labs(x = "",  -->
-<!--        y = "Standardised effect size",  -->
-<!--        title = "Chronic pain and brain structures in UK Biobank: sex-stratified", -->
-<!--        colour = "Sex", -->
-<!--        shape = "P-value (adjusted/not adjusted*) < 0.05") + -->
-<!--   theme(plot.title = element_text(hjust = 0.5)) + -->
-<!--   scale_color_manual(values = pal_continuous) + -->
-<!--   ggforce::facet_col(facets = vars(brain_structure_type),  -->
-<!--                      scales = "free_y",  -->
-<!--                      space = "free") -->
-
-<!-- brain_structure_gg -->
-<!-- ``` -->
-
-
-<!-- ##### Effect size graph - Probable Recurrent Major Depressive Disorder in full smaple -->
-
-<!-- ```{r Effect size graph MDD - full sample, echo=FALSE,  fig.height=50} -->
-
-<!-- brain_structure_gg = ggplot(brain_structure_MDD_all, aes(x=brain_phenotype_plot, y=beta, shape=`P-value (adjusted/not adjusted*) < 0.05`)) +  -->
-<!--   geom_point(size=2) + -->
-<!--   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0) + -->
-<!--   theme_minimal() + -->
-<!--   geom_hline(yintercept=0, linetype="dashed", color = "black") + -->
-<!--   coord_flip() + -->
-<!--   scale_colour_gradientn(colours = pal_discrete) + -->
-<!--   labs(x = "Brain Structure Phenotype",  -->
-<!--        y = "Standardised effect size",  -->
-<!--        title = "Major depressive disorder and brain structures in UK Biobank", -->
-<!--        colour = "Nominal P-value", -->
-<!--        shape = "P-value (adjusted/not adjusted*) < 0.05") + -->
-<!--   theme(plot.title = element_text(hjust = 0.5))  + -->
-<!--   ggforce::facet_col(facets = vars(brain_structure_type),  -->
-<!--                      scales = "free_y",  -->
-<!--                      space = "free") -->
-
-<!-- brain_structure_gg -->
-
-<!-- ``` -->
-
-<!-- ##### Effect size graph - Probable Recurrent Major Depressive Disorder in sex-stratified sample -->
-
-<!-- ```{r Effect size graph MDD - sex-stratified sample, echo=FALSE,  fig.height=50} -->
-
-<!-- ## Plot resutls -->
-<!-- brain_structure_gg = ggplot(subset(res_CP_MDD_brain_structure[res_CP_MDD_brain_structure$disorder == "recurrent_depression",], sample %in% c("Male", "Female", "All")), aes(x=brain_phenotype_plot, y=beta, shape=`P-value (adjusted/not adjusted*) < 0.05`,colour=sample)) +  -->
-<!--   geom_point(aes(y=beta),size=3, alpha = 0.5) + -->
-<!--   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) + -->
-<!--   theme_minimal() + -->
-<!--   geom_hline(yintercept=0, linetype="dashed", color = "black") + -->
-<!--   coord_flip() + -->
-<!--   labs(x = "",  -->
-<!--        y = "Standardised effect size",  -->
-<!--        title = "Depression and brain structures in UK Biobank: sex-stratified", -->
-<!--        colour = "Sex", -->
-<!--        shape = "P-value (adjusted/not adjusted*) < 0.05") + -->
-<!--   theme(plot.title = element_text(hjust = 0.5)) + -->
-<!--   scale_color_manual(values = pal_continuous) + -->
-<!--   ggforce::facet_col(facets = vars(brain_structure_type),  -->
-<!--                      scales = "free_y",  -->
-<!--                      space = "free") -->
-
-<!-- brain_structure_gg -->
-
-<!-- ``` -->
-
-
-
-<!-- ##### Effect size graph - Balanced datasets -->
-
-<!-- ```{r Balanced depression, fig.height= 25, echo=FALSE} -->
-
-<!-- res_CP_MDD_brain_structure_balanced_CP_f <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$sample == "Female"| res_CP_MDD_brain_structure$sample == "Balanced:Female") & res_CP_MDD_brain_structure$disorder == "chronic_pain",] -->
-<!-- res_CP_MDD_brain_structure_balanced_CP_m <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$sample == "Male"| res_CP_MDD_brain_structure$sample == "Balanced:Male") & res_CP_MDD_brain_structure$disorder == "chronic_pain",] -->
-<!-- res_CP_MDD_brain_structure_balanced_MDD_f <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$sample == "Female"| res_CP_MDD_brain_structure$sample == "Balanced:Female") & res_CP_MDD_brain_structure$disorder == "recurrent_depression",] -->
-<!-- res_CP_MDD_brain_structure_balanced_MDD_m <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$sample == "Male"| res_CP_MDD_brain_structure$sample == "Balanced:Male") & res_CP_MDD_brain_structure$disorder == "recurrent_depression",] -->
-
-<!-- res_comorbidity_brain_structure_balanced_f <- res_comorbidity_brain_structure[res_comorbidity_brain_structure$sample == "Balanced:Female",] -->
-<!-- res_comorbidity_brain_structure_balanced_m <- res_comorbidity_brain_structure[res_comorbidity_brain_structure$sample == "Balanced:Male",] -->
-
-<!-- ## Order levels of brain phenotpyes in oder of beta values to make plot neat -->
-<!-- res_CP_MDD_brain_structure_balanced_CP_f$brain_phenotype_plot <- reorder(res_CP_MDD_brain_structure_balanced_CP_f$brain_phenotype_plot, -res_CP_MDD_brain_structure_balanced_CP_f$beta) -->
-<!-- res_CP_MDD_brain_structure_balanced_CP_m$brain_phenotype_plot <- reorder(res_CP_MDD_brain_structure_balanced_CP_m$brain_phenotype_plot, -res_CP_MDD_brain_structure_balanced_CP_m$beta) -->
-<!-- res_CP_MDD_brain_structure_balanced_MDD_f$brain_phenotype_plot <- reorder(res_CP_MDD_brain_structure_balanced_MDD_f$brain_phenotype_plot, -res_CP_MDD_brain_structure_balanced_MDD_f$beta) -->
-<!-- res_CP_MDD_brain_structure_balanced_MDD_m$brain_phenotype_plot <- reorder(res_CP_MDD_brain_structure_balanced_MDD_m$brain_phenotype_plot, -res_CP_MDD_brain_structure_balanced_MDD_m$beta) -->
-
-
-<!-- brain_structure_gg = ggplot(res_CP_MDD_brain_structure_balanced_CP_f, aes(x=brain_phenotype_plot, y=beta, shape=`P-value (adjusted/not adjusted*) < 0.05`,colour=sample)) +  -->
-<!--   geom_point(aes(y=beta),size=3, alpha = 0.5) + -->
-<!--   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) + -->
-<!--   theme_minimal() + -->
-<!--   geom_hline(yintercept=0, linetype="dashed", color = "black") + -->
-<!--   coord_flip() + -->
-<!--   labs(x = "",  -->
-<!--        y = "Standardised effect size",  -->
-<!--        title = "Chronic pain in full sample VS balanced sample: Females", -->
-<!--        colour = "Sex", -->
-<!--        shape = "P-value (adjusted/not adjusted*) < 0.05") + -->
-<!--   theme(plot.title = element_text(hjust = 0.5)) + -->
-<!--   scale_color_manual(values = pal_continuous) + -->
-<!--   ggforce::facet_col(facets = vars(brain_structure_type),  -->
-<!--                      scales = "free_y",  -->
-<!--                      space = "free") -->
-
-<!-- brain_structure_gg -->
-
-
-<!-- brain_structure_gg = ggplot(res_CP_MDD_brain_structure_balanced_CP_m, aes(x=brain_phenotype_plot, y=beta, shape=`P-value (adjusted/not adjusted*) < 0.05`,colour=sample)) +  -->
-<!--   geom_point(aes(y=beta),size=3, alpha = 0.5) + -->
-<!--   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) + -->
-<!--   theme_minimal() + -->
-<!--   geom_hline(yintercept=0, linetype="dashed", color = "black") + -->
-<!--   coord_flip() + -->
-<!--   labs(x = "",  -->
-<!--        y = "Standardised effect size",  -->
-<!--        title = "Chronic pain in full sample VS balanced sample: Males", -->
-<!--        colour = "Sex", -->
-<!--        shape = "P-value (adjusted/not adjusted*) < 0.05") + -->
-<!--   theme(plot.title = element_text(hjust = 0.5)) + -->
-<!--   scale_color_manual(values = pal_continuous) + -->
-<!--   ggforce::facet_col(facets = vars(brain_structure_type),  -->
-<!--                      scales = "free_y",  -->
-<!--                      space = "free") -->
-
-<!-- brain_structure_gg -->
-
-<!-- brain_structure_gg = ggplot(res_CP_MDD_brain_structure_balanced_MDD_f, aes(x=brain_phenotype_plot, y=beta, shape=`P-value (adjusted/not adjusted*) < 0.05`,colour=sample)) +  -->
-<!--   geom_point(aes(y=beta),size=3, alpha = 0.5) + -->
-<!--   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) + -->
-<!--   theme_minimal() + -->
-<!--   geom_hline(yintercept=0, linetype="dashed", color = "black") + -->
-<!--   coord_flip() + -->
-<!--   labs(x = "",  -->
-<!--        y = "Standardised effect size",  -->
-<!--        title = "Depression in full sample VS balanced sample: Females", -->
-<!--        colour = "Sex", -->
-<!--        shape = "P-value (adjusted/not adjusted*) < 0.05") + -->
-<!--   theme(plot.title = element_text(hjust = 0.5)) + -->
-<!--   scale_color_manual(values = pal_continuous) + -->
-<!--   ggforce::facet_col(facets = vars(brain_structure_type),  -->
-<!--                      scales = "free_y",  -->
-<!--                      space = "free") -->
-
-<!-- brain_structure_gg -->
-
-
-<!-- brain_structure_gg = ggplot(res_CP_MDD_brain_structure_balanced_MDD_m, aes(x=brain_phenotype_plot, y=beta, shape=`P-value (adjusted/not adjusted*) < 0.05`,colour=sample)) +  -->
-<!--   geom_point(aes(y=beta),size=3, alpha = 0.5) + -->
-<!--   geom_errorbar(aes(ymin=Lower_95CI, ymax=Upper_95CI), width=0, alpha = 0.5) + -->
-<!--   theme_minimal() + -->
-<!--   geom_hline(yintercept=0, linetype="dashed", color = "black") + -->
-<!--   coord_flip() + -->
-<!--   labs(x = "",  -->
-<!--        y = "Standardised effect size",  -->
-<!--        title = "Depression in full sample VS balanced sample: Males", -->
-<!--        colour = "Sex", -->
-<!--        shape = "P-value (adjusted/not adjusted*) < 0.05") + -->
-<!--   theme(plot.title = element_text(hjust = 0.5)) + -->
-<!--   scale_color_manual(values = pal_continuous) + -->
-<!--   ggforce::facet_col(facets = vars(brain_structure_type),  -->
-<!--                      scales = "free_y",  -->
-<!--                      space = "free") -->
-
-<!-- brain_structure_gg -->
-
-<!-- ``` -->
-
-<!-- ####  Number of significant hits -->
-
-<!-- ```{r} -->
-<!-- res_comorbidity_brain_structure_full <- res_comorbidity_brain_structure_all[res_comorbidity_brain_structure_all$sample == "All",] -->
-
-<!-- sum(res_comorbidity_brain_structure_full$p.adjust < 0.05) -->
-<!-- sum(res_comorbidity_brain_structure_female$p.adjust < 0.05) -->
-<!-- sum(res_comorbidity_brain_structure_male$p.adjust < 0.05) -->
-
-<!-- sum(brain_structure_CP_all$`P-value (adjusted/not adjusted*) < 0.05` == "Yes") -->
-<!-- sum(brain_structure_CP_female$`P-value (adjusted/not adjusted*) < 0.05` == "Yes") -->
-<!-- sum(brain_structure_CP_male$`P-value (adjusted/not adjusted*) < 0.05` == "Yes") -->
-
-<!-- sum(brain_structure_MDD_all$`P-value (adjusted/not adjusted*) < 0.05` == "Yes") -->
-<!-- sum(brain_structure_MDD_female$`P-value (adjusted/not adjusted*) < 0.05` == "Yes") -->
-<!-- sum(brain_structure_MDD_male$`P-value (adjusted/not adjusted*) < 0.05` == "Yes") -->
-<!-- ``` -->
-
-<!-- ####  Number of significant hits - balanced vs unbalanced -->
-
-
-<!-- ```{r} -->
-<!-- cat("Unbalanced comorbidity:") -->
-<!-- sum(res_comorbidity_brain_structure$p.adjust < 0.05) -->
-<!-- sum(res_comorbidity_brain_structure_female$p.adjust < 0.05) -->
-<!-- sum(res_comorbidity_brain_structure_male$p.adjust < 0.05) -->
-<!-- cat("Balanced comorbidity:") -->
-<!-- sum(res_comorbidity_brain_structure_balanced_f$p.adjust < 0.05) -->
-<!-- sum(res_comorbidity_brain_structure_balanced_m$p.adjust < 0.05) -->
-<!-- cat("Unbalanced CP:") -->
-<!-- sum(brain_structure_CP_female$`P-value (adjusted/not adjusted*) < 0.05` == "Yes") -->
-<!-- sum(brain_structure_CP_male$`P-value (adjusted/not adjusted*) < 0.05` == "Yes") -->
-<!-- cat("Balanced CP:") -->
-<!-- nrow(res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$sample == "Balanced:Female") & res_CP_MDD_brain_structure$disorder == "chronic_pain" & res_CP_MDD_brain_structure$`P-value (adjusted/not adjusted*) < 0.05` == "Yes",]) -->
-<!-- nrow(res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$sample == "Balanced:Male") & res_CP_MDD_brain_structure$disorder == "chronic_pain" & res_CP_MDD_brain_structure$`P-value (adjusted/not adjusted*) < 0.05` == "Yes",]) -->
-<!-- cat("Unbalanced MDD:") -->
-<!-- sum(brain_structure_MDD_female$`P-value (adjusted/not adjusted*) < 0.05` == "Yes") -->
-<!-- sum(brain_structure_MDD_male$`P-value (adjusted/not adjusted*) < 0.05` == "Yes") -->
-<!-- cat("Balanced MDD:") -->
-<!-- nrow(res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$sample == "Balanced:Female") & res_CP_MDD_brain_structure$disorder == "recurrent_depression" & res_CP_MDD_brain_structure$`P-value (adjusted/not adjusted*) < 0.05` == "Yes",]) -->
-<!-- nrow(res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$sample == "Balanced:Male") & res_CP_MDD_brain_structure$disorder == "recurrent_depression" & res_CP_MDD_brain_structure$`P-value (adjusted/not adjusted*) < 0.05` == "Yes",]) -->
-<!-- ``` -->
-
-
-
-<!-- ##### P-value graph - Depression - full sample -->
-
-<!-- ```{r P-value graph MDD - full sample, echo=FALSE, fig.height=10} -->
-<!-- brain_structure_MDD_all <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$disorder == "recurrent_depression") & res_CP_MDD_brain_structure$sample == "All",] -->
-
-<!-- ## Order levels of brain phenotpyes in oder of beta values to make plot neat -->
-<!-- brain_structure_MDD_all$brain_phenotype_plot <- reorder(brain_structure_MDD_all$brain_phenotype_plot, -brain_structure_MDD_all$beta) -->
-
-<!-- pal2 <- wes_palette("Darjeeling1", 11,type = "continuous") -->
-
-<!-- ## Transform p.adjsut to use as y-axis -->
-<!-- brain_structure_MDD_all$p.adjust.minus.log <- -log10(brain_structure_MDD_all$p.adjust) -->
-
-<!-- ggplot(brain_structure_MDD_all, aes(x = brain_structure_type, y = p.adjust.minus.log, colour =  brain_structure_type, shape = Direction, stroke = 1, fill = `P-value (adjusted/not adjusted*) < 0.05`)) + -->
-<!--   scale_shape_manual(values=c(25, 24)) +  -->
-<!--   scale_fill_manual(values = c("white", "dark grey")) + -->
-<!--   geom_jitter(size = 2, position = position_jitter(seed = 151097)) + -->
-<!--     geom_hline(yintercept=-log10(0.05), linetype="dashed",  -->
-<!--                color = "red", size=1, alpha = 0.4) + -->
-<!--   geom_label_repel(aes(label = ifelse(p.adjust < 0.05,as.character(brain_phenotype_plot),'')), -->
-<!--                   box.padding = 2,  -->
-<!--                   size = 2, -->
-<!--                   point.padding = 0, -->
-<!--                   segment.color = 'grey50', -->
-<!--                   position = position_jitter(seed = 151097), -->
-<!--                   max.overlaps = 100, -->
-<!--                   fill = "white", -->
-<!--                   show.legend = FALSE) + -->
-<!--   theme_classic() + -->
-<!--   theme(axis.text.x = element_text(angle = 90, hjust = 1), axis.text.y=element_blank()) + -->
-<!--   xlab("") + ylab("-log10(p)") + -->
-<!--   scale_color_manual(values = pal2) +  -->
-<!--   guides(fill=guide_legend(override.aes=list(shape=21)), colour=guide_legend(title = "Brain Strucutre Subcategory")) -->
-
-
-<!-- ``` -->
-
-<!-- ##### P-value graph - Depression - sex-stratified sample -->
-
-<!-- ```{r P-value graph MDD - male sample, echo=FALSE, fig.height=10} -->
-
-<!-- brain_structure_MDD_sex_stratified <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$disorder == "recurrent_depression") & (res_CP_MDD_brain_structure$sample == "Female" | res_CP_MDD_brain_structure$sample == "Male"),] -->
-
-<!-- ## Order levels of brain phenotpyes in oder of beta values to make plot neat -->
-<!-- brain_structure_MDD_sex_stratified$brain_phenotype_plot <- reorder(brain_structure_MDD_sex_stratified$brain_phenotype_plot, -brain_structure_MDD_sex_stratified$beta) -->
-
-<!-- brain_structure_MDD_male <- brain_structure_MDD_sex_stratified[brain_structure_MDD_sex_stratified$sample == "Male",] -->
-<!-- brain_structure_MDD_female <- brain_structure_MDD_sex_stratified[brain_structure_MDD_sex_stratified$sample == "Female",] -->
-
-
-<!-- ## Transform p.adjsut to use as y-axis -->
-<!-- brain_structure_MDD_male$p.adjust.minus.log <- -log10(brain_structure_MDD_male$p.adjust) -->
-<!-- brain_structure_MDD_female$p.adjust.minus.log <- -log10(brain_structure_MDD_female$p.adjust) -->
-
-
-<!-- plot_depression_females <- ggplot(brain_structure_MDD_female, aes(x = brain_structure_type, y = p.adjust.minus.log, colour =  brain_structure_type, shape = Direction, stroke = 1, fill = `P-value (adjusted/not adjusted*) < 0.05`)) + -->
-<!--   scale_shape_manual(values=c(25, 24)) +  -->
-<!--   scale_fill_manual(values = c("white", "dark grey")) + -->
-<!--   geom_jitter(size = 2, position = position_jitter(seed = 151097)) + -->
-<!--   geom_hline(yintercept=-log10(0.05), linetype="dashed",  -->
-<!--                color = "red", size=1, alpha = 0.4) + -->
-<!--   geom_label_repel(aes(label = ifelse(p.adjust < 0.05,as.character(brain_phenotype_plot),'')), -->
-<!--                   size = 2, -->
-<!--                   box.padding = 2,  -->
-<!--                   point.padding = 0, -->
-<!--                   segment.color = 'grey50', -->
-<!--                   segment.alpha = 0.5, -->
-<!--                   position = position_jitter(seed = 151097), -->
-<!--                   max.overlaps = 100, -->
-<!--                   fill = "white", -->
-<!--                   show.legend = FALSE) + -->
-<!--   theme_classic() + -->
-<!--   ylim(c(0,(max(brain_structure_MDD_female$p.adjust.minus.log) + 1))) + -->
-<!--   theme(axis.text.x = element_blank()) + -->
-<!--   xlab("") + ylab("-log10(p)") + -->
-<!--   scale_color_manual(values = pal2) +  -->
-<!--   guides(fill=guide_legend(override.aes=list(shape=21)), colour=guide_legend(title = "Brain Strucutre Subcategory")) -->
-
-
-<!-- plot_depression_males <- ggplot(brain_structure_MDD_male, aes(x = brain_structure_type, y = p.adjust.minus.log, colour =  brain_structure_type, shape = Direction, stroke = 1, fill = `P-value (adjusted/not adjusted*) < 0.05`)) + -->
-<!--   scale_shape_manual(values=c(25, 24)) +  -->
-<!--   scale_fill_manual(values = c("white", "dark grey")) + -->
-<!--   geom_jitter(size = 2, position = position_jitter(width = 2, seed = 151097)) + -->
-<!--   geom_hline(yintercept=-log10(0.05), linetype="dashed",  -->
-<!--                color = "red", size=1, alpha = 0.4) + -->
-<!--   geom_label_repel(aes(label = ifelse(p.adjust < 0.05,as.character(brain_phenotype_plot),'')), -->
-<!--                   box.padding = 2,  -->
-<!--                   size = 2, -->
-<!--                   point.padding = 0, -->
-<!--                   xlim = c(3, NA), -->
-<!--                   segment.color = 'grey50', -->
-<!--                   segment.alpha = 0.5, -->
-<!--                   position = position_jitter(width = 2,seed = 151097), -->
-<!--                   max.overlaps = 100, -->
-<!--                   fill = "white", -->
-<!--                   show.legend = FALSE)  + -->
-<!--   theme_classic() + -->
-<!--   theme(axis.text.x = element_text(angle = 90, vjust = 1)) + -->
-<!--   xlab("") + ylab("-log10(p)") + -->
-<!--   scale_color_manual(values = pal2) + -->
-<!--   scale_y_reverse(limits = c((max(brain_structure_MDD_female$p.adjust.minus.log) + 1),0)) + -->
-<!--   scale_x_discrete(position = "top") + -->
-<!--   theme(plot.margin = unit(c(-1, 0, 0, 0), "cm")) -->
-
-<!-- # arrange the three plots in a single row -->
-<!-- prow <- cowplot::plot_grid( -->
-<!--   plot_depression_females + theme(legend.position="none"), -->
-<!--   plot_depression_males + theme(legend.position="none"), -->
-<!--   ncol = 1., -->
-<!--   rel_heights = c(1,1.2)) -->
-
-<!-- # extract the legend from one of the plots -->
-<!-- legend <- cowplot::get_legend(plot_depression_females + theme(legend.box.margin = ggplot2::margin(50, 100, 0, 50))) -->
-
-<!-- # add the legend to the row we made earlier. Give it one-third of  -->
-<!-- # the width of one plot (via rel_widths). -->
-<!-- cowplot::plot_grid(prow, legend, rel_widths = c(2, 1)) -->
-<!-- ``` -->
-
-
-<!-- ##### P-value graph - Chronic Pain Status - full sample -->
-
-<!-- ```{r P-value graph chronic pain status - full sample, echo=FALSE, fig.height=10} -->
-
-<!-- brain_structure_CP_all <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$disorder == "chronic_pain") & res_CP_MDD_brain_structure$sample == "All",] -->
-
-<!-- ## Order levels of brain phenotpyes in oder of beta values to make plot neat -->
-<!-- brain_structure_CP_all$brain_phenotype_plot <- reorder(brain_structure_CP_all$brain_phenotype_plot, -brain_structure_CP_all$beta) -->
-
-<!-- brain_structure_CP_all$p.adjust.minus.log <- -log10(brain_structure_CP_all$p.adjust) -->
-
-<!-- ggplot(brain_structure_CP_all, aes(x = brain_structure_type, y = p.adjust.minus.log, colour =  brain_structure_type, shape = Direction, stroke = 1, fill = `P-value (adjusted/not adjusted*) < 0.05`)) + -->
-<!--   scale_shape_manual(values=c(25, 24)) +  -->
-<!--   scale_fill_manual(values = c("white", "dark grey")) + -->
-<!--   geom_jitter(size = 2, position = position_jitter(seed = 151097)) + -->
-<!--   geom_hline(yintercept=-log10(0.05), linetype="dashed",  -->
-<!--                color = "red", size=1, alpha = 0.4) + -->
-<!--   geom_label_repel(aes(label = ifelse(p.adjust < 0.05,as.character(brain_phenotype_plot),'')), -->
-<!--                   size = 2, -->
-<!--                   box.padding = 2,  -->
-<!--                   point.padding = 0, -->
-<!--                   segment.color = 'grey50', -->
-<!--                   position = position_jitter(seed = 151097), -->
-<!--                   max.overlaps = 50, -->
-<!--                   fill = "white", -->
-<!--                   show.legend = FALSE) + -->
-<!--   theme_classic() + -->
-<!--   theme(axis.text.x = element_text(angle = 90, hjust = 1), axis.text.y=element_blank()) + -->
-<!--   xlab("") + ylab("-log10(p)") + -->
-<!--   scale_color_manual(values = pal2) +  -->
-<!--   guides(fill=guide_legend(override.aes=list(shape=21)), colour=guide_legend(title = "Brain Strucutre Subcategory")) -->
-<!-- ``` -->
-
-
-<!-- ##### P-value graph - Chronic Pain - sex-stratified sample -->
-
-<!-- ```{r P-value graph Chronic Pain - male sample, echo=FALSE, fig.height=10} -->
-
-<!-- brain_structure_CP_sex_stratified <- res_CP_MDD_brain_structure[(res_CP_MDD_brain_structure$disorder == "chronic_pain") & (res_CP_MDD_brain_structure$sample == "Female" | res_CP_MDD_brain_structure$sample == "Male"),] -->
-
-<!-- ## Order levels of brain phenotpyes in oder of beta values to make plot neat -->
-<!-- brain_structure_CP_sex_stratified$brain_phenotype_plot <- reorder(brain_structure_CP_sex_stratified$brain_phenotype_plot, -brain_structure_CP_sex_stratified$beta) -->
-
-<!-- brain_structure_CP_male <- brain_structure_CP_sex_stratified[brain_structure_CP_sex_stratified$sample == "Male",] -->
-<!-- brain_structure_CP_female <- brain_structure_CP_sex_stratified[brain_structure_CP_sex_stratified$sample == "Female",] -->
-
-
-<!-- ## Transform p.adjsut to use as y-axis -->
-<!-- brain_structure_CP_male$p.adjust.minus.log <- -log10(brain_structure_CP_male$p.adjust) -->
-<!-- brain_structure_CP_female$p.adjust.minus.log <- -log10(brain_structure_CP_female$p.adjust) -->
-
-
-<!-- plot_CP_females <- ggplot(brain_structure_CP_female, aes(x = brain_structure_type, y = p.adjust.minus.log, colour =  brain_structure_type, shape = Direction, stroke = 1, fill = `P-value (adjusted/not adjusted*) < 0.05`)) + -->
-<!--   scale_shape_manual(values=c(25, 24)) +  -->
-<!--   scale_fill_manual(values = c("white", "dark grey")) + -->
-<!--   geom_jitter(size = 2, position = position_jitter(seed = 151097)) + -->
-<!--   geom_hline(yintercept=-log10(0.05), linetype="dashed",  -->
-<!--                color = "red", size=1, alpha = 0.4) + -->
-<!--   geom_label_repel(aes(label = ifelse(p.adjust < 0.05,as.character(brain_phenotype_plot),'')), -->
-<!--                   size = 2, -->
-<!--                   box.padding = 2,  -->
-<!--                   segment.alpha = 0.5, -->
-<!--                   point.padding = 0, -->
-<!--                   segment.color = 'grey50', -->
-<!--                   position = position_jitter(seed = 151097), -->
-<!--                   max.overlaps = 100, -->
-<!--                   fill = "white", -->
-<!--                   show.legend = FALSE) + -->
-<!--   theme_classic() + -->
-<!--   ylim(c(0,(max(brain_structure_CP_female$p.adjust.minus.log) + 1))) + -->
-<!--   theme(axis.text.x = element_blank()) + -->
-<!--   xlab("") + ylab("-log10(p)") + -->
-<!--   scale_color_manual(values = pal2) +  -->
-<!--   guides(fill=guide_legend(override.aes=list(shape=21)), colour=guide_legend(title = "Brain Strucutre Subcategory")) -->
-
-
-
-<!-- plot_CP_males <- ggplot(brain_structure_CP_male, aes(x = brain_structure_type, y = p.adjust.minus.log, colour =  brain_structure_type, shape = Direction, stroke = 1, fill = `P-value (adjusted/not adjusted*) < 0.05`)) + -->
-<!--   scale_shape_manual(values=c(25, 24)) +  -->
-<!--   scale_fill_manual(values = c("white", "dark grey")) + -->
-<!--   geom_jitter(size = 2, position = position_jitter(seed = 151097)) + -->
-<!--   geom_hline(yintercept=-log10(0.05), linetype="dashed",  -->
-<!--                color = "red", size=1, alpha = 0.4) + -->
-<!--   geom_label_repel(aes(label = ifelse(p.adjust < 0.05,as.character(brain_phenotype_plot),'')), -->
-<!--                   box.padding = 2,  -->
-<!--                   size = 2, -->
-<!--                   point.padding = 0, -->
-<!--                   segment.color = 'grey50', -->
-<!--                   segment.alpha = 0.5, -->
-<!--                   position = position_jitter(seed = 151097), -->
-<!--                   max.overlaps = 100, -->
-<!--                   fill = "white", -->
-<!--                   show.legend = FALSE)  + -->
-<!--   theme_classic() + -->
-<!--   theme(axis.text.x = element_text(angle = 90, vjust = 1)) + -->
-<!--   xlab("") + ylab("-log10(p)") + -->
-<!--   scale_color_manual(values = pal2) + -->
-<!--   scale_y_reverse(limits = c((max(brain_structure_CP_female$p.adjust.minus.log) + 1),0)) + -->
-<!--   scale_x_discrete(position = "top") + -->
-<!--   theme(plot.margin = unit(c(-1, 0, 0, 0), "cm")) -->
-
-<!-- # arrange the three plots in a single row -->
-<!-- prow <- cowplot::plot_grid( -->
-<!--   plot_CP_females + theme(legend.position="none"), -->
-<!--   plot_CP_males + theme(legend.position="none"), -->
-<!--   ncol = 1, -->
-<!--   rel_heights = c(1,1.2)) -->
-
-<!-- # extract the legend from one of the plots -->
-<!-- legend <- cowplot::get_legend(plot_CP_females+ theme(legend.box.margin = ggplot2::margin(50, 100, 0, 50))) -->
-
-<!-- # add the legend to the row we made earlier. Give it one-third of  -->
-<!-- # the width of one plot (via rel_widths). -->
-<!-- cowplot::plot_grid(prow, legend, rel_widths = c(2, 1)) -->
-<!-- ``` -->
-
 

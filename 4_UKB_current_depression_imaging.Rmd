@@ -1,0 +1,46 @@
+---
+title: "UKB Current Depression Phenotype at Imaging"
+author: "Hannah Casey"
+date: "2025-02-26"
+output: html_document
+---
+
+## Load in touchscreen questionnaire data
+```{r setup}
+UKB_touchscreen <- readRDS("/Volumes/GenScotDepression/data/ukb/phenotypes/fields/2021-04-phenotypes-ukb44797/Touchscreen.rds")
+```
+
+## Recode depression symptom variables
+Current depression phenotype at imaging based on: https://onlinelibrary.wiley.com/doi/10.1002/hbm.25690
+f.2050.2.0 - Frequency of depressed mood in last 2 weeks
+f.2060.2.0 - Frequency of unenthusiasm/disinterest in last 2 weeks
+f.2070.2.0 - Frequency of tenseness/restlessness in last 2 weeks
+f.2080.2.0 - Frequency of tiredness/lethargy in last 2 weeks.
+```{r recode variables}
+## Define recoding key
+reverse_recode_key <- c(
+  "Not at all" = "1",
+  "Several days" = "2",
+  "More than half the days" = "3",
+  "Nearly every day" = "4",
+  "Do not know" = NA_character_,   # Convert "Do not know" to NA
+  "Prefer not to answer" = NA_character_  # Convert "Prefer not to answer" to NA
+)
+
+## Apply recoding and remove rows with NAs
+UKB_RDS_4 <- UKB_touchscreen %>%
+  select(f.eid, f.2050.2.0, f.2060.2.0, f.2070.2.0, f.2080.2.0) %>%
+  mutate(across(-f.eid, ~ recode(., !!!reverse_recode_key))) %>%
+  mutate(across(-f.eid, as.numeric)) %>%  ## Convert to numeric
+  mutate(current_depression = rowSums(across(-f.eid))) ## Participant without complete data not summed
+
+```
+
+## Save current depression phenotyp
+
+```{r save}
+
+write.csv(UKB_RDS_4, "/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_current_depression_imaging.csv", row.names = FALSE)
+
+```
+
