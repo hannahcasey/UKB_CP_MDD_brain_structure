@@ -472,7 +472,7 @@ DTI_VE_df <- data.frame(
   "variance_explained" = c(PC_res_MD_global_VE, PC_res_MD_association_fibres_VE, PC_res_MD_projection_fibres_VE, PC_res_MD_thalamic_radiations_VE, PC_res_FA_global_VE, PC_res_FA_association_fibres_VE, PC_res_FA_projection_fibres_VE, PC_res_FA_thalamic_radiations_VE)
 )
 
-write.csv(DTI_VE_df, "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/DTI_PCA_variance_explained.csv", row.names = F)
+write.csv(DTI_VE_df, "/output/DTI_PCA_variance_explained.csv", row.names = F)
 
 ```
 
@@ -662,9 +662,9 @@ T1_outlier_ids <- unique(UKB_imaging_covariates$f.eid[rowSums(T1_z_scores>5, na.
 outlier_ids <- unique(c(DTI_outlier_ids, T1_outlier_ids))
 
 ## Save list of outliers
-write.csv(as.data.frame(DTI_outlier_ids), "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/DTI_imaging_outliers.csv", quote = F)
-write.csv(as.data.frame(T1_outlier_ids), "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/T1_imaging_outliers.csv", quote = F)
-write.csv(as.data.frame(outlier_ids), "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/imaging_outliers.csv", quote = F)
+write.csv(as.data.frame(DTI_outlier_ids), "/resources/DTI_imaging_outliers.csv", quote = F)
+write.csv(as.data.frame(T1_outlier_ids), "/resources/T1_imaging_outliers.csv", quote = F)
+write.csv(as.data.frame(outlier_ids), "/resources/imaging_outliers.csv", quote = F)
 ```
 ## Scale all brain structures and continuous covariates
 
@@ -752,8 +752,8 @@ dim(UKB_imaging_covariates_long)
 ## Save short and long-formatted preprocessed brain structure data
 
 ```{r Save to project folder}
-write.csv(UKB_imaging_covariates, "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates_qc.csv", quote = F)
-write.csv(UKB_imaging_covariates_long, "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_imaging_covariates_long_qc.csv", quote = F)
+write.csv(UKB_imaging_covariates, "/resources/UKB_imaging_covariates_qc.csv", quote = F)
+write.csv(UKB_imaging_covariates_long, "/resources/UKB_imaging_covariates_long_qc.csv", quote = F)
 ```
 
 

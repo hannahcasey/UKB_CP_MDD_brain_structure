@@ -28,7 +28,7 @@ Load in dataframes containing imaging data and covariate from UK Biobank (create
 
 ## Set working directory
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-work_dir <- "~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/"
+work_dir <- ""
 setwd(work_dir)
 
 ## Load in data
@@ -39,7 +39,7 @@ UKB_imaging_covariates <- read.csv(paste0(work_dir, "resources/UKB_imaging_covar
 UKB_imaging_covariates_long <- read.csv(paste0(work_dir, "resources/UKB_imaging_covariates_long_qc.csv"), header = TRUE)
 
 ## Load in chronic pain at imaging data
-UKB_CP <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_chronic_pain_phenotype/output/UKB_chronic_pain_phenotype_imaging.csv")
+UKB_CP <- read.csv("/../UKB_chronic_pain_phenotype/output/UKB_chronic_pain_phenotype_imaging.csv")
 
 ## Remame ID column, f_eid -> f_eid
 UKB_CP <- UKB_CP %>% 

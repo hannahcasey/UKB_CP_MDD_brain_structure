@@ -28,8 +28,6 @@ library(ggh4x)
 **Pre-processing and QC - brain structure data:**
 
 - Outliers removed (>5 SD)
-- Only British/Irish
-
 - Global DTI measures calculated using PCA
 
 ----------------------------------------------------------------------------------------------------------------------------
@@ -45,7 +43,6 @@ Covariates:
 - Age^2
 - UKB imaging assessment centre
 - ICV (only for measures of brain volume)
-- Imaging scanner coords
 
 Multiple comparision correction: FDR
   - n = number of brain structure phenotypes per imaging subcategory
