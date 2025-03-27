@@ -174,11 +174,11 @@ res_CP_MDD_brain_structure$p.adjust.minus.log <- -log10(res_CP_MDD_brain_structu
 brain_structure_abbreviations <- c(
   "Regional Subcortical Volume" = "SCV",
   "Regional Cortical Volume" = "RCV",
-  "Global and Local Cortical Volume" = "GCV",
+  "Global and Lobal Cortical Volume" = "GCV",
   "Regional Cortical Area" = "RCA",
-  "Global and Local Cortical Area" = "GCA",
+  "Global and Lobal Cortical Area" = "GCA",
   "Regional Cortical Thickness" = "RCT",
-  "Global and Local Cortical Thickness" = "GCT",
+  "Global and Lobal Cortical Thickness" = "GCT",
   "Fractional Anisotropy" = "FA",
   "General Fractional Anisotropy" = "GFA",
   "Mean Diffusivity" = "MD",
@@ -190,7 +190,7 @@ brain_structure_types <- levels(res_CP_MDD_brain_structure$brain_structure_type)
 brain_structure_positions <- seq_along(brain_structure_types)
 
 # Define custom colors
-custom_colors <- c("Above Threshold" = "darkblue", "Below Threshold" = "darkgrey")
+custom_colors <- c("Positive" = "#0072B2", "Negative" = "#D55E00", "Not Significant" = "grey60")
 threshold <- -log10(0.05)
 
 ## Depression full sample----
@@ -209,70 +209,83 @@ jitter_width <- 0.2  # Adjust as needed
 
 ## Merge shading data with the main dataset
 depression_all_df <- res_CP_MDD_brain_structure %>%
-  filter(disorder == "current_depression" & sample == "All\n") %>%
-  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_brain_structure$brain_structure_type))) %>% ## Set order
-  arrange(brain_structure_type) %>%
-  mutate( ## Apply jitter manually to x-axis (brain structure type)
-    brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
-    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+  filter(disorder == "depression" & sample == "All\n") %>%
+  mutate(
+    brain_structure_numeric = as.numeric(factor(brain_structure_type)),
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width),
+    Significance = case_when(
+      p.adjust < 0.05 & Direction == "Positive" ~ "Positive",
+      p.adjust < 0.05 & Direction == "Negative" ~ "Negative",
+      TRUE ~ "Not Significant"
+    ),
+    brain_structure_abbreviation = recode(brain_structure_type, !!!brain_structure_abbreviations)
   )
+  
+## Identify the top significant finding in each brain structure category
+top_findings <- depression_all_df %>%
+  filter(p.adjust < 0.05) %>%
+  group_by(brain_structure_type) %>%
+  arrange(p.adjust, desc(abs(beta))) %>%  # First by p-value, then by largest absolute beta
+  slice(1)
+
 
 depression_all_plot <- ggplot(
   depression_all_df,
-  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
-  ## Shading
+  aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)
+) +
+  ## Background shading for alternate structure types
   geom_rect(data = shading_all_df, 
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
             fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
   scale_shape_manual(values = c(25, 24)) + 
-  ## Apply color based on threshold
-  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
-             size = 2) +
+  ## Color coding significant positive/negative points
+  geom_point(aes(color = Significance, fill = Significance, alpha = 0.8), 
+             size = 3, stroke = 1) +
+  ## Add threshold reference line
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
-  ## Labels
-  # geom_text_repel(
-  #   aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-  #   size = 6,  
-  #   box.padding = 0.5,   
-  #   point.padding = 0.5,
-  #   segment.color = 'black',
-  #   color = 'black',
-  #   segment.size = 0.3,
-  #   alpha = 0.7, 
-  #   max.overlaps = Inf,
-  #   nudge_y = 0.3, 
-  #   direction = "both",
-  #   min.segment.length = 0.5, 
-  #   force = 10,
-  #   force_pull = 0,
-  #   show.legend = FALSE
-  # ) +
-    scale_x_continuous(
-    breaks = unique(depression_all_df$brain_structure_numeric),  # Keep original positions
-    labels = brain_structure_abbreviations # Show corresponding names
-    ) +
-  scale_y_continuous(
-    limits = c(0, 11)
+  ## Add labels only for the most significant point in each brain structure category
+  geom_text_repel(
+    data = top_findings,
+    aes(label = brain_phenotype_plot),
+    size = 6,
+    box.padding = 0.5,
+    point.padding = 0.5,
+    segment.color = 'black',
+    segment.size = 0.3,
+    color = "black",
+    alpha = 0.8,
+    max.overlaps = Inf,
+    nudge_y = 0.5,
+    force = 10,
+    show.legend = FALSE
   ) +
+  ## Axis formatting
+  scale_x_continuous(
+    breaks = sort(unique(depression_all_df$brain_structure_numeric)),
+    labels = brain_structure_abbreviations,  
+  ) +
+  scale_y_continuous(limits = c(0, 6)) +
+  ## Custom Theme
   theme_classic() +
   theme(
-    text = element_text(size=17),
-    axis.text.x = element_text(size=17), 
-    legend.position = "none"  # Remove legend
+    text = element_text(size = 17),
+    axis.text.x = element_text(size = 17),
+    legend.position = "bottom"
   ) +
-  xlab("") + 
-  ylab("-log10(p)") +
+  ## Custom Colors
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
-  guides(color = "none", shape = "none") + 
+  guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
+  ## Labels and Title
+  xlab("") + 
+  ylab("-log10(p)") +
   ggtitle('Full Sample')
 
 ## Depression sex interaction ----
 
 ## Merge shading data with the main dataset
 depression_sex_interaction_df <- res_CP_MDD_brain_structure %>%
-  filter(disorder == "current_depression" & sample == "Sex Interaction\n(Male - Female)") %>%
+  filter(disorder == "depression" & sample == "Sex Interaction\n(Male - Female)") %>%
   group_by(brain_structure_type) %>%
   filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups without any significant findings
   ungroup() %>%
@@ -280,7 +293,12 @@ depression_sex_interaction_df <- res_CP_MDD_brain_structure %>%
   arrange(brain_structure_type) %>%
   mutate( ## Apply jitter manually to x-axis (brain structure type)
     brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
-    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width),  # Apply jitter
+    Significance = case_when(
+      p.adjust < 0.05 & Direction == "Positive" ~ "Positive",
+      p.adjust < 0.05 & Direction == "Negative" ~ "Negative",
+      TRUE ~ "Not Significant"
+      )
   )
 
 ## Get unique brain structure types
@@ -298,15 +316,14 @@ shading_all_df <- data.frame(
 
 depression_sex_interaction_plot <- ggplot(
   depression_sex_interaction_df,
-  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
+  aes(x = jittered_x, y = p.adjust.minus.log, fill = Significance, colour = Significance, shape = Direction, stroke = 1)) +
   ## Shading
   geom_rect(data = shading_all_df, 
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
             fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
   scale_shape_manual(values = c(25, 24)) + 
-  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
-             size = 2) +
+  geom_point(aes(color = Significance, fill = Significance, alpha = 0.8), 
+             size = 3, stroke = 1) +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
   ## Labels
   geom_text_repel(
@@ -327,11 +344,11 @@ depression_sex_interaction_plot <- ggplot(
     show.legend = FALSE
   ) +
     scale_x_continuous(
-    breaks = unique(depression_sex_interaction_df$brain_structure_numeric),  # Keep original positions
+    breaks = sort(unique(depression_sex_interaction_df$brain_structure_numeric)),  # Keep original positions
     labels = brain_structure_abbreviations_filtered  # Show corresponding names
   ) +
     scale_y_continuous(
-    limits = c(0, 11)
+    limits =  c(0, 6)
   ) +
   theme_classic() +
   theme(
@@ -343,23 +360,28 @@ depression_sex_interaction_plot <- ggplot(
   ylab("-log10(p)") +
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
-  guides(color = "none", shape = "none") + 
+    guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
   ggtitle('Sex Interaction (Male - Female)')
 
 ## Depression male sample ----
 
 ## Merge shading data with the main dataset
 depression_male_df <- res_CP_MDD_brain_structure %>%
-  filter(disorder == "current_depression" & (sample == "Sex Interaction\n(Male - Female)" | sample == "Male\n")) %>%
+  filter(disorder == "depression" & (sample == "Sex Interaction\n(Male - Female)" | sample == "Male\n")) %>%
   group_by(brain_structure_type) %>%
   filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups not included in interaction analysis
   ungroup() %>%
-  filter(disorder == "current_depression" & sample == "Male\n") %>%
+  filter(disorder == "depression" & sample == "Male\n") %>%
   mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_brain_structure$brain_structure_type))) %>% ## Set order
   arrange(brain_structure_type) %>%
   mutate( ## Apply jitter manually to x-axis (brain structure type)
     brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
-    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width),  # Apply jitter
+    Significance = case_when(
+      p.adjust < 0.05 & Direction == "Positive" ~ "Positive",
+      p.adjust < 0.05 & Direction == "Negative" ~ "Negative",
+      TRUE ~ "Not Significant"
+      )
   )
 
 ## Get unique brain structure types
@@ -377,15 +399,16 @@ shading_all_df <- data.frame(
 
 depression_male_plot <- ggplot(
   depression_male_df,
-  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
-  ## Shading
+  aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)
+) +
+  ## Background shading for alternate structure types
   geom_rect(data = shading_all_df, 
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
             fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
   scale_shape_manual(values = c(25, 24)) + 
-  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
-             size = 2) +
+  ## Color coding significant positive/negative points
+  geom_point(aes(color = Significance, fill = Significance, alpha = 0.8), 
+             size = 3, stroke = 1) +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
   ## Labels
   geom_text_repel(
@@ -406,11 +429,11 @@ depression_male_plot <- ggplot(
     show.legend = FALSE
   ) +
     scale_x_continuous(
-    breaks = unique(depression_male_df$brain_structure_numeric),  # Keep original positions
+    breaks = sort(unique(depression_male_df$brain_structure_numeric)),  # Keep original positions
     labels = brain_structure_abbreviations_filtered  # Show corresponding names
   ) +
     scale_y_continuous(
-    limits = c(0, 11)
+    limits =  c(0, 6)
   ) +
   theme_classic() +
   theme(
@@ -422,23 +445,26 @@ depression_male_plot <- ggplot(
   ylab("-log10(p)") +
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
-  guides(color = "none", shape = "none") + 
+    guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
   ggtitle('Male Sample')
 
 ## Depression female sample ----
 
 ## Merge shading data with the main dataset
 depression_female_df <- res_CP_MDD_brain_structure %>%
-  filter(disorder == "current_depression" & (sample == "Sex Interaction\n(Male - Female)" | sample == "Female\n")) %>%
+  filter(disorder == "depression" & (sample == "Sex Interaction\n(Male - Female)" | sample == "Female\n")) %>%
   group_by(brain_structure_type) %>%
   filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups without any significant findings
   ungroup() %>%
-  filter(disorder == "current_depression" & sample == "Female\n") %>%
-  mutate(brain_structure_type = factor(brain_structure_type, levels = levels(res_CP_MDD_brain_structure$brain_structure_type))) %>% ## Set order
-  arrange(brain_structure_type) %>%
+  filter(disorder == "depression" & sample == "Female\n") %>%
   mutate( ## Apply jitter manually to x-axis (brain structure type)
     brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
-    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width),  # Apply jitter
+    Significance = case_when(
+      p.adjust < 0.05 & Direction == "Positive" ~ "Positive",
+      p.adjust < 0.05 & Direction == "Negative" ~ "Negative",
+      TRUE ~ "Not Significant"
+      )
   )
 
 ## Get unique brain structure types
@@ -456,15 +482,16 @@ shading_all_df <- data.frame(
 
 depression_female_plot <- ggplot(
   depression_female_df,
-  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
-  ## Shading
+  aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)
+) +
+  ## Background shading for alternate structure types
   geom_rect(data = shading_all_df, 
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
             fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
   scale_shape_manual(values = c(25, 24)) + 
-  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
-             size = 2) +
+  ## Color coding significant positive/negative points
+  geom_point(aes(color = Significance, fill = Significance, alpha = 0.8), 
+             size = 3, stroke = 1) +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
   # Labels
   geom_text_repel(
@@ -485,11 +512,11 @@ depression_female_plot <- ggplot(
     show.legend = FALSE
   ) +
     scale_x_continuous(
-    breaks = unique(depression_female_df$brain_structure_numeric),  # Keep original positions
+    breaks = sort(unique(depression_female_df$brain_structure_numeric)),  # Keep original positions
     labels = brain_structure_abbreviations_filtered  # Show corresponding names
   ) +
   scale_y_continuous(
-    limits = c(0, 11)
+    limits =  c(0, 6)
   ) +
   theme_classic() +
   theme(
@@ -501,13 +528,13 @@ depression_female_plot <- ggplot(
   ylab("-log10(p)") +
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
-  guides(color = "none", shape = "none") + 
+    guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
   ggtitle('Female Sample')
 
 tiff("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/depression.tiff", units="in", width=15, height=15, res=300)
 
 depression_all_plot / (depression_sex_interaction_plot + depression_male_plot + depression_female_plot) +
-   plot_layout(heights = unit(c(25, 1), c('cm', 'null')))
+   plot_layout(heights = unit(c(20, 1), c('cm', 'null')))
 
 dev.off()
 ```
@@ -542,57 +569,72 @@ chronic_pain_all_df <- res_CP_MDD_brain_structure %>%
   arrange(brain_structure_type) %>%
   mutate( ## Apply jitter manually to x-axis (brain structure type)
     brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
-    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width),  # Apply jitter
+    Significance = case_when(
+      p.adjust < 0.05 & Direction == "Positive" ~ "Positive",
+      p.adjust < 0.05 & Direction == "Negative" ~ "Negative",
+      TRUE ~ "Not Significant"
+      )
   )
+
+## Identify the top significant finding in each brain structure category
+top_findings <- chronic_pain_all_df %>%
+  filter(p.adjust < 0.05) %>%
+  group_by(brain_structure_type) %>%
+  arrange(p.adjust, desc(abs(beta))) %>%  # First by p-value, then by largest absolute beta
+  slice(1)
+
 
 chronic_pain_all_plot <- ggplot(
   chronic_pain_all_df,
-  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
-  ## Shading
+    aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)
+) +
+  ## Background shading for alternate structure types
   geom_rect(data = shading_all_df, 
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
             fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
   scale_shape_manual(values = c(25, 24)) + 
-  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
-             size = 2) +
+  ## Color coding significant positive/negative points
+  geom_point(aes(color = Significance, fill = Significance, alpha = 0.8), 
+             size = 3, stroke = 1) +
+  ## Add threshold reference line
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
-  ## Labels
-  # geom_text_repel(
-  #   aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-  #   size = 6,
-  #   box.padding = 0.5,
-  #   point.padding = 0.5,
-  #   segment.color = 'black',
-  #   color = 'black',
-  #   segment.size = 0.3,
-  #   alpha = 0.7,
-  #   max.overlaps = Inf,
-  #   nudge_y = 0.3,
-  #   direction = "both",
-  #   min.segment.length = 0.5,
-  #   force = 10,
-  #   force_pull = 0,
-  #   show.legend = FALSE
-  # ) +
-    scale_x_continuous(
-    breaks = unique(chronic_pain_all_df$brain_structure_numeric),  # Keep original positions
-    labels = brain_structure_abbreviations  # Show corresponding names
-    ) +
-  scale_y_continuous(
-    limits = c(0, 17)
+  ## Add labels only for the most significant point in each brain structure category
+  geom_text_repel(
+    data = top_findings,
+    aes(label = brain_phenotype_plot),
+    size = 6,
+    box.padding = 0.5,
+    point.padding = 0.5,
+    segment.color = 'black',
+    segment.size = 0.3,
+    color = "black",
+    alpha = 0.8,
+    max.overlaps = Inf,
+    nudge_y = 0.5,
+    force = 10,
+    show.legend = FALSE
   ) +
+  ## Axis formatting
+  scale_x_continuous(
+    breaks = sort(unique(chronic_pain_all_df$brain_structure_numeric)),  # Keep original positions
+    labels = brain_structure_abbreviations # Show corresponding names
+  ) +
+  scale_y_continuous(limits = c(0, 17)) +
+  ## Custom Theme
   theme_classic() +
   theme(
-    text = element_text(size=17),
-    axis.text.x = element_text(size=17), 
-    legend.position = "none"  # Remove legend
+    text = element_text(size = 17),
+    axis.text.x = element_text(size = 17),
+    legend.position = "bottom"
   ) +
-  xlab("") + 
-  ylab("-log10(p)") +
+  ## Custom Colors
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
-  guides(color = "none", shape = "none") + 
+    guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
+  ## Labels and Title
+  xlab("") + 
+  ylab("-log10(p)") +
   ggtitle('Full Sample')
 
 ## Chronic Pain sex interaction ----
@@ -607,7 +649,12 @@ chronic_pain_sex_interaction_df <- res_CP_MDD_brain_structure %>%
   arrange(brain_structure_type) %>%
   mutate( ## Apply jitter manually to x-axis (brain structure type)
     brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
-    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width),  # Apply jitter
+    Significance = case_when(
+      p.adjust < 0.05 & Direction == "Positive" ~ "Positive",
+      p.adjust < 0.05 & Direction == "Negative" ~ "Negative",
+      TRUE ~ "Not Significant"
+      )
   )
 
 ## Get unique brain structure types
@@ -625,15 +672,16 @@ shading_all_df <- data.frame(
 
 chronic_pain_sex_interaction_plot <- ggplot(
   chronic_pain_sex_interaction_df,
-  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
-  ## Shading
+  aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)
+) +
+  ## Background shading for alternate structure types
   geom_rect(data = shading_all_df, 
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
             fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
   scale_shape_manual(values = c(25, 24)) + 
-  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
-             size = 2) +
+  ## Color coding significant positive/negative points
+  geom_point(aes(color = Significance, fill = Significance, alpha = 0.8), 
+             size = 3, stroke = 1) +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
   ## Labels
   geom_text_repel(
@@ -654,7 +702,7 @@ chronic_pain_sex_interaction_plot <- ggplot(
     show.legend = FALSE
   ) +
     scale_x_continuous(
-    breaks = unique(chronic_pain_sex_interaction_df$brain_structure_numeric),  # Keep original positions
+    breaks = sort(unique(chronic_pain_sex_interaction_df$brain_structure_numeric)),  # Keep original positions
     labels = brain_structure_abbreviations_filtered  # Show corresponding names
   ) +
     scale_y_continuous(
@@ -670,7 +718,7 @@ chronic_pain_sex_interaction_plot <- ggplot(
   ylab("-log10(p)") +
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
-  guides(color = "none", shape = "none") + 
+    guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
   ggtitle('Sex Interaction (Male - Female)')
 
 ## Chronic Pain male sample ----
@@ -686,7 +734,12 @@ chronic_pain_male_df <- res_CP_MDD_brain_structure %>%
   arrange(brain_structure_type) %>%
   mutate( ## Apply jitter manually to x-axis (brain structure type)
     brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
-    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width),  # Apply jitter
+    Significance = case_when(
+      p.adjust < 0.05 & Direction == "Positive" ~ "Positive",
+      p.adjust < 0.05 & Direction == "Negative" ~ "Negative",
+      TRUE ~ "Not Significant"
+      )
   )
 
 ## Get unique brain structure types
@@ -704,15 +757,16 @@ shading_all_df <- data.frame(
 
 chronic_pain_male_plot <- ggplot(
   chronic_pain_male_df,
-  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
-  ## Shading
+  aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)
+) +
+  ## Background shading for alternate structure types
   geom_rect(data = shading_all_df, 
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
             fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
   scale_shape_manual(values = c(25, 24)) + 
-  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
-             size = 2) +
+  ## Color coding significant positive/negative points
+  geom_point(aes(color = Significance, fill = Significance, alpha = 0.8), 
+             size = 3, stroke = 1) +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
   ## Labels
   geom_text_repel(
@@ -733,7 +787,7 @@ chronic_pain_male_plot <- ggplot(
     show.legend = FALSE
   ) +
     scale_x_continuous(
-    breaks = unique(chronic_pain_male_df$brain_structure_numeric),  # Keep original positions
+    breaks = sort(unique(chronic_pain_male_df$brain_structure_numeric)),  # Keep original positions
     labels = brain_structure_abbreviations_filtered  # Show corresponding names
   ) +
     scale_y_continuous(
@@ -749,7 +803,7 @@ chronic_pain_male_plot <- ggplot(
   ylab("-log10(p)") +
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
-  guides(color = "none", shape = "none") + 
+    guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
   ggtitle('Male Sample')
 
 ## Chronic Pain female sample ----
@@ -765,7 +819,12 @@ chronic_pain_female_df <- res_CP_MDD_brain_structure %>%
   arrange(brain_structure_type) %>%
   mutate( ## Apply jitter manually to x-axis (brain structure type)
     brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
-    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width),  # Apply jitter
+    Significance = case_when(
+      p.adjust < 0.05 & Direction == "Positive" ~ "Positive",
+      p.adjust < 0.05 & Direction == "Negative" ~ "Negative",
+      TRUE ~ "Not Significant"
+      )
   )
 
 ## Get unique brain structure types
@@ -783,16 +842,16 @@ shading_all_df <- data.frame(
 
 chronic_pain_female_plot <- ggplot(
   chronic_pain_female_df,
-  aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)) +
-  ## Shading
+  aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)
+) +
+  ## Background shading for alternate structure types
   geom_rect(data = shading_all_df, 
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
             fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
   scale_shape_manual(values = c(25, 24)) + 
-  geom_point(aes(color = p.adjust.minus.log > -log10(0.05)), size = 2) +
-  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
-             size = 2) +
+  ## Color coding significant positive/negative points
+  geom_point(aes(color = Significance, fill = Significance, alpha = 0.8), 
+             size = 3, stroke = 1) +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
   ## Labels
   geom_text_repel(
@@ -813,7 +872,7 @@ chronic_pain_female_plot <- ggplot(
     show.legend = FALSE
   ) +
     scale_x_continuous(
-    breaks = unique(chronic_pain_female_df$brain_structure_numeric),  # Keep original positions
+    breaks = sort(unique(chronic_pain_female_df$brain_structure_numeric)),  # Keep original positions
     labels = brain_structure_abbreviations_filtered  # Show corresponding names
   ) +
   scale_y_continuous(
@@ -829,7 +888,7 @@ chronic_pain_female_plot <- ggplot(
   ylab("-log10(p)") +
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
-  guides(color = "none", shape = "none") + 
+    guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
   ggtitle('Female Sample')
 
 tiff("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/chronic_pain.tiff", units="in", width=15, height=15, res=300)
@@ -870,25 +929,31 @@ disorder_interaction_all_df <- res_CP_MDD_structure_disorder_interaction %>%
   arrange(brain_structure_type) %>%
   mutate( ## Apply jitter manually to x-axis (brain structure type)
     brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
-    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width),  # Apply jitter
+    Significance = case_when(
+      p.adjust < 0.05 & Direction == "Positive" ~ "Positive",
+      p.adjust < 0.05 & Direction == "Negative" ~ "Negative",
+      TRUE ~ "Not Significant"
+      )
   )
 
 disorder_interaction_all_plot <- ggplot(
   disorder_interaction_all_df,
-  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
-  ## Shading
+  aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)
+) +
+  ## Background shading for alternate structure types
   geom_rect(data = shading_all_df, 
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
             fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
   scale_shape_manual(values = c(25, 24)) + 
-  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
-             size = 2) +
+  ## Color coding significant positive/negative points
+  geom_point(aes(color = Significance, fill = Significance, alpha = 0.8), 
+             size = 3, stroke = 1) +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 5,
+    size = 6,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -904,7 +969,7 @@ disorder_interaction_all_plot <- ggplot(
     show.legend = FALSE
   ) +
     scale_x_continuous(
-    breaks = unique(depression_all_df$brain_structure_numeric)  # Keep original positions
+    breaks = sort(unique(disorder_interaction_all_df$brain_structure_numeric)) # Keep original positions
     #labels = depression_all_df$brain_structure_type # Show corresponding names
     ) +
   scale_y_continuous(
@@ -920,7 +985,7 @@ disorder_interaction_all_plot <- ggplot(
   ylab("-log10(p)") +
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
-  guides(color = "none", shape = "none") + 
+    guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
   ggtitle('Full Sample')
 
 ## Disorder-sex interaction ----
@@ -935,7 +1000,12 @@ disorder_sex_interaction_df <- res_CP_MDD_structure_disorder_interaction %>%
   arrange(brain_structure_type) %>%
   mutate( ## Apply jitter manually to x-axis (brain structure type)
     brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
-    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width),  # Apply jitter
+    Significance = case_when(
+      p.adjust < 0.05 & Direction == "Positive" ~ "Positive",
+      p.adjust < 0.05 & Direction == "Negative" ~ "Negative",
+      TRUE ~ "Not Significant"
+      )
   )
 
 ## Get unique brain structure types
@@ -953,20 +1023,21 @@ shading_all_df <- data.frame(
 
 disorder_sex_interaction_plot <- ggplot(
   disorder_sex_interaction_df,
-  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
-  ## Shading
+  aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)
+) +
+  ## Background shading for alternate structure types
   geom_rect(data = shading_all_df, 
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
             fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
   scale_shape_manual(values = c(25, 24)) + 
-  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
-             size = 2) +
+  ## Color coding significant positive/negative points
+  geom_point(aes(color = Significance, fill = Significance, alpha = 0.8), 
+             size = 3, stroke = 1) +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 5,
+    size = 6,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -982,7 +1053,7 @@ disorder_sex_interaction_plot <- ggplot(
     show.legend = FALSE
   ) +
     scale_x_continuous(
-    breaks = unique(disorder_sex_interaction_df$brain_structure_numeric),  # Keep original positions
+    breaks = sort(unique(disorder_sex_interaction_df$brain_structure_numeric)),  # Keep original positions
     labels = brain_structure_abbreviations_filtered  # Show corresponding names
   ) +
     scale_y_continuous(
@@ -998,7 +1069,7 @@ disorder_sex_interaction_plot <- ggplot(
   ylab("-log10(p)") +
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
-  guides(color = "none", shape = "none") + 
+    guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
   ggtitle('Sex Interaction (Male - Female)')
 
 ## Disorder interaction male sample ----
@@ -1014,7 +1085,12 @@ disorder_interaction_male_df <- res_CP_MDD_structure_disorder_interaction %>%
   arrange(brain_structure_type) %>%
   mutate( ## Apply jitter manually to x-axis (brain structure type)
     brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
-    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width),  # Apply jitter
+    Significance = case_when(
+      p.adjust < 0.05 & Direction == "Positive" ~ "Positive",
+      p.adjust < 0.05 & Direction == "Negative" ~ "Negative",
+      TRUE ~ "Not Significant"
+      )
   )
 
 ## Get unique brain structure types
@@ -1032,20 +1108,21 @@ shading_all_df <- data.frame(
 
 disorder_interaction_male_plot <- ggplot(
   disorder_interaction_male_df,
-  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
-  ## Shading
+  aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)
+) +
+  ## Background shading for alternate structure types
   geom_rect(data = shading_all_df, 
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
             fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
   scale_shape_manual(values = c(25, 24)) + 
-  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"), alpha = 0.5),
-             size = 2) +
+  ## Color coding significant positive/negative points
+  geom_point(aes(color = Significance, fill = Significance, alpha = 0.8), 
+             size = 3, stroke = 1) +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 5,
+    size = 6,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -1061,7 +1138,7 @@ disorder_interaction_male_plot <- ggplot(
     show.legend = FALSE
   ) +
     scale_x_continuous(
-    breaks = unique(disorder_interaction_male_df$brain_structure_numeric),  # Keep original positions
+    breaks = sort(unique(disorder_interaction_male_df$brain_structure_numeric)),  # Keep original positions
     labels = brain_structure_abbreviations_filtered  # Show corresponding names
   ) +
     scale_y_continuous(
@@ -1077,7 +1154,7 @@ disorder_interaction_male_plot <- ggplot(
   ylab("-log10(p)") +
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
-  guides(color = "none", shape = "none") + 
+    guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
   ggtitle('Male Sample')
 
 ## Disorder interaction female sample ----
@@ -1093,7 +1170,12 @@ disorder_interaction_female_df <- res_CP_MDD_structure_disorder_interaction %>%
   arrange(brain_structure_type) %>%
   mutate( ## Apply jitter manually to x-axis (brain structure type)
     brain_structure_numeric = as.numeric(factor(brain_structure_type)),  # Convert to numeric
-    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width)  # Apply jitter
+    jittered_x = brain_structure_numeric + runif(n(), -jitter_width, jitter_width),  # Apply jitter
+    Significance = case_when(
+      p.adjust < 0.05 & Direction == "Positive" ~ "Positive",
+      p.adjust < 0.05 & Direction == "Negative" ~ "Negative",
+      TRUE ~ "Not Significant"
+      )
   )
 
 ## Get unique brain structure types
@@ -1111,21 +1193,21 @@ shading_all_df <- data.frame(
 
 disorder_interaction_female_plot <- ggplot(
   disorder_interaction_female_df,
-  aes(x = jittered_x, y = p.adjust.minus.log, fill = brain_structure_type, colour = brain_structure_type, shape = Direction, stroke = 1)) +
-  ## Shading
+  aes(x = jittered_x, y = p.adjust.minus.log, shape = Direction, stroke = 1)
+) +
+  ## Background shading for alternate structure types
   geom_rect(data = shading_all_df, 
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
             fill = "lightgrey", alpha = 0.2, inherit.aes = FALSE) +
   scale_shape_manual(values = c(25, 24)) + 
-  geom_point(aes(color = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 fill = ifelse(p.adjust.minus.log > threshold, "Above Threshold", "Below Threshold"),
-                 alpha = 0.5),
-             size = 2) +
+  ## Color coding significant positive/negative points
+  geom_point(aes(color = Significance, fill = Significance, alpha = 0.8), 
+             size = 3, stroke = 1) +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red", size = 1, alpha = 0.4) +
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 5,
+    size = 6,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -1141,7 +1223,7 @@ disorder_interaction_female_plot <- ggplot(
     show.legend = FALSE
   ) +
     scale_x_continuous(
-    breaks = unique(disorder_interaction_female_df$brain_structure_numeric),  # Keep original positions
+    breaks = sort(unique(disorder_interaction_female_df$brain_structure_numeric)),  # Keep original positions
     labels = brain_structure_abbreviations_filtered  # Show corresponding names
   ) +
     scale_y_continuous(
@@ -1157,11 +1239,89 @@ disorder_interaction_female_plot <- ggplot(
   ylab("-log10(p)") +
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
-  guides(color = "none", shape = "none") + 
+    guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
   ggtitle('Female Sample')
 
 tiff("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/disorder_interaction.tiff", units="in", width=15, height=10, res=300)
 (disorder_sex_interaction_plot + disorder_interaction_male_plot + disorder_interaction_female_plot)
 dev.off()
+```
+
+#### Common alterations in chronic pain and depression
+```{r, echo=FALSE, results="asis", comment=NA}
+
+# Filter significant results
+depression_sig <- depression_all_df %>% filter(p.adjust < 0.05)
+chronic_pain_sig <- chronic_pain_all_df %>% filter(p.adjust < 0.05)
+
+depression_sig$brain_phenotype <- gsub("_right|_left", "", depression_sig$brain_phenotype)
+chronic_pain_sig$brain_phenotype <- gsub("_right|_left", "", chronic_pain_sig$brain_phenotype)
+
+# Merge on common brain phenotype
+common_sig <- inner_join(depression_sig, chronic_pain_sig, by = "brain_phenotype", suffix = c("_dep", "_pain"))
+
+# Filter where the direction of effect is the same (both beta values positive or both negative)
+common_sig_same_direction <- common_sig %>%
+  filter(sign(beta_dep) == sign(beta_pain))
+
+```
+
+### Volume in chronic pain
+```{r, echo=FALSE, results="asis", comment=NA}
+
+CP_sign_volume <- chronic_pain_all_df %>%
+  filter(p.adjust < 0.05) %>%
+  filter(brain_structure_type == "Regional Cortical Volume") %>%
+  select(brain_phenotype_plot) %>%
+  mutate(brain_phenotype_plot = gsub(" left| right", "", brain_phenotype_plot)) %>%
+  unique()
+
+
+CP_sign_area <- chronic_pain_all_df %>%
+  filter(p.adjust < 0.05) %>%
+  filter(brain_structure_type == "Regional Cortical Area") %>%
+  select(brain_phenotype_plot) %>%
+  mutate(brain_phenotype_plot = gsub(" left| right", "", brain_phenotype_plot)) %>%
+  unique()
+
+
+CP_sign_thickness <- chronic_pain_all_df %>%
+  filter(p.adjust < 0.05) %>%
+  filter(Direction == "Negative") %>%
+  filter(brain_structure_type == "Regional Cortical Thickness") %>%
+  select(brain_phenotype_plot) %>%
+  mutate(brain_phenotype_plot = gsub(" left| right", "", brain_phenotype_plot)) %>%
+  unique()
+
+
+## Lower volume with lower area and thickness
+length(CP_sign_volume$brain_phenotype_plot)
+sum(CP_sign_volume$brain_phenotype_plot %in% CP_sign_area$brain_phenotype_plot)
+sum(CP_sign_volume$brain_phenotype_plot %in% CP_sign_thickness$brain_phenotype_plot)
+sum(CP_sign_volume$brain_phenotype_plot %in% CP_sign_thickness$brain_phenotype_plot & CP_sign_volume$brain_phenotype_plot %in% CP_sign_area$brain_phenotype_plot)
+
+
+## Lower volumes withput lower area and thickness
+CP_sign_volume$brain_phenotype_plot[!CP_sign_volume$brain_phenotype_plot %in% CP_sign_area$brain_phenotype_plot & !CP_sign_volume$brain_phenotype_plot %in% CP_sign_thickness$brain_phenotype_plot]
+
+
+CP_sign_area$brain_phenotype_plot[CP_sign_area$brain_phenotype_plot %in% CP_sign_volume$brain_phenotype_plot]
+
+CP_sign_thickness$brain_phenotype_plot[CP_sign_thickness$brain_phenotype_plot %in% CP_sign_volume$brain_phenotype_plot]
+
+
+brain_results <- chronic_pain_all_df %>%
+  mutate(
+    base_region = str_remove(brain_phenotype, "^(left_|right_)"),
+    base_region = str_remove(base_region, "(volume|area|thickness)$")
+  )
+
+significant <- brain_results %>%
+  filter(p.adjust < 0.05)
+
+CP_region_morph_counts <- significant %>%
+  count(brain_phenotype_plot) %>%
+  filter(n >= 2)
+
 ```
 

@@ -4,19 +4,117 @@ author: "Hannah Casey"
 date: "2025-02-26"
 output: html_document
 ---
+```{r setup}
+library(dplyr)
+```
+
 
 ## Load in touchscreen questionnaire data
-```{r setup}
+```{r Get data}
 UKB_touchscreen <- readRDS("/Volumes/GenScotDepression/data/ukb/phenotypes/fields/2021-04-phenotypes-ukb44797/Touchscreen.rds")
 ```
 
-## Recode depression symptom variables
-Current depression phenotype at imaging based on: https://onlinelibrary.wiley.com/doi/10.1002/hbm.25690
-f.2050.2.0 - Frequency of depressed mood in last 2 weeks
-f.2060.2.0 - Frequency of unenthusiasm/disinterest in last 2 weeks
-f.2070.2.0 - Frequency of tenseness/restlessness in last 2 weeks
-f.2080.2.0 - Frequency of tiredness/lethargy in last 2 weeks.
-```{r recode variables}
+## Get required variables to derived lifetime depression - based on Smith et al phenotypes:https://biobank.ndph.ox.ac.uk/showcase/refer.cgi?id=158772
+```{r get lifetime depression varaibles}
+
+UKB_touchscreen_lifetime_dep <- UKB_touchscreen %>%
+  select(f.eid, f.4598.2.0, f.4609.2.0, f.4620.2.0, f.4631.2.0, 
+         f.5375.2.0, f.5386.2.0, f.2090.2.0, f.2100.2.0) 
+```
+
+## Derive lifetime depression phenotypes
+```{r derive Smith et al depression phenotypes}
+# (1) Ever felt depressed for a whole week - 4598
+# (2) Ever disinterested or unenthusiastic for a whole week - 4631
+# (3) Only 1 episode - 4620
+# (4) ≥ 2 episodes - 4620
+# (5) Episode lasted ≥ 2 weeks - 4609
+# (6) Ever seen a GP for nerves, anxiety, tension or depression. - 2090
+# (7) Ever seen a psychiatrist for nerves, anxiety, tension or depression - 2100
+
+UKB_touchscreen_lifetime_dep$depressed_week <- recode(
+  UKB_touchscreen_lifetime_dep$f.4598.2.0,
+  "No" = 0,
+  "Yes" = 1
+)
+
+UKB_touchscreen_lifetime_dep$disinterested_week <- recode(
+  UKB_touchscreen_lifetime_dep$f.4631.2.0,
+  "No" = 0,
+  "Yes" = 1
+)
+
+UKB_touchscreen_lifetime_dep$only_one <- NA
+UKB_touchscreen_lifetime_dep$only_one[UKB_touchscreen_lifetime_dep$f.4620.2.0 == 0 | UKB_touchscreen_lifetime_dep$f.4620.2.0 > 1] <- 0
+UKB_touchscreen_lifetime_dep$only_one[UKB_touchscreen_lifetime_dep$f.4620.2.0 == 1] <- 1
+
+UKB_touchscreen_lifetime_dep$at_least_two <- NA
+UKB_touchscreen_lifetime_dep$at_least_two[UKB_touchscreen_lifetime_dep$f.4620.2.0 == 0 | UKB_touchscreen_lifetime_dep$f.4620.2.0 == 1] <- 0
+UKB_touchscreen_lifetime_dep$at_least_two[UKB_touchscreen_lifetime_dep$f.4620.2.0 > 1] <- 1
+
+UKB_touchscreen_lifetime_dep$longest_period_2_weeks <- NA
+UKB_touchscreen_lifetime_dep$longest_period_2_weeks[UKB_touchscreen_lifetime_dep$f.4609.2.0 == 0 | UKB_touchscreen_lifetime_dep$f.4609.2.0 == 1] <- 0
+UKB_touchscreen_lifetime_dep$longest_period_2_weeks[UKB_touchscreen_lifetime_dep$f.4609.2.0 >= 2] <- 1
+
+UKB_touchscreen_lifetime_dep$GP <- recode(
+  UKB_touchscreen_lifetime_dep$f.2090.2.0,
+  "No" = 0,
+  "Yes" = 1
+)
+
+UKB_touchscreen_lifetime_dep$psychiatrist <- recode(
+  UKB_touchscreen_lifetime_dep$f.2100.2.0,
+  "No" = 0,
+  "Yes" = 1
+)
+
+## Single episode of probable MD 
+#{(1) AND (3) AND (5) AND [(6) OR (7)]} OR {(2) AND (3) AND (5) AND [(6) OR (7)]}
+UKB_touchscreen_lifetime_dep$single_episode_MD <- (UKB_touchscreen_lifetime_dep$depressed_week & UKB_touchscreen_lifetime_dep$only_one & UKB_touchscreen_lifetime_dep$longest_period_2_weeks & (UKB_touchscreen_lifetime_dep$GP | UKB_touchscreen_lifetime_dep$psychiatrist) |
+                                                     UKB_touchscreen_lifetime_dep$disinterested_week & UKB_touchscreen_lifetime_dep$only_one & UKB_touchscreen_lifetime_dep$longest_period_2_weeks & (UKB_touchscreen_lifetime_dep$GP | UKB_touchscreen_lifetime_dep$psychiatrist))
+
+## Probable Recurrent MD (moderate)
+# [(1) OR (2)] AND (4) AND (5) AND (6)
+UKB_touchscreen_lifetime_dep$recurrent_MD_moderate <- (UKB_touchscreen_lifetime_dep$depressed_week | UKB_touchscreen_lifetime_dep$disinterested_week) & 
+  UKB_touchscreen_lifetime_dep$at_least_two & UKB_touchscreen_lifetime_dep$longest_period_2_weeks & UKB_touchscreen_lifetime_dep$GP
+
+## Probable Recurrent MD (severe)
+# [(1) OR (2)] AND (4) AND (5) AND (6)
+UKB_touchscreen_lifetime_dep$recurrent_MD_severe <- (UKB_touchscreen_lifetime_dep$depressed_week | UKB_touchscreen_lifetime_dep$disinterested_week) & 
+  UKB_touchscreen_lifetime_dep$at_least_two & UKB_touchscreen_lifetime_dep$longest_period_2_weeks & UKB_touchscreen_lifetime_dep$psychiatrist
+
+## Get status of participants with enough information to derive phenotype
+UKB_touchscreen_lifetime_dep$eligible <- ifelse((!is.na(UKB_touchscreen_lifetime_dep$depressed_week) &
+                                            !is.na(UKB_touchscreen_lifetime_dep$disinterested_week) &
+                                            !is.na(UKB_touchscreen_lifetime_dep$GP) &
+                                            !is.na(UKB_touchscreen_lifetime_dep$psychiatrist)),1,0)
+
+UKB_touchscreen_lifetime_dep$smith_depression <- 0
+
+UKB_touchscreen_lifetime_dep$smith_depression[UKB_touchscreen_lifetime_dep$single_episode_MD | UKB_touchscreen_lifetime_dep$recurrent_MD_moderate | UKB_touchscreen_lifetime_dep$recurrent_MD_severe] <- 1
+
+## Remove those without enough information to derive phenotype
+UKB_touchscreen_lifetime_dep$smith_depression[UKB_touchscreen_lifetime_dep$eligible == 0] <- NA
+
+table(UKB_touchscreen_lifetime_dep$smith_depression)
+```
+
+
+## Get required variables to derived current depressive symptoms - https://pmc.ncbi.nlm.nih.gov/articles/instance/7469862/bin/HBM-41-3922-s001.pdf
+```{r}
+
+UKB_touchscreen_current_dep <- UKB_touchscreen %>%
+  select(f.eid, f.2050.2.0, f.2060.2.0, f.4526.2.0, 
+         f.1930.2.0, f.1960.2.0, f.2050.2.0, f.2060.2.0, f.4526.2.0,
+         f.1170.2.0,  f.1200.2.0,
+         f.2070.2.0,  f.2080.2.0,
+         f.1940.2.0,  f.1950.2.0, f.2020.2.0,  f.2030.2.0) 
+```
+
+## Derive current depression phenotypes
+```{r derive current depression status}
+# Current depression if: depressed mood OR disinterest OR feeling unhappy OR at least one symptom of each of the following: mood, sleep problems, psychomotor or interpersonal
+
 ## Define recoding key
 reverse_recode_key <- c(
   "Not at all" = "1",
@@ -27,20 +125,146 @@ reverse_recode_key <- c(
   "Prefer not to answer" = NA_character_  # Convert "Prefer not to answer" to NA
 )
 
-## Apply recoding and remove rows with NAs
-UKB_RDS_4 <- UKB_touchscreen %>%
-  select(f.eid, f.2050.2.0, f.2060.2.0, f.2070.2.0, f.2080.2.0) %>%
-  mutate(across(-f.eid, ~ recode(., !!!reverse_recode_key))) %>%
-  mutate(across(-f.eid, as.numeric)) %>%  ## Convert to numeric
-  mutate(current_depression = rowSums(across(-f.eid))) ## Participant without complete data not summed
+## Depressed mood over the past two weeks for at least more than half of the days - 2050
+UKB_touchscreen_current_dep$depressed_mood <- ifelse(recode(UKB_touchscreen_current_dep$f.2050.2.0, !!!reverse_recode_key) > 2, 1, 0)
+
+## Disinterest over the past two weeks for at least more than half of the days - 2060
+UKB_touchscreen_current_dep$disinterest <- ifelse(recode(UKB_touchscreen_current_dep$f.2060.2.0, !!!reverse_recode_key) > 2, 1, 0)
+
+## In general feeling very unhappy or extremely unhappy - 4526
+UKB_touchscreen_current_dep$unhappy[!is.na(UKB_touchscreen_current_dep$f.4526.2.0)] <- 0
+UKB_touchscreen_current_dep$unhappy[UKB_touchscreen_current_dep$f.4526.2.0 == "Prefer not to answer" | UKB_touchscreen_current_dep$f.4526.2.0 == "Do not know "] <- NA
+UKB_touchscreen_current_dep$unhappy[UKB_touchscreen_current_dep$f.4526.2.0 == "Very unhappy" | UKB_touchscreen_current_dep$f.4526.2.0 == "Extremely unhappy"] <- 1
+
+## At least one symptom for at least three of four symptom groups related to depression – mood symptoms, sleep problems, psychomotor symptoms or interpersonal symptoms
+
+## Mood symptoms
+# Miserable - 1930
+UKB_touchscreen_current_dep$mood_miserable <- NA
+UKB_touchscreen_current_dep$mood_miserable[UKB_touchscreen_current_dep$f.1930.2.0 == "Yes"] <- 1
+UKB_touchscreen_current_dep$mood_miserable[UKB_touchscreen_current_dep$f.1930.2.0 == "No"] <- 0
+# Fed-up - 1960
+UKB_touchscreen_current_dep$mood_fedup <- NA
+UKB_touchscreen_current_dep$mood_fedup[UKB_touchscreen_current_dep$f.1960.2.0 == "Yes"] <- 1
+UKB_touchscreen_current_dep$mood_fedup[UKB_touchscreen_current_dep$f.1960.2.0 == "No"] <- 0
+# # Depressed mood - 2050
+UKB_touchscreen_current_dep$mood_depressed <- ifelse(recode(UKB_touchscreen_current_dep$f.2050.2.0, !!!reverse_recode_key) > 1, 1, 0)
+## Disintered mood - 2060
+UKB_touchscreen_current_dep$mood_disinterest <- ifelse(recode(UKB_touchscreen_current_dep$f.2060.2.0, !!!reverse_recode_key) > 1, 1, 0)
+
+## Feeling moderately unhappy - 4526
+UKB_touchscreen_current_dep$mood_moderately_unhappy[!is.na(UKB_touchscreen_current_dep$f.4526.2.0)] <- 0
+UKB_touchscreen_current_dep$mood_moderately_unhappy[UKB_touchscreen_current_dep$f.4526.2.0 == "Prefer not to answer" | UKB_touchscreen_current_dep$f.4526.2.0 == "Do not know "] <- NA
+UKB_touchscreen_current_dep$mood_moderately_unhappy[UKB_touchscreen_current_dep$f.4526.2.0  == "Moderately unhappy" | UKB_touchscreen_current_dep$f.4526.2.0 == "Very unhappy" | UKB_touchscreen_current_dep$f.4526.2.0 == "Extremely unhappy"] <- 1
+UKB_touchscreen_current_dep$mood_at_least_one <- ifelse((UKB_touchscreen_current_dep$mood_miserable | UKB_touchscreen_current_dep$mood_fedup | UKB_touchscreen_current_dep$mood_depressed | UKB_touchscreen_current_dep$mood_disinterest
+                                                        | UKB_touchscreen_current_dep$mood_moderately_unhappy) , 1, 0)
+
+# Sleep problems
+# Getting up - 1170
+UKB_touchscreen_current_dep$sleep_getting_up <- NA
+UKB_touchscreen_current_dep$sleep_getting_up[UKB_touchscreen_current_dep$f.1170.2.0 == "Fairly easy" | UKB_touchscreen_current_dep$f.1170.2.0 == "Very easy"] <- 0
+UKB_touchscreen_current_dep$sleep_getting_up[UKB_touchscreen_current_dep$f.1170.2.0 == "Not very easy" | UKB_touchscreen_current_dep$f.1170.2.0 == "Not at all easy"] <- 1
+# Insomnia - 1200
+UKB_touchscreen_current_dep$sleep_insomnia <- NA
+UKB_touchscreen_current_dep$sleep_insomnia[UKB_touchscreen_current_dep$f.1200.2.0 == "Never/rarely" | UKB_touchscreen_current_dep$f.1200.2.0 == "Sometimes"] <- 0
+UKB_touchscreen_current_dep$sleep_insomnia[UKB_touchscreen_current_dep$f.1200.2.0 == "Usually"] <- 1
+UKB_touchscreen_current_dep$sleep_at_least_one <- ifelse((UKB_touchscreen_current_dep$sleep_getting_up | UKB_touchscreen_current_dep$sleep_insomnia) , 1, 0)
+
+## Psychomotor
+# Restlessness - 2070
+UKB_touchscreen_current_dep$psychomotor_restlessness <- ifelse(recode(UKB_touchscreen_current_dep$f.2070.2.0, !!!reverse_recode_key) > 2, 1, 0)
+# Tiredness - 2080
+UKB_touchscreen_current_dep$psychomotor_tiredness <- ifelse(recode(UKB_touchscreen_current_dep$f.2080.2.0, !!!reverse_recode_key) > 3, 1, 0)
+UKB_touchscreen_current_dep$psychomotor_at_least_one <- ifelse((UKB_touchscreen_current_dep$psychomotor_restlessness | UKB_touchscreen_current_dep$psychomotor_tiredness) , 1, 0)
+
+## Interpersonal
+# irritable - 1940
+UKB_touchscreen_current_dep$interpersonal_irritable <- NA
+UKB_touchscreen_current_dep$interpersonal_irritable[UKB_touchscreen_current_dep$f.1940.2.0 == "No"] <- 0
+UKB_touchscreen_current_dep$interpersonal_irritable[UKB_touchscreen_current_dep$f.1940.2.0 == "Yes"] <- 1
+# hurt feelings - 1950
+UKB_touchscreen_current_dep$interpersonal_hurt_feelings <- NA
+UKB_touchscreen_current_dep$interpersonal_hurt_feelings[UKB_touchscreen_current_dep$f.1950.2.0 == "No"] <- 0
+UKB_touchscreen_current_dep$interpersonal_hurt_feelings[UKB_touchscreen_current_dep$f.1950.2.0 == "Yes"] <- 1
+# lonliness - 2020
+UKB_touchscreen_current_dep$interpersonal_lonely <- NA
+UKB_touchscreen_current_dep$interpersonal_lonely[UKB_touchscreen_current_dep$f.2020.2.0 == "No"] <- 0
+UKB_touchscreen_current_dep$interpersonal_lonely[UKB_touchscreen_current_dep$f.2020.2.0 == "Yes"] <- 1
+# guilt - 2030
+UKB_touchscreen_current_dep$interpersonal_guilt <- NA
+UKB_touchscreen_current_dep$interpersonal_guilt[UKB_touchscreen_current_dep$f.2030.2.0 == "No"] <- 0
+UKB_touchscreen_current_dep$interpersonal_guilt[UKB_touchscreen_current_dep$f.2030.2.0 == "Yes"] <- 1
+UKB_touchscreen_current_dep$interpersonal_at_least_one <- ifelse((UKB_touchscreen_current_dep$interpersonal_irritable | UKB_touchscreen_current_dep$interpersonal_hurt_feelings |
+                                                                    UKB_touchscreen_current_dep$interpersonal_lonely | UKB_touchscreen_current_dep$interpersonal_guilt) , 1, 0)
+
+## Get status of participants with enough information to derive phenotype
+UKB_touchscreen_current_dep$eligible <- ifelse(!is.na(UKB_touchscreen_current_dep$depressed_mood) & !is.na(UKB_touchscreen_current_dep$disinterest) & !is.na(UKB_touchscreen_current_dep$unhappy) &
+                                                 !is.na(UKB_touchscreen_current_dep$mood_at_least_one) & !is.na(UKB_touchscreen_current_dep$sleep_at_least_one) & 
+                                                 !is.na(UKB_touchscreen_current_dep$psychomotor_at_least_one) & !is.na(UKB_touchscreen_current_dep$interpersonal_at_least_one), 1, 0)
+
+UKB_touchscreen_current_dep$current_depression <- 0
+
+UKB_touchscreen_current_dep$current_depression[UKB_touchscreen_current_dep$depressed_mood | UKB_touchscreen_current_dep$disinterest | UKB_touchscreen_current_dep$unhappy |
+                                                 ((UKB_touchscreen_current_dep$mood_at_least_one + UKB_touchscreen_current_dep$sleep_at_least_one +
+                                                     UKB_touchscreen_current_dep$psychomotor_at_least_one + UKB_touchscreen_current_dep$interpersonal_at_least_one) > 2)] <- 1
+
+## Remove those without enough information to derive phenotype
+UKB_touchscreen_current_dep$current_depression[UKB_touchscreen_current_dep$eligible == 0] <- NA
+
+table(UKB_touchscreen_current_dep$current_depression)
+```
+
+
+## Get those with current depression according to Smith et al criteria and current symptoms
+
+```{r combine depression phenotypes}
+UKB_touchscreen_depression <- left_join(UKB_touchscreen_current_dep, UKB_touchscreen_lifetime_dep, by = "f.eid")
+UKB_touchscreen_depression$depression <- NA
+UKB_touchscreen_depression$depression[UKB_touchscreen_depression$smith_depression & UKB_touchscreen_depression$current_depression] <- 1
+UKB_touchscreen_depression$depression[UKB_touchscreen_depression$smith_depression & UKB_touchscreen_depression$current_depression == 0] <- 0
+UKB_touchscreen_depression$depression[UKB_touchscreen_depression$smith_depression == 0 & UKB_touchscreen_depression$current_depression == 0] <- 0
+UKB_touchscreen_depression$depression[UKB_touchscreen_depression$smith_depression == 0 & UKB_touchscreen_depression$current_depression == 1] <- 0
+
+UKB_touchscreen_depression$depression_sensitivity <- UKB_touchscreen_depression$depression
+UKB_touchscreen_depression$depression_sensitivity[UKB_touchscreen_depression$smith_depression == 0 & UKB_touchscreen_depression$current_depression == 1] <- NA
+
+table(UKB_touchscreen_depression$depression)
+table(UKB_touchscreen_depression$depression_sensitivity)
 
 ```
+
 
 ## Save current depression phenotyp
 
 ```{r save}
 
-write.csv(UKB_RDS_4, "/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/resources/UKB_current_depression_imaging.csv", row.names = FALSE)
-
+write.csv(UKB_touchscreen_depression, "/resources/UKB_current_depression_imaging.csv", row.names = FALSE)
 ```
+
+
+<!-- ## Recode depression symptom variables -->
+<!-- Current depression phenotype at imaging based on: https://onlinelibrary.wiley.com/doi/10.1002/hbm.25690 -->
+<!-- f.2050.2.0 - Frequency of depressed mood in last 2 weeks -->
+<!-- f.2060.2.0 - Frequency of unenthusiasm/disinterest in last 2 weeks -->
+<!-- f.2070.2.0 - Frequency of tenseness/restlessness in last 2 weeks -->
+<!-- f.2080.2.0 - Frequency of tiredness/lethargy in last 2 weeks. -->
+<!-- ```{r recode variables} -->
+<!-- ## Define recoding key -->
+<!-- reverse_recode_key <- c( -->
+<!--   "Not at all" = "1", -->
+<!--   "Several days" = "2", -->
+<!--   "More than half the days" = "3", -->
+<!--   "Nearly every day" = "4", -->
+<!--   "Do not know" = NA_character_,   # Convert "Do not know" to NA -->
+<!--   "Prefer not to answer" = NA_character_  # Convert "Prefer not to answer" to NA -->
+<!-- ) -->
+
+<!-- ## Apply recoding and remove rows with NAs -->
+<!-- UKB_RDS_4 <- UKB_touchscreen %>% -->
+<!--   select(f.eid, f.2050.2.0, f.2060.2.0, f.2070.2.0, f.2080.2.0) %>% -->
+<!--   mutate(across(-f.eid, ~ recode(., !!!reverse_recode_key))) %>% -->
+<!--   mutate(across(-f.eid, as.numeric)) %>%  ## Convert to numeric -->
+<!--   mutate(current_depression = rowSums(across(-f.eid))) ## Participant without complete data not summed -->
+
+<!-- ``` -->
 

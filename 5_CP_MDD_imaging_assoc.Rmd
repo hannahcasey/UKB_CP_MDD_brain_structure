@@ -28,28 +28,28 @@ Load in dataframes containing imaging data and covariate from UK Biobank (create
 
 ## Set working directory
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-work_dir <- ""
+#work_dir <- ""
 setwd(work_dir)
 
 ## Load in data
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Load dataframes containing imaging features of interest and covariates
-UKB_imaging_covariates <- read.csv(paste0(work_dir, "resources/UKB_imaging_covariates_qc.csv"), header = TRUE)
+UKB_imaging_covariates <- read.csv(paste0(work_dir, "/resources/UKB_imaging_covariates_qc.csv"), header = TRUE)
 
-UKB_imaging_covariates_long <- read.csv(paste0(work_dir, "resources/UKB_imaging_covariates_long_qc.csv"), header = TRUE)
+UKB_imaging_covariates_long <- read.csv(paste0(work_dir, "/resources/UKB_imaging_covariates_long_qc.csv"), header = TRUE)
 
 ## Load in chronic pain at imaging data
-UKB_CP <- read.csv("/../UKB_chronic_pain_phenotype/output/UKB_chronic_pain_phenotype_imaging.csv")
+UKB_CP <- read.csv(paste0(work_dir,"/../UKB_chronic_pain_phenotype/output/UKB_chronic_pain_phenotype_imaging.csv"))
 
 ## Remame ID column, f_eid -> f_eid
 UKB_CP <- UKB_CP %>% 
   dplyr::rename(f.eid = n_eid)
 
 ## Load in current deppresion at imaging data
-UKB_Dep <- read.csv(paste0(work_dir, "resources/UKB_current_depression_imaging.csv"), header = TRUE)
+UKB_Dep <- read.csv(paste0(work_dir, "/resources/UKB_current_depression_imaging.csv"), header = TRUE)
 
 ## Load in eligible participants and filter data
-eligible_IDs <- read.csv(paste0(work_dir, "resources/eligible.csv"), header = TRUE)
+eligible_IDs <- read.csv(paste0(work_dir, "/resources/eligible.csv"), header = TRUE)
 
 UKB_imaging_covariates <- UKB_imaging_covariates[UKB_imaging_covariates$f.eid %in% eligible_IDs$x,]
 UKB_imaging_covariates_long <- UKB_imaging_covariates_long[UKB_imaging_covariates_long$f.eid %in% eligible_IDs$x,]
@@ -87,46 +87,42 @@ age_sd_full <- round(sd(UKB_CP_MDD_imaging_covariates$age_raw),2)
 age_sd_female <- round(sd(UKB_CP_MDD_imaging_covariates_female$age_raw),2)
 age_sd_male <- round(sd(UKB_CP_MDD_imaging_covariates_male$age_raw),2)
 
-depression_mean_full <- round(mean(UKB_CP_MDD_imaging_covariates$current_depression, na.rm = T),2)
-depression_mean_female <- round(mean(UKB_CP_MDD_imaging_covariates_female$current_depression, na.rm = T),2)
-depression_mean_male <- round(mean(UKB_CP_MDD_imaging_covariates_male$current_depression, na.rm = T),2)
-depression_sd_full <- round(sd(UKB_CP_MDD_imaging_covariates$current_depression, na.rm = T),2)
-depression_sd_female <- round(sd(UKB_CP_MDD_imaging_covariates_female$current_depression, na.rm = T),2)
-depression_sd_male <- round(sd(UKB_CP_MDD_imaging_covariates_male$current_depression, na.rm = T),2)
+depression_percent_full <- round(sum(UKB_CP_MDD_imaging_covariates$depression, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates$depression)) * 100,2)
+depression_percent_female <- round(sum(UKB_CP_MDD_imaging_covariates_female$depression, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates_female$depression)) * 100,2)
+depression_percent_male <- round(sum(UKB_CP_MDD_imaging_covariates_male$depression, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates_male$depression)) * 100,2)
 
-chronic_pain_percent_full <- round(sum(UKB_CP_MDD_imaging_covariates$chronic_pain_status == 1, na.rm = T)/n_full * 100,2)
-chronic_pain_percent_female <- round(sum(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status == 1, na.rm = T)/n_female * 100,2)
-chronic_pain_percent_male <- round(sum(UKB_CP_MDD_imaging_covariates_male$chronic_pain_status == 1, na.rm = T)/n_male * 100,2)
+chronic_pain_percent_full <- round(sum(UKB_CP_MDD_imaging_covariates$chronic_pain_status == 1, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates$chronic_pain_status)) * 100,2)
+chronic_pain_percent_female <- round(sum(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status == 1, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status)) * 100,2)
+chronic_pain_percent_male <- round(sum(UKB_CP_MDD_imaging_covariates_male$chronic_pain_status == 1, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates_male$chronic_pain_status)) * 100,2)
 
 
-## Depression in those with chronic pain
-CP_depression_mean_full <- round(mean(subset(UKB_CP_MDD_imaging_covariates, chronic_pain_status == 1)$current_depression, na.rm = T),2)
-CP_depression_mean_female <- round(mean(subset(UKB_CP_MDD_imaging_covariates_female, chronic_pain_status == 1)$current_depression, na.rm = T),2)
-CP_depression_mean_male <- round(mean(subset(UKB_CP_MDD_imaging_covariates_male, chronic_pain_status == 1)$current_depression, na.rm = T),2)
-CP_depression_sd_full <- round(sd(subset(UKB_CP_MDD_imaging_covariates, chronic_pain_status == 1)$current_depression, na.rm = T),2)
-CP_depression_sd_female <- round(sd(subset(UKB_CP_MDD_imaging_covariates_female, chronic_pain_status == 1)$current_depression, na.rm = T),2)
-CP_depression_sd_male <- round(sd(subset(UKB_CP_MDD_imaging_covariates_male, chronic_pain_status == 1)$current_depression, na.rm = T),2)
+## With comorbid chronic pain and depression
+comorbid_percent_full <- round(sum(UKB_CP_MDD_imaging_covariates$chronic_pain_status == 1 & UKB_CP_MDD_imaging_covariates$depression == 1, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates$chronic_pain_status) & !is.na(UKB_CP_MDD_imaging_covariates$depression)) * 100,2)
+
+comorbid_percent_female <- round(sum(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status == 1 & UKB_CP_MDD_imaging_covariates_female$depression == 1, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status) & !is.na(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status)) * 100,2)
+
+comorbid_percent_male <- round(sum(UKB_CP_MDD_imaging_covariates_male$chronic_pain_status == 1 & UKB_CP_MDD_imaging_covariates_male$depression == 1, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates_male$chronic_pain_status) & !is.na(UKB_CP_MDD_imaging_covariates_male$depression)) * 100,2)
 
 
 descriptives_df <- data.frame(
-  Variables = c("Mean Age (SD)", "Chronic Pain (%)", "Mean Depression Score (SD)", "Mean Depression Score in Chronic Pain (SD)"), 
+  Variables = c("Mean Age (SD)", "Chronic Pain (%)", "Depression (%)", "Comorbid Chronic Pain and Depression (%)"), 
   full_temp = c(
     paste0(age_mean_full, " (", age_sd_full, ")"), ## Age full sample
     paste0(chronic_pain_percent_full, "%"), ## Chronic pain full sample
-    paste0(depression_mean_full, " (", depression_sd_full, ")"), ## Depression full sample
-    paste0(CP_depression_mean_full, " (", CP_depression_sd_full, ")") ## Depression in chronic pain full sample
+    paste0(depression_percent_full,  "%"), ## Depression full sample
+    paste0(comorbid_percent_full,  "%") ## Comorbidity in full sample
     ),
   female_temp = c(
     paste0(age_mean_female, " (", age_sd_female, ")"), ## Age female sample
     paste0(chronic_pain_percent_female, "%"), ## Chronic pain female sample
-    paste0(depression_mean_female, " (", depression_sd_female, ")"), ## Depression female sample
-    paste0(CP_depression_mean_female, " (", CP_depression_sd_female, ")") ## Depression in chronic pain female sample
+    paste0(depression_percent_female, "%"), ## Depression female sample
+    paste0(comorbid_percent_female, "%") ## Comorbidity in female sample
     ),
   male_temp = c(
     paste0(age_mean_male, " (", age_sd_male, ")"), ## Age male sample
     paste0(chronic_pain_percent_male, "%"), ## Chronic pain male sample
-    paste0(depression_mean_male, " (", depression_sd_male, ")"), ## Depression male sample
-    paste0(CP_depression_mean_male, " (", CP_depression_sd_male, ")") ## Depression in chronic pain male sample
+    paste0(depression_percent_male, "%"), ## Depression male sample
+    paste0(comorbid_percent_male, "%") ## Comorbidity in male sample
     ))
 
 
@@ -446,8 +442,8 @@ unilateral_interaction <- function(dependent, independent, interaction_terms, co
 ## Define association analysis inputs
 ```{r define association analysis input}
 ## Define covariates to be used in association analysis
-brain_structure_covariates_T1 <- c("sex", "age", "age_squared", "ICV", "assessment_centre_first_imaging")
-brain_structure_covariates_diffusion <- c("sex", "age", "age_squared", "assessment_centre_first_imaging")
+brain_structure_covariates_T1 <- c("sex", "age", "age_squared", "ICV", "assessment_centre_first_imaging", "X_position", "Y_position", "Z_position")
+brain_structure_covariates_diffusion <- c("sex", "age", "age_squared", "assessment_centre_first_imaging", "X_position", "Y_position", "Z_position")
 
 ## Define subsets of brain structure variables
 ## General cortical measures
@@ -502,7 +498,7 @@ lapply(UKB_CP_MDD_imaging_covariates_long[,brain_structure_covariates_T1], summa
 
 ## Carry out association analysis
 ```{r association analysis}
-for (disorder in c("chronic_pain_status", "current_depression")) {
+for (disorder in c("chronic_pain_status", "depression", "depression_sensitivity")) {
 
   ## Subcortical Volume ----
   ## Flag if any bilateral hemisphere measurements need to be analyzed separately
@@ -841,7 +837,7 @@ for (disorder in c("chronic_pain_status", "current_depression")) {
 brain_structure_covariates_T1_no_sex <- brain_structure_covariates_T1[brain_structure_covariates_T1 != "sex"]
 brain_structure_covariates_diffusion_no_sex <- brain_structure_covariates_diffusion[brain_structure_covariates_diffusion != "sex"]
 
-for (disorder in c("chronic_pain_status", "current_depression")) {
+for (disorder in c("chronic_pain_status", "depression", "depression_sensitivity")) {
 
   ## Subcortical Volume ----
   ## Flag if any bilateral hemisphere measurements need to be analyzed separately
@@ -1201,7 +1197,7 @@ UKB_CP_MDD_imaging_covariates_long_female <- subset(UKB_CP_MDD_imaging_covariate
 
 ## Loop through each disorder and sex to carry out association analysis
 for (sex in c("female", "male")){
-  for (disorder in c("chronic_pain_status", "current_depression")){
+  for (disorder in c("chronic_pain_status", "depression", "depression_sensitivity")){
     
    df_sex_interactions <- filter(CP_MDD_structure_sex_interaction_all, disorder == get("disorder", envir = .env))
     
@@ -1552,7 +1548,7 @@ for (sex in c("female", "male")){
 ## Flag if any bilateral hemisphere measurements need to be analyzed separately  
 hemisphere_interactions <- hemisphere_interaction(
   dependent = sub_cortical_volume_bilateral,
-  independent = "current_depression",
+  independent = "depression",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
   hemisphere_col = "hemi",
@@ -1562,7 +1558,7 @@ hemisphere_interactions <- hemisphere_interaction(
 
 subcortical_volume_disorder_interaction <- bilateral_interaction(
   dependent = sub_cortical_volume_bilateral[!sub_cortical_volume_bilateral %in% hemisphere_interactions],
-  independent = "current_depression", 
+  independent = "depression", 
   interaction_terms = "chronic_pain_status",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
@@ -1592,7 +1588,7 @@ subcortical_volume_disorder_interaction$p.adjust <- p.adjust(subcortical_volume_
 ## Cortical Volume ----
 hemisphere_interactions <- hemisphere_interaction(
   dependent = cortical_volume_bilateral,
-  independent = "current_depression",
+  independent = "depression",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
   hemisphere_col = "hemi",
@@ -1602,7 +1598,7 @@ hemisphere_interactions <- hemisphere_interaction(
 
 cortical_volume_disorder_interaction <- bilateral_interaction(
   dependent = cortical_volume_bilateral[!cortical_volume_bilateral %in% hemisphere_interactions],
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = "chronic_pain_status",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
@@ -1617,7 +1613,7 @@ if (!is.null(hemisphere_interactions)) {  ## If hemi interaction found, run sepa
     cortical_volume_disorder_interaction,
     unilateral_interaction(
       dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-      independent = "current_depression",
+      independent = "depression",
       interaction_terms = "chronic_pain_status",
       covariates = brain_structure_covariates_T1,
       dataset = UKB_CP_MDD_imaging_covariates,
@@ -1632,7 +1628,7 @@ cortical_volume_disorder_interaction$p.adjust <- p.adjust(cortical_volume_disord
 ## General Cortical Volume Measures
 cortical_volume_general_disorder_interaction <- unilateral_interaction(
   dependent = cortical_volume_general,
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = "chronic_pain_status",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates,
@@ -1650,7 +1646,7 @@ cortical_volume_general_disorder_interaction[grepl("global", row.names(cortical_
 ## Cortical Thickness ----
 hemisphere_interactions <- hemisphere_interaction(
   dependent = cortical_thickness_bilateral,
-  independent = "current_depression",
+  independent = "depression",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
   hemisphere_col = "hemi",
@@ -1660,7 +1656,7 @@ hemisphere_interactions <- hemisphere_interaction(
 
 cortical_thickness_disorder_interaction <- bilateral_interaction(
   dependent = cortical_thickness_bilateral[!cortical_thickness_bilateral %in% hemisphere_interactions],
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = "chronic_pain_status",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
@@ -1675,7 +1671,7 @@ if (!is.null(hemisphere_interactions)) {  ## If hemi interaction found, run sepa
     cortical_thickness_disorder_interaction,
     unilateral_interaction(
       dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-      independent = "current_depression",
+      independent = "depression",
       interaction_terms = "chronic_pain_status",
       covariates = brain_structure_covariates_T1,
       dataset = UKB_CP_MDD_imaging_covariates,
@@ -1690,7 +1686,7 @@ cortical_thickness_disorder_interaction$p.adjust <- p.adjust(cortical_thickness_
 ## General Cortical Thickness Measures
 cortical_thickness_general_disorder_interaction <- unilateral_interaction(
   dependent = cortical_thickness_general,
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = "chronic_pain_status",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates,
@@ -1708,7 +1704,7 @@ cortical_thickness_general_disorder_interaction[grepl("global", row.names(cortic
 ## Cortical Area ----
 hemisphere_interactions <- hemisphere_interaction(
   dependent = cortical_area_bilateral,
-  independent = "current_depression",
+  independent = "depression",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
   hemisphere_col = "hemi",
@@ -1718,7 +1714,7 @@ hemisphere_interactions <- hemisphere_interaction(
 
 cortical_area_disorder_interaction <- bilateral_interaction(
   dependent = cortical_area_bilateral[!cortical_area_bilateral %in% hemisphere_interactions],
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = "chronic_pain_status",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
@@ -1733,7 +1729,7 @@ if (!is.null(hemisphere_interactions)) {  ## If hemi interaction found, run sepa
     cortical_area_disorder_interaction,
     unilateral_interaction(
       dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-      independent = "current_depression",
+      independent = "depression",
       interaction_terms = "chronic_pain_status",
       covariates = brain_structure_covariates_T1,
       dataset = UKB_CP_MDD_imaging_covariates,
@@ -1748,7 +1744,7 @@ cortical_area_disorder_interaction$p.adjust <- p.adjust(cortical_area_disorder_i
 ## General Cortical Area Measures
 cortical_area_general_disorder_interaction <- unilateral_interaction(
   dependent = cortical_area_general,
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = "chronic_pain_status",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates,
@@ -1766,7 +1762,7 @@ cortical_area_general_disorder_interaction[grepl("global", row.names(cortical_ar
 ## FA ----
 hemisphere_interactions <- hemisphere_interaction(
   dependent = FA_bilateral,
-  independent = "current_depression",
+  independent = "depression",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
   hemisphere_col = "hemi",
@@ -1776,7 +1772,7 @@ hemisphere_interactions <- hemisphere_interaction(
 
 FA_bilateral_disorder_interaction <- bilateral_interaction(
   dependent = FA_bilateral[!FA_bilateral %in% hemisphere_interactions],
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = "chronic_pain_status",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
@@ -1791,7 +1787,7 @@ if (!is.null(hemisphere_interactions)) {  ## If hemi interaction found, run sepa
     FA_bilateral_disorder_interaction,
     unilateral_interaction(
       dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-      independent = "current_depression",
+      independent = "depression",
       interaction_terms = "chronic_pain_status",
       covariates = brain_structure_covariates_T1,
       dataset = UKB_CP_MDD_imaging_covariates,
@@ -1805,7 +1801,7 @@ if (!is.null(hemisphere_interactions)) {  ## If hemi interaction found, run sepa
     FA_bilateral_disorder_interaction,
     unilateral_interaction(
       dependent = FA_unilateral,
-      independent = "current_depression",
+      independent = "depression",
       interaction_terms = "chronic_pain_status",
       sex_interaction = FALSE, 
       covariates = brain_structure_covariates_diffusion,
@@ -1818,7 +1814,7 @@ if (!is.null(hemisphere_interactions)) {  ## If hemi interaction found, run sepa
 
   FA_general_disorder_interaction <- unilateral_interaction(
     dependent = FA_general,
-    independent = "current_depression",
+    independent = "depression",
     interaction_terms = "chronic_pain_status",
     sex_interaction = FALSE, 
     covariates = brain_structure_covariates_diffusion,
@@ -1837,7 +1833,7 @@ FA_general_disorder_interaction[grepl("global", row.names(FA_general_disorder_in
 ## MD ----
 hemisphere_interactions <- hemisphere_interaction(
   dependent = MD_bilateral,
-  independent = "current_depression",
+  independent = "depression",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
   hemisphere_col = "hemi",
@@ -1847,7 +1843,7 @@ hemisphere_interactions <- hemisphere_interaction(
 
 MD_bilateral_disorder_interaction <- bilateral_interaction(
   dependent = MD_bilateral[!MD_bilateral %in% hemisphere_interactions],
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = "chronic_pain_status",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
@@ -1862,7 +1858,7 @@ if (!is.null(hemisphere_interactions)) {  ## If hemi interaction found, run sepa
     MD_bilateral_disorder_interaction,
     unilateral_interaction(
       dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-      independent = "current_depression",
+      independent = "depression",
       interaction_terms = "chronic_pain_status",
       covariates = brain_structure_covariates_T1,
       dataset = UKB_CP_MDD_imaging_covariates,
@@ -1876,7 +1872,7 @@ MD_disorder_interaction <- rbind(
   MD_bilateral_disorder_interaction,
     unilateral_interaction(
       dependent = MD_unilateral,
-      independent = "current_depression",
+      independent = "depression",
       interaction_terms = "chronic_pain_status",
       sex_interaction = FALSE, 
       covariates = brain_structure_covariates_diffusion,
@@ -1889,7 +1885,7 @@ MD_disorder_interaction$p.adjust <- p.adjust(MD_disorder_interaction$p.value, me
 
 MD_general_disorder_interaction <- unilateral_interaction(
   dependent = MD_general,
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = "chronic_pain_status",
   sex_interaction = FALSE, 
   covariates = brain_structure_covariates_diffusion,
@@ -1919,7 +1915,7 @@ CP_MDD_structure_disorder_interaction_all <- do.call("rbind", list(
 ## Flag if any bilateral hemisphere measurements need to be analyzed separately
 hemisphere_interactions <- hemisphere_interaction(
   dependent = sub_cortical_volume_bilateral,
-  independent = "current_depression",
+  independent = "depression",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
   hemisphere_col = "hemi",
@@ -1931,7 +1927,7 @@ hemisphere_interactions <- hemisphere_interaction(
 
 subcortical_volume_disorder_sex_interaction <- bilateral_interaction(
   dependent = sub_cortical_volume_bilateral[!sub_cortical_volume_bilateral %in% hemisphere_interactions],
-  independent = "current_depression",  
+  independent = "depression",  
   interaction_terms = c("chronic_pain_status", "sex"), 
   sex_interaction = TRUE, 
   sex_variable = "sex",
@@ -1947,7 +1943,7 @@ if (!is.null(hemisphere_interactions)) { ## If hemi interaction found, run separ
     subcortical_volume_disorder_sex_interaction,
     unilateral_interaction(
       dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-      independent = "current_depression",
+      independent = "depression",
       sex_variable = "sex",
       covariates = brain_structure_covariates_T1_no_sex,
       dataset = UKB_CP_MDD_imaging_covariates,
@@ -1959,7 +1955,7 @@ if (!is.null(hemisphere_interactions)) { ## If hemi interaction found, run separ
 ## Cortical Volume ----
 hemisphere_interactions <- hemisphere_interaction(
   dependent = cortical_volume_bilateral,
-  independent = "current_depression",
+  independent = "depression",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
   hemisphere_col = "hemi",
@@ -1971,7 +1967,7 @@ hemisphere_interactions <- hemisphere_interaction(
 
 cortical_volume_disorder_sex_interaction <- bilateral_interaction(
   dependent = cortical_volume_bilateral[!cortical_volume_bilateral %in% hemisphere_interactions],
-  independent = "current_depression", 
+  independent = "depression", 
   interaction_terms = c("chronic_pain_status", "sex"),
   sex_interaction = TRUE, 
   sex_variable = "sex",
@@ -1987,7 +1983,7 @@ if (!is.null(hemisphere_interactions)) { ## If hemi interaction found, run separ
     cortical_volume_disorder_sex_interaction,
     unilateral_interaction(
       dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-      independent = "current_depression",
+      independent = "depression",
       sex_variable = "sex",
       covariates = brain_structure_covariates_T1_no_sex,
       dataset = UKB_CP_MDD_imaging_covariates,
@@ -2000,7 +1996,7 @@ if (!is.null(hemisphere_interactions)) { ## If hemi interaction found, run separ
 
 cortical_volume_general_disorder_sex_interaction <- unilateral_interaction(
   dependent = cortical_volume_general,
-  independent = "current_depression", 
+  independent = "depression", 
   interaction_terms = c("chronic_pain_status", "sex"),
   sex_interaction = TRUE, 
   sex_variable = "sex",
@@ -2012,7 +2008,7 @@ cortical_volume_general_disorder_sex_interaction <- unilateral_interaction(
 ## Cortical Thickness ----
 hemisphere_interactions <- hemisphere_interaction(
   dependent = cortical_thickness_bilateral,
-  independent = "current_depression",
+  independent = "depression",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
   hemisphere_col = "hemi",
@@ -2024,7 +2020,7 @@ hemisphere_interactions <- hemisphere_interaction(
 
 cortical_thickness_disorder_sex_interaction <- bilateral_interaction(
   dependent = cortical_thickness_bilateral[!cortical_thickness_bilateral %in% hemisphere_interactions],
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = c("chronic_pain_status", "sex"),
   sex_interaction = TRUE, 
   sex_variable = "sex",
@@ -2040,7 +2036,7 @@ if (!is.null(hemisphere_interactions)) { ## If hemi interaction found, run separ
     cortical_thickness_disorder_sex_interaction,
     unilateral_interaction(
       dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-      independent = "current_depression",
+      independent = "depression",
       interaction_terms = c("chronic_pain_status", "sex"),
       sex_interaction = TRUE, 
       sex_variable = "sex",
@@ -2053,7 +2049,7 @@ if (!is.null(hemisphere_interactions)) { ## If hemi interaction found, run separ
 
 cortical_thickness_general_disorder_sex_interaction <- unilateral_interaction(
   dependent = cortical_thickness_general,
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = c("chronic_pain_status", "sex"),
   sex_interaction = TRUE, 
   sex_variable = "sex",
@@ -2065,7 +2061,7 @@ cortical_thickness_general_disorder_sex_interaction <- unilateral_interaction(
 ## Cortical Area ----
 hemisphere_interactions <- hemisphere_interaction(
   dependent = cortical_area_bilateral,
-  independent = "current_depression",
+  independent = "depression",
   covariates = brain_structure_covariates_T1,
   dataset = UKB_CP_MDD_imaging_covariates_long,
   hemisphere_col = "hemi",
@@ -2077,7 +2073,7 @@ hemisphere_interactions <- hemisphere_interaction(
 
 cortical_area_disorder_sex_interaction <- bilateral_interaction(
   dependent = cortical_area_bilateral[!cortical_area_bilateral %in% hemisphere_interactions],
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = c("chronic_pain_status", "sex"),
   sex_interaction = TRUE, 
   sex_variable = "sex",
@@ -2093,7 +2089,7 @@ if (!is.null(hemisphere_interactions)) { ## If hemi interaction found, run separ
     cortical_area_disorder_sex_interaction,
     unilateral_interaction(
       dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-      independent = "current_depression",
+      independent = "depression",
       interaction_terms = c("chronic_pain_status", "sex"),
       sex_interaction = TRUE, 
       sex_variable = "sex",
@@ -2106,7 +2102,7 @@ if (!is.null(hemisphere_interactions)) { ## If hemi interaction found, run separ
 
 cortical_area_general_disorder_sex_interaction <- unilateral_interaction(
   dependent = cortical_area_general,
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = c("chronic_pain_status", "sex"),
   sex_interaction = TRUE, 
   sex_variable = "sex",
@@ -2118,7 +2114,7 @@ cortical_area_general_disorder_sex_interaction <- unilateral_interaction(
 ## FA ----
 hemisphere_interactions <- hemisphere_interaction(
   dependent = FA_bilateral,
-  independent = "current_depression",
+  independent = "depression",
   covariates = brain_structure_covariates_diffusion,
   dataset = UKB_CP_MDD_imaging_covariates_long,
   hemisphere_col = "hemi",
@@ -2130,7 +2126,7 @@ hemisphere_interactions <- hemisphere_interaction(
 
 FA_bilateral_disorder_sex_interaction <- bilateral_interaction(
   dependent = FA_bilateral[!FA_bilateral %in% hemisphere_interactions],
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = c("chronic_pain_status", "sex"),
   sex_interaction = TRUE, 
   sex_variable = "sex",
@@ -2146,7 +2142,7 @@ if (!is.null(hemisphere_interactions)) { ## If hemi interaction found, run separ
     FA_bilateral_disorder_sex_interaction,
     unilateral_interaction(
       dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-      independent = "current_depression",
+      independent = "depression",
       interaction_terms = c("chronic_pain_status", "sex"),
       sex_interaction = TRUE, 
       sex_variable = "sex",
@@ -2161,7 +2157,7 @@ FA_disorder_sex_interaction <- rbind(
   FA_bilateral_disorder_sex_interaction,
     unilateral_interaction(
     dependent = FA_unilateral,
-    independent = "current_depression",
+    independent = "depression",
     interaction_terms = c("chronic_pain_status", "sex"),
     sex_interaction = TRUE, 
     sex_variable = "sex",
@@ -2173,7 +2169,7 @@ FA_disorder_sex_interaction <- rbind(
 
 FA_general_disorder_sex_interaction <- unilateral_interaction(
   dependent = FA_general,
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = c("chronic_pain_status", "sex"),
   sex_interaction = TRUE, 
   sex_variable = "sex",
@@ -2185,7 +2181,7 @@ FA_general_disorder_sex_interaction <- unilateral_interaction(
 ## MD ----
 hemisphere_interactions <- hemisphere_interaction(
   dependent = MD_bilateral,
-  independent = "current_depression",
+  independent = "depression",
   covariates = brain_structure_covariates_diffusion,
   dataset = UKB_CP_MDD_imaging_covariates_long,
   hemisphere_col = "hemi",
@@ -2197,7 +2193,7 @@ hemisphere_interactions <- hemisphere_interaction(
 
 MD_bilateral_disorder_sex_interaction <- bilateral_interaction(
   dependent = MD_bilateral[!MD_bilateral %in% hemisphere_interactions],
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = c("chronic_pain_status", "sex"),
   sex_interaction = TRUE, 
   sex_variable = "sex",
@@ -2213,7 +2209,7 @@ if (!is.null(hemisphere_interactions)) { ## If hemi interaction found, run separ
     MD_bilateral_disorder_sex_interaction,
     unilateral_interaction(
       dependent = c(paste0(hemisphere_interactions, "_right"), paste0(hemisphere_interactions, "_left")),
-      independent = "current_depression",
+      independent = "depression",
       interaction_terms = c("chronic_pain_status", "sex"),
       sex_interaction = TRUE, 
       sex_variable = "sex",
@@ -2228,7 +2224,7 @@ MD_disorder_sex_interaction <- rbind(
   MD_bilateral_disorder_sex_interaction,
   unilateral_interaction(
     dependent = MD_unilateral,
-    independent = "current_depression",
+    independent = "depression",
     interaction_terms = c("chronic_pain_status", "sex"),
     sex_interaction = TRUE, 
     sex_variable = "sex",
@@ -2240,7 +2236,7 @@ MD_disorder_sex_interaction <- rbind(
 
 MD_general_disorder_sex_interaction <- unilateral_interaction(
   dependent = MD_general,
-  independent = "current_depression",
+  independent = "depression",
   interaction_terms = c("chronic_pain_status", "sex"),
   sex_interaction = TRUE, 
   sex_variable = "sex",
@@ -2275,7 +2271,7 @@ for (sex in c("female", "male")){
     if(length(sig_disorder_sex_interaction_bilateral)){
       subcortical_volume_disorder_interaction <- bilateral_interaction(
         dependent = sig_disorder_sex_interaction_bilateral,
-        independent = "current_depression",  
+        independent = "depression",  
         interaction_terms = "chronic_pain_status", 
         sex_interaction = FALSE, 
         sex_variable = "sex",
@@ -2294,7 +2290,7 @@ for (sex in c("female", "male")){
         subcortical_volume_disorder_interaction,
         unilateral_interaction(
           dependent = sig_disorder_sex_interaction_unilateral,
-          independent = "current_depression", 
+          independent = "depression", 
           interaction_terms = "chronic_pain_status", 
           sex_interaction = FALSE,
           sex_variable = "sex",
@@ -2322,7 +2318,7 @@ for (sex in c("female", "male")){
     if(length(sig_disorder_sex_interaction_bilateral)){
       cortical_volume_disorder_interaction <- bilateral_interaction(
         dependent = sig_disorder_sex_interaction_bilateral,
-        independent = "current_depression", 
+        independent = "depression", 
         interaction_terms = "chronic_pain_status",
         sex_interaction = FALSE, 
         sex_variable = "sex",
@@ -2341,10 +2337,10 @@ for (sex in c("female", "male")){
     cortical_volume_disorder_interaction,
     unilateral_interaction(
       dependent = sig_disorder_sex_interaction_unilateral,
-      independent = "current_depression",
+      independent = "depression",
       sex_variable = "sex",
       covariates = brain_structure_covariates_T1_no_sex,
-      dataset = UKB_CP_MDD_imaging_covariates,
+      dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
       structural_subtype = "Regional Cortical Volume",
       sex_interaction = FALSE,
       interaction_terms = "chronic_pain_status"
@@ -2362,12 +2358,12 @@ for (sex in c("female", "male")){
   if (length(sig_disorder_sex_interaction_general) > 0){
     cortical_volume_general_disorder_interaction <- unilateral_interaction(
   dependent = sig_disorder_sex_interaction_general,
-  independent = "current_depression", 
+  independent = "depression", 
   interaction_terms = "chronic_pain_status",
   sex_interaction = FALSE, 
   sex_variable = "sex",
   covariates = brain_structure_covariates_T1_no_sex,
-  dataset = UKB_CP_MDD_imaging_covariates,
+  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
   structural_subtype = "Global and Lobal Cortical Volume"
 )
   } else{
@@ -2392,7 +2388,7 @@ cortical_volume_general_disorder_interaction[grepl("global", row.names(cortical_
     if(length(sig_disorder_sex_interaction_bilateral)){
       cortical_thickness_disorder_interaction <- bilateral_interaction(
         dependent = sig_disorder_sex_interaction_bilateral,
-        independent = "current_depression", 
+        independent = "depression", 
         interaction_terms = "chronic_pain_status",
         sex_interaction = FALSE, 
         sex_variable = "sex",
@@ -2411,10 +2407,10 @@ cortical_volume_general_disorder_interaction[grepl("global", row.names(cortical_
     cortical_thickness_disorder_interaction,
     unilateral_interaction(
       dependent = sig_disorder_sex_interaction_unilateral,
-      independent = "current_depression",
+      independent = "depression",
       sex_variable = "sex",
       covariates = brain_structure_covariates_T1_no_sex,
-      dataset = UKB_CP_MDD_imaging_covariates,
+      dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
       structural_subtype = "Regional Cortical Thickness",
       sex_interaction = FALSE,
       interaction_terms = "chronic_pain_status"
@@ -2432,12 +2428,12 @@ cortical_volume_general_disorder_interaction[grepl("global", row.names(cortical_
   if (length(sig_disorder_sex_interaction_general) > 0){
     cortical_thickness_general_disorder_interaction <- unilateral_interaction(
   dependent = sig_disorder_sex_interaction_general,
-  independent = "current_depression", 
+  independent = "depression", 
   interaction_terms = "chronic_pain_status",
   sex_interaction = FALSE, 
   sex_variable = "sex",
   covariates = brain_structure_covariates_T1_no_sex,
-  dataset = UKB_CP_MDD_imaging_covariates,
+  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
   structural_subtype = "Global and Lobal Cortical Thickness"
 )
   } else{
@@ -2462,7 +2458,7 @@ cortical_thickness_general_disorder_interaction[grepl("global", row.names(cortic
     if(length(sig_disorder_sex_interaction_bilateral)){
       cortical_area_disorder_interaction <- bilateral_interaction(
         dependent = sig_disorder_sex_interaction_bilateral,
-        independent = "current_depression", 
+        independent = "depression", 
         interaction_terms = "chronic_pain_status",
         sex_interaction = FALSE, 
         sex_variable = "sex",
@@ -2481,10 +2477,10 @@ cortical_thickness_general_disorder_interaction[grepl("global", row.names(cortic
     cortical_area_disorder_interaction,
     unilateral_interaction(
       dependent = sig_disorder_sex_interaction_unilateral,
-      independent = "current_depression",
+      independent = "depression",
       sex_variable = "sex",
       covariates = brain_structure_covariates_T1_no_sex,
-      dataset = UKB_CP_MDD_imaging_covariates,
+      dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
       structural_subtype = "Regional Cortical Area",
       sex_interaction = FALSE,
       interaction_terms = "chronic_pain_status"
@@ -2502,12 +2498,12 @@ cortical_thickness_general_disorder_interaction[grepl("global", row.names(cortic
   if (length(sig_disorder_sex_interaction_general) > 0){
     cortical_area_general_disorder_interaction <- unilateral_interaction(
   dependent = sig_disorder_sex_interaction_general,
-  independent = "current_depression", 
+  independent = "depression", 
   interaction_terms = "chronic_pain_status",
   sex_interaction = FALSE, 
   sex_variable = "sex",
   covariates = brain_structure_covariates_T1_no_sex,
-  dataset = UKB_CP_MDD_imaging_covariates,
+  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
   structural_subtype = "Global and Lobal Cortical Area"
 )
   } else{
@@ -2533,7 +2529,7 @@ cortical_area_general_disorder_interaction[grepl("global", row.names(cortical_ar
     if(length(sig_disorder_sex_interaction_bilateral)){
       FA_disorder_interaction <- bilateral_interaction(
         dependent = sig_disorder_sex_interaction_bilateral,
-        independent = "current_depression", 
+        independent = "depression", 
         interaction_terms = "chronic_pain_status",
         sex_interaction = FALSE, 
         sex_variable = "sex",
@@ -2552,10 +2548,10 @@ cortical_area_general_disorder_interaction[grepl("global", row.names(cortical_ar
     FA_disorder_interaction,
     unilateral_interaction(
       dependent = sig_disorder_sex_interaction_unilateral,
-      independent = "current_depression",
+      independent = "depression",
       sex_variable = "sex",
       covariates = brain_structure_covariates_T1_no_sex,
-      dataset = UKB_CP_MDD_imaging_covariates,
+      dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
       structural_subtype = "Fractional Anisotropy",
       sex_interaction = FALSE,
       interaction_terms = "chronic_pain_status"
@@ -2573,12 +2569,12 @@ cortical_area_general_disorder_interaction[grepl("global", row.names(cortical_ar
   if (length(sig_disorder_sex_interaction_general) > 0){
     FA_general_disorder_interaction <- unilateral_interaction(
   dependent = sig_disorder_sex_interaction_general,
-  independent = "current_depression", 
+  independent = "depression", 
   interaction_terms = "chronic_pain_status",
   sex_interaction = FALSE, 
   sex_variable = "sex",
   covariates = brain_structure_covariates_T1_no_sex,
-  dataset = UKB_CP_MDD_imaging_covariates,
+  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
   structural_subtype = "General Fractional Anisotropy"
 )
   } else{
@@ -2604,7 +2600,7 @@ cortical_area_general_disorder_interaction[grepl("global", row.names(cortical_ar
     if(length(sig_disorder_sex_interaction_bilateral)){
       MD_disorder_interaction <- bilateral_interaction(
         dependent = sig_disorder_sex_interaction_bilateral,
-        independent = "current_depression", 
+        independent = "depression", 
         interaction_terms = "chronic_pain_status",
         sex_interaction = FALSE, 
         sex_variable = "sex",
@@ -2623,10 +2619,10 @@ cortical_area_general_disorder_interaction[grepl("global", row.names(cortical_ar
     MD_disorder_interaction,
     unilateral_interaction(
       dependent = sig_disorder_sex_interaction_unilateral,
-      independent = "current_depression",
+      independent = "depression",
       sex_variable = "sex",
       covariates = brain_structure_covariates_T1_no_sex,
-      dataset = UKB_CP_MDD_imaging_covariates,
+      dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
       structural_subtype = "Mean Diffusivity",
       sex_interaction = FALSE,
       interaction_terms = "chronic_pain_status"
@@ -2644,12 +2640,12 @@ cortical_area_general_disorder_interaction[grepl("global", row.names(cortical_ar
   if (length(sig_disorder_sex_interaction_general) > 0){
     MD_general_disorder_interaction <- unilateral_interaction(
   dependent = sig_disorder_sex_interaction_general,
-  independent = "current_depression", 
+  independent = "depression", 
   interaction_terms = "chronic_pain_status",
   sex_interaction = FALSE, 
   sex_variable = "sex",
   covariates = brain_structure_covariates_T1_no_sex,
-  dataset = UKB_CP_MDD_imaging_covariates,
+  dataset = get(paste0("UKB_CP_MDD_imaging_covariates_",sex)),
   structural_subtype = "General Mean Diffusivity"
 )
   } else{
@@ -2673,23 +2669,23 @@ cortical_area_general_disorder_interaction[grepl("global", row.names(cortical_ar
 ## Save results
 ```{r Save output}
 ## Save output
-write.csv(CP_MDD_structure_assoc_all, paste0(work_dir,"output/CP_MDD_structure_assoc_all.csv"), quote = FALSE, row.names = FALSE)
+write.csv(CP_MDD_structure_assoc_all, paste0(work_dir,"/output/CP_MDD_structure_assoc_all.csv"), quote = FALSE, row.names = FALSE)
 
-write.csv(CP_MDD_structure_sex_interaction_all, paste0(work_dir,"output/CP_MDD_structure_sex_interaction_all.csv"), quote = FALSE, row.names = FALSE)
+write.csv(CP_MDD_structure_sex_interaction_all, paste0(work_dir,"/output/CP_MDD_structure_sex_interaction_all.csv"), quote = FALSE, row.names = FALSE)
 
-write.csv(CP_MDD_structure_assoc_female, paste0(work_dir,"output/CP_MDD_structure_assoc_female.csv"), quote = FALSE, row.names = FALSE)
+write.csv(CP_MDD_structure_assoc_female, paste0(work_dir,"/output/CP_MDD_structure_assoc_female.csv"), quote = FALSE, row.names = FALSE)
 
-write.csv(CP_MDD_structure_assoc_male, paste0(work_dir,"output/CP_MDD_structure_assoc_male.csv"), quote = FALSE, row.names = FALSE)
+write.csv(CP_MDD_structure_assoc_male, paste0(work_dir,"/output/CP_MDD_structure_assoc_male.csv"), quote = FALSE, row.names = FALSE)
 
-write.csv(CP_MDD_structure_disorder_interaction_all, paste0(work_dir,"output/CP_MDD_structure_disorder_interaction_all.csv"), quote = FALSE, row.names = FALSE)
+write.csv(CP_MDD_structure_disorder_interaction_all, paste0(work_dir,"/output/CP_MDD_structure_disorder_interaction_all.csv"), quote = FALSE, row.names = FALSE)
 
-write.csv(CP_MDD_structure_disorder_sex_interaction_all, paste0(work_dir,"output/CP_MDD_structure_disorder_sex_interaction_all.csv"), quote = FALSE, row.names = FALSE)
+write.csv(CP_MDD_structure_disorder_sex_interaction_all, paste0(work_dir,"/output/CP_MDD_structure_disorder_sex_interaction_all.csv"), quote = FALSE, row.names = FALSE)
 
-write.csv(CP_MDD_structure_disorder_interaction_female, paste0(work_dir,"output/CP_MDD_structure_disorder_interaction_female.csv"), quote = FALSE, row.names = FALSE)
+write.csv(CP_MDD_structure_disorder_interaction_female, paste0(work_dir,"/output/CP_MDD_structure_disorder_interaction_female.csv"), quote = FALSE, row.names = FALSE)
 
-write.csv(CP_MDD_structure_disorder_interaction_male, paste0(work_dir,"output/CP_MDD_structure_disorder_interaction_male.csv"), quote = FALSE, row.names = FALSE)
+write.csv(CP_MDD_structure_disorder_interaction_male, paste0(work_dir,"/output/CP_MDD_structure_disorder_interaction_male.csv"), quote = FALSE, row.names = FALSE)
 
-write.csv(descriptives_df, paste0(work_dir,"output/descriptives.csv"), quote = TRUE, row.names = FALSE)
+write.csv(descriptives_df, paste0(work_dir,"/output/descriptives.csv"), quote = TRUE, row.names = FALSE)
 ```
 
 
