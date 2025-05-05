@@ -53,8 +53,7 @@ n_CP_missing_phenotype <- sum(!eligible_data$f.eid %in% CP_IDs) ## N without chr
 
 ## With depression phenotyping
 n_MDD_missing_phenotype <- sum(eligible_data$f.eid %in% UKB_MDD$f.eid[(is.na(UKB_MDD$smith_depression) | is.na(UKB_MDD$current_depression))]) ## N without depression phenotyping
-n_MDD_current_no_liftime <- sum(eligible_data$f.eid %in% UKB_MDD$f.eid[UKB_MDD$smith_depression == 0 & UKB_MDD$current_depression == 1])
-n_MDD_excluded <- n_MDD_missing_phenotype + n_MDD_current_no_liftime
+n_MDD_excluded <- n_MDD_missing_phenotype
 UKB_MDD <- UKB_MDD[UKB_MDD$f.eid %in% eligible_data$f.eid,]
 n_MDD <- length(na.omit(UKB_MDD$depression))
 MDD_IDs <- UKB_MDD$f.eid[!is.na(UKB_MDD$depression)]
@@ -107,11 +106,8 @@ CP_pop <- boxGrob(glue("Chronic Pain Phenotyping:",
 
 
 MDD_excluded_pop <- boxGrob(glue("Excluded (n = {tot})",
-                                 "- Missing depression phenotyping: {no_pheno}",
-                                 "- Current depression symptoms, \nno lifetime depression: {current_no_liftime}",
+                                 "- Missing depression phenotyping",
                         tot = txtInt(n_MDD_excluded),
-                        no_pheno = txtInt(n_MDD_missing_phenotype),
-                        current_no_liftime = txtInt(n_MDD_current_no_liftime),
                         .sep = "\n"), 
                    y = 0.4, x = 0.87, bjust = c(0.5, 0.5),
                    just = "left")

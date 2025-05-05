@@ -87,16 +87,26 @@ age_sd_full <- round(sd(UKB_CP_MDD_imaging_covariates$age_raw),2)
 age_sd_female <- round(sd(UKB_CP_MDD_imaging_covariates_female$age_raw),2)
 age_sd_male <- round(sd(UKB_CP_MDD_imaging_covariates_male$age_raw),2)
 
+depression_n_full <- sum(UKB_CP_MDD_imaging_covariates$depression, na.rm = T)
+depression_n_female <- sum(UKB_CP_MDD_imaging_covariates_female$depression, na.rm = T)
+depression_n_male <- sum(UKB_CP_MDD_imaging_covariates_male$depression, na.rm = T)
+
 depression_percent_full <- round(sum(UKB_CP_MDD_imaging_covariates$depression, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates$depression)) * 100,2)
 depression_percent_female <- round(sum(UKB_CP_MDD_imaging_covariates_female$depression, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates_female$depression)) * 100,2)
 depression_percent_male <- round(sum(UKB_CP_MDD_imaging_covariates_male$depression, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates_male$depression)) * 100,2)
+
+chronic_pain_n_full <- sum(UKB_CP_MDD_imaging_covariates$chronic_pain_status, na.rm = T)
+chronic_pain_n_female <- sum(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status, na.rm = T)
+chronic_pain_n_male <- sum(UKB_CP_MDD_imaging_covariates_male$chronic_pain_status, na.rm = T)
 
 chronic_pain_percent_full <- round(sum(UKB_CP_MDD_imaging_covariates$chronic_pain_status == 1, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates$chronic_pain_status)) * 100,2)
 chronic_pain_percent_female <- round(sum(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status == 1, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status)) * 100,2)
 chronic_pain_percent_male <- round(sum(UKB_CP_MDD_imaging_covariates_male$chronic_pain_status == 1, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates_male$chronic_pain_status)) * 100,2)
 
+comorbid_n_full <- sum(UKB_CP_MDD_imaging_covariates$chronic_pain_status == 1 & UKB_CP_MDD_imaging_covariates$depression == 1, na.rm = T)
+comorbid_n_female <- sum(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status == 1 & UKB_CP_MDD_imaging_covariates_female$depression == 1, na.rm = T)
+comorbid_n_male <- sum(UKB_CP_MDD_imaging_covariates_male$chronic_pain_status == 1 & UKB_CP_MDD_imaging_covariates_male$depression == 1, na.rm = T)
 
-## With comorbid chronic pain and depression
 comorbid_percent_full <- round(sum(UKB_CP_MDD_imaging_covariates$chronic_pain_status == 1 & UKB_CP_MDD_imaging_covariates$depression == 1, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates$chronic_pain_status) & !is.na(UKB_CP_MDD_imaging_covariates$depression)) * 100,2)
 
 comorbid_percent_female <- round(sum(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status == 1 & UKB_CP_MDD_imaging_covariates_female$depression == 1, na.rm = T)/sum(!is.na(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status) & !is.na(UKB_CP_MDD_imaging_covariates_female$chronic_pain_status)) * 100,2)
@@ -105,24 +115,24 @@ comorbid_percent_male <- round(sum(UKB_CP_MDD_imaging_covariates_male$chronic_pa
 
 
 descriptives_df <- data.frame(
-  Variables = c("Mean Age (SD)", "Chronic Pain (%)", "Depression (%)", "Comorbid Chronic Pain and Depression (%)"), 
+  Variables = c("Mean Age (SD)", "Depression (%)",  "Chronic Pain (%)", "Comorbid Chronic Pain and Depression (%)"), 
   full_temp = c(
     paste0(age_mean_full, " (", age_sd_full, ")"), ## Age full sample
-    paste0(chronic_pain_percent_full, "%"), ## Chronic pain full sample
-    paste0(depression_percent_full,  "%"), ## Depression full sample
-    paste0(comorbid_percent_full,  "%") ## Comorbidity in full sample
+    paste0(txtInt(depression_n_full), " (", depression_percent_full,  "%)"), ## Depression full sample
+    paste0(txtInt(chronic_pain_n_full), " (", chronic_pain_percent_full, "%)"), ## Chronic pain full sample
+    paste0(txtInt(comorbid_n_full), " (", comorbid_percent_full,  "%)") ## Comorbidity in full sample
     ),
   female_temp = c(
     paste0(age_mean_female, " (", age_sd_female, ")"), ## Age female sample
-    paste0(chronic_pain_percent_female, "%"), ## Chronic pain female sample
-    paste0(depression_percent_female, "%"), ## Depression female sample
-    paste0(comorbid_percent_female, "%") ## Comorbidity in female sample
+    paste0(txtInt(depression_n_female), " (", depression_percent_female, "%)"), ## Depression female sample
+    paste0(txtInt(chronic_pain_n_female), " (", chronic_pain_percent_female, "%)"), ## Chronic pain female sample
+    paste0(txtInt(comorbid_n_female), " (", comorbid_percent_female, "%)") ## Comorbidity in female sample
     ),
   male_temp = c(
     paste0(age_mean_male, " (", age_sd_male, ")"), ## Age male sample
-    paste0(chronic_pain_percent_male, "%"), ## Chronic pain male sample
-    paste0(depression_percent_male, "%"), ## Depression male sample
-    paste0(comorbid_percent_male, "%") ## Comorbidity in male sample
+    paste0(txtInt(depression_n_male), " (", depression_percent_male, "%)"), ## Depression male sample
+    paste0(txtInt(chronic_pain_n_male), " (", chronic_pain_percent_male, "%)"), ## Chronic pain male sample
+    paste0(txtInt(comorbid_n_male), " (", comorbid_percent_male, "%)") ## Comorbidity in male sample
     ))
 
 

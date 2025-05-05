@@ -55,7 +55,7 @@ res_CP_MDD_brain_structure_all <- read.csv("/Users/hannahcasey/Desktop/PhD/proje
 res_CP_MDD_brain_structure_all$sample <- "All\n"
 
 res_CP_MDD_structure_sex_interaction_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_sex_interaction_all.csv",header=T)
-res_CP_MDD_structure_sex_interaction_all$sample <- "Sex Interaction\n(Male - Female)"
+res_CP_MDD_structure_sex_interaction_all$sample <- "Sex Interaction\n(Female - Male)"
 res_CP_MDD_structure_sex_interaction_all$p.adjust <- res_CP_MDD_structure_sex_interaction_all$p.value
 res_CP_MDD_structure_sex_interaction_all <- res_CP_MDD_structure_sex_interaction_all %>%
   select(brain_phenotype, brain_structure_type, disorder, beta, p.adjust, sample)
@@ -71,7 +71,7 @@ res_CP_MDD_structure_disorder_interaction_all <- read.csv("~/Desktop/PhD/project
 res_CP_MDD_structure_disorder_interaction_all$sample <- "All\n"
 
 res_CP_MDD_structure_disorder_sex_interaction_all <- read.csv("/Users/hannahcasey/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/CP_MDD_structure_disorder_sex_interaction_all.csv",header=T)
-res_CP_MDD_structure_disorder_sex_interaction_all$sample <- "Sex Interaction\n(Male - Female)"
+res_CP_MDD_structure_disorder_sex_interaction_all$sample <- "Sex Interaction\n(Female - Male)"
 res_CP_MDD_structure_disorder_sex_interaction_all$p.adjust <- res_CP_MDD_structure_disorder_sex_interaction_all$p.value
 res_CP_MDD_structure_disorder_sex_interaction_all <- res_CP_MDD_structure_disorder_sex_interaction_all %>%
   select(brain_phenotype, brain_structure_type, disorder, beta, p.adjust, sample)
@@ -285,7 +285,7 @@ depression_all_plot <- ggplot(
 
 ## Merge shading data with the main dataset
 depression_sex_interaction_df <- res_CP_MDD_brain_structure %>%
-  filter(disorder == "depression" & sample == "Sex Interaction\n(Male - Female)") %>%
+  filter(disorder == "depression" & sample == "Sex Interaction\n(Female - Male)") %>%
   group_by(brain_structure_type) %>%
   filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups without any significant findings
   ungroup() %>%
@@ -361,13 +361,13 @@ depression_sex_interaction_plot <- ggplot(
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
     guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
-  ggtitle('Sex Interaction (Male - Female)')
+  ggtitle('Sex Interaction (Female - Male)')
 
 ## Depression male sample ----
 
 ## Merge shading data with the main dataset
 depression_male_df <- res_CP_MDD_brain_structure %>%
-  filter(disorder == "depression" & (sample == "Sex Interaction\n(Male - Female)" | sample == "Male\n")) %>%
+  filter(disorder == "depression" & (sample == "Sex Interaction\n(Female - Male)" | sample == "Male\n")) %>%
   group_by(brain_structure_type) %>%
   filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups not included in interaction analysis
   ungroup() %>%
@@ -452,7 +452,7 @@ depression_male_plot <- ggplot(
 
 ## Merge shading data with the main dataset
 depression_female_df <- res_CP_MDD_brain_structure %>%
-  filter(disorder == "depression" & (sample == "Sex Interaction\n(Male - Female)" | sample == "Female\n")) %>%
+  filter(disorder == "depression" & (sample == "Sex Interaction\n(Female - Male)" | sample == "Female\n")) %>%
   group_by(brain_structure_type) %>%
   filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups without any significant findings
   ungroup() %>%
@@ -533,7 +533,7 @@ depression_female_plot <- ggplot(
 
 tiff("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/depression.tiff", units="in", width=15, height=15, res=300)
 
-depression_all_plot / (depression_sex_interaction_plot + depression_male_plot + depression_female_plot) +
+depression_all_plot / (depression_sex_interaction_plot + depression_female_plot + depression_male_plot) +
    plot_layout(heights = unit(c(20, 1), c('cm', 'null')))
 
 dev.off()
@@ -641,7 +641,7 @@ chronic_pain_all_plot <- ggplot(
 
 ## Merge shading data with the main dataset
 chronic_pain_sex_interaction_df <- res_CP_MDD_brain_structure %>%
-  filter(disorder == "chronic_pain_status" & sample == "Sex Interaction\n(Male - Female)") %>%
+  filter(disorder == "chronic_pain_status" & sample == "Sex Interaction\n(Female - Male)") %>%
   group_by(brain_structure_type) %>%
   filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups without any significant findings
   ungroup() %>%
@@ -719,13 +719,13 @@ chronic_pain_sex_interaction_plot <- ggplot(
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
     guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
-  ggtitle('Sex Interaction (Male - Female)')
+  ggtitle('Sex Interaction (Female - Male)')
 
 ## Chronic Pain male sample ----
 
 ## Merge shading data with the main dataset
 chronic_pain_male_df <- res_CP_MDD_brain_structure %>%
-  filter(disorder == "chronic_pain_status" & (sample == "Sex Interaction\n(Male - Female)" | sample == "Male\n")) %>%
+  filter(disorder == "chronic_pain_status" & (sample == "Sex Interaction\n(Female - Male)" | sample == "Male\n")) %>%
   group_by(brain_structure_type) %>%
   filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups not included in interaction analysis
   ungroup() %>%
@@ -810,7 +810,7 @@ chronic_pain_male_plot <- ggplot(
 
 ## Merge shading data with the main dataset
 chronic_pain_female_df <- res_CP_MDD_brain_structure %>%
-  filter(disorder == "chronic_pain_status" & (sample == "Sex Interaction\n(Male - Female)" | sample == "Female\n")) %>%
+  filter(disorder == "chronic_pain_status" & (sample == "Sex Interaction\n(Female - Male)" | sample == "Female\n")) %>%
   group_by(brain_structure_type) %>%
   filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups without any significant findings
   ungroup() %>%
@@ -893,7 +893,7 @@ chronic_pain_female_plot <- ggplot(
 
 tiff("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/chronic_pain.tiff", units="in", width=15, height=15, res=300)
 
-chronic_pain_all_plot / (chronic_pain_sex_interaction_plot + chronic_pain_male_plot + chronic_pain_female_plot) +
+chronic_pain_all_plot / (chronic_pain_sex_interaction_plot + chronic_pain_female_plot + chronic_pain_male_plot) +
    plot_layout(heights = unit(c(22, 1), c('cm', 'null')))
 
 dev.off()
@@ -992,7 +992,7 @@ disorder_interaction_all_plot <- ggplot(
 
 ## Merge shading data with the main dataset
 disorder_sex_interaction_df <- res_CP_MDD_structure_disorder_interaction %>%
-  filter(sample == "Sex Interaction\n(Male - Female)") %>%
+  filter(sample == "Sex Interaction\n(Female - Male)") %>%
   group_by(brain_structure_type) %>%
   filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups without any significant findings
   ungroup() %>%
@@ -1070,13 +1070,13 @@ disorder_sex_interaction_plot <- ggplot(
   scale_fill_manual(values = custom_colors) +  
   scale_color_manual(values = custom_colors) +  
     guides(colour = "none", fill = "none", shape = "none", alpha = "none") + 
-  ggtitle('Sex Interaction (Male - Female)')
+  ggtitle('Sex Interaction (Female - Male)')
 
 ## Disorder interaction male sample ----
 
 ## Merge shading data with the main dataset
 disorder_interaction_male_df <- res_CP_MDD_structure_disorder_interaction %>%
-  filter(sample == "Sex Interaction\n(Male - Female)" | sample == "Male\n") %>%
+  filter(sample == "Sex Interaction\n(Female - Male)" | sample == "Male\n") %>%
   group_by(brain_structure_type) %>%
   filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups not included in interaction analysis
   ungroup() %>%
@@ -1161,7 +1161,7 @@ disorder_interaction_male_plot <- ggplot(
 
 ## Merge shading data with the main dataset
 disorder_interaction_female_df <- res_CP_MDD_structure_disorder_interaction %>%
-  filter(sample == "Sex Interaction\n(Male - Female)" | sample == "Female\n") %>%
+  filter(sample == "Sex Interaction\n(Female - Male)" | sample == "Female\n") %>%
   group_by(brain_structure_type) %>%
   filter(any(p.adjust < 0.05)) %>% ## Remove brain structure groups not included in interaction analysis
   ungroup() %>%
@@ -1243,16 +1243,24 @@ disorder_interaction_female_plot <- ggplot(
   ggtitle('Female Sample')
 
 tiff("~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/output/disorder_interaction.tiff", units="in", width=15, height=10, res=300)
-(disorder_sex_interaction_plot + disorder_interaction_male_plot + disorder_interaction_female_plot)
+(disorder_sex_interaction_plot + disorder_interaction_female_plot + disorder_interaction_male_plot)
 dev.off()
 ```
 
 #### Common alterations in chronic pain and depression
 ```{r, echo=FALSE, results="asis", comment=NA}
-
 # Filter significant results
 depression_sig <- depression_all_df %>% filter(p.adjust < 0.05)
 chronic_pain_sig <- chronic_pain_all_df %>% filter(p.adjust < 0.05)
+
+## Number of associations in common
+length(intersect(depression_sig$brain_phenotype, chronic_pain_sig$brain_phenotype))
+
+## Proportion of chronic pain in depression
+sum(depression_sig$brain_phenotype %in% chronic_pain_sig$brain_phenotype)/length(depression_sig$brain_phenotype)
+
+## Proportion of depression in chronic pain
+sum(chronic_pain_sig$brain_phenotype %in% depression_sig$brain_phenotype)/length(chronic_pain_sig$brain_phenotype)
 
 depression_sig$brain_phenotype <- gsub("_right|_left", "", depression_sig$brain_phenotype)
 chronic_pain_sig$brain_phenotype <- gsub("_right|_left", "", chronic_pain_sig$brain_phenotype)
