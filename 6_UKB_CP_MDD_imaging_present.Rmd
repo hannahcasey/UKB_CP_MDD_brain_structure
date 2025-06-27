@@ -247,7 +247,7 @@ depression_all_plot <- ggplot(
   geom_text_repel(
     data = top_findings,
     aes(label = brain_phenotype_plot),
-    size = 6,
+    size = 7,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -328,7 +328,7 @@ depression_sex_interaction_plot <- ggplot(
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 6,
+    size = 7,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -413,7 +413,7 @@ depression_male_plot <- ggplot(
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 6,
+    size = 7,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -496,7 +496,7 @@ depression_female_plot <- ggplot(
   # Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 6,
+    size = 7,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -603,7 +603,7 @@ chronic_pain_all_plot <- ggplot(
   geom_text_repel(
     data = top_findings,
     aes(label = brain_phenotype_plot),
-    size = 6,
+    size = 7,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -686,7 +686,7 @@ chronic_pain_sex_interaction_plot <- ggplot(
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 6,
+    size = 7,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -771,7 +771,7 @@ chronic_pain_male_plot <- ggplot(
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 6,
+    size = 7,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -856,7 +856,7 @@ chronic_pain_female_plot <- ggplot(
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 6,
+    size = 7,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -953,7 +953,7 @@ disorder_interaction_all_plot <- ggplot(
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 6,
+    size = 7,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -1037,7 +1037,7 @@ disorder_sex_interaction_plot <- ggplot(
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 6,
+    size = 7,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -1122,7 +1122,7 @@ disorder_interaction_male_plot <- ggplot(
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 6,
+    size = 7,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
@@ -1207,7 +1207,7 @@ disorder_interaction_female_plot <- ggplot(
   ## Labels
   geom_text_repel(
     aes(label = ifelse(p.adjust < 0.05, as.character(brain_phenotype_plot), '')),
-    size = 6,
+    size = 7,
     box.padding = 0.5,
     point.padding = 0.5,
     segment.color = 'black',
