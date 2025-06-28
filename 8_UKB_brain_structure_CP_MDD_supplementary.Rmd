@@ -1,5 +1,5 @@
 ---
-title: "Brain Structure in Chronic Pain and Depression Supplementary Material"
+title: "Structural brain correlates of current chronic pain and depression: cross-sectional study in UK Biobank Supplementary Materials"
 output: 
   word_document:
     reference_docx: ~/Desktop/PhD/projects/UKB_CP_MDD_brain_structure/writeup/RMD_template.docx
@@ -210,9 +210,9 @@ res_disorder_interaction_brain_structure$brain_phenotype_plot <- gsub("\\.[1-9]"
 res_disorder_interaction_brain_structure$brain_phenotype_plot <-  gsub("_|[.]", " ", res_disorder_interaction_brain_structure$brain_phenotype_plot)
 
 ## Reorder brain phenotype and subgroups for plotting
-res_CP_MDD_brain_structure$brain_structure_type  <- ordered(res_CP_MDD_brain_structure$brain_structure_type , levels = c("Regional Subcortical Volume", "Regional Cortical Volume","Global and Lobal Cortical Area", "Regional Cortical Area", "Cortical Area Global and Lobal Measures", "Regional Cortical Thickness","Global and Lobal Cortical Thickness", "Fractional Anisotropy", "Mean Diffusivity","General Fractional Anisotropy", "General Mean Diffusivity"))
+res_CP_MDD_brain_structure$brain_structure_type  <- ordered(res_CP_MDD_brain_structure$brain_structure_type , levels = c("Regional Subcortical Volume", "Regional Cortical Volume","Global and Lobal Cortical Volume", "Regional Cortical Area", "Global and Lobal Cortical Area", "Regional Cortical Thickness","Global and Lobal Cortical Thickness", "Fractional Anisotropy", "Mean Diffusivity","General Fractional Anisotropy", "General Mean Diffusivity"))
 
-res_disorder_interaction_brain_structure$brain_structure_type  <- ordered(res_disorder_interaction_brain_structure$brain_structure_type , levels = c("Regional Subcortical Volume", "Regional Cortical Volume","Global and Lobal Cortical Area", "Regional Cortical Area", "Cortical Area Global and Lobal Measures", "Regional Cortical Thickness","Global and Lobal Cortical Thickness", "Fractional Anisotropy", "Mean Diffusivity","General Fractional Anisotropy", "General Mean Diffusivity"))
+res_disorder_interaction_brain_structure$brain_structure_type  <- ordered(res_disorder_interaction_brain_structure$brain_structure_type , levels = c("Regional Subcortical Volume", "Regional Cortical Volume","Global and Lobal Cortical Volume", "Regional Cortical Area", "Global and Lobal Cortical Area", "Regional Cortical Thickness","Global and Lobal Cortical Thickness", "Fractional Anisotropy", "Mean Diffusivity","General Fractional Anisotropy", "General Mean Diffusivity"))
 
 res_CP_MDD_brain_structure_CP <- res_CP_MDD_brain_structure[res_CP_MDD_brain_structure$disorder == "chronic_pain_status",]
 res_CP_MDD_brain_structure_MDD <- res_CP_MDD_brain_structure[res_CP_MDD_brain_structure$disorder == "depression",]
@@ -247,7 +247,7 @@ reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.05, paste0(temp, "*"), re
 reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.01, paste0(temp, "**"), reshaped$beta.Male)
 reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.001, paste0(temp, "***"), reshaped$beta.Male)
 
-cat_order <- c("Regional Subcortical Volume", "Regional Cortical Volume","Global and Lobal Cortical Area", "Regional Cortical Area", "Cortical Area Global and Lobal Measures", "Regional Cortical Thickness","Global and Lobal Cortical Thickness", "Fractional Anisotropy", "General Fractional Anisotropy", "Mean Diffusivity", "General Mean Diffusivity")
+cat_order <- c("Regional Subcortical Volume", "Regional Cortical Volume","Global and Lobal Cortical Volume", "Regional Cortical Area", "Global and Lobal Cortical Area", "Regional Cortical Thickness","Global and Lobal Cortical Thickness", "Fractional Anisotropy", "Mean Diffusivity","General Fractional Anisotropy", "General Mean Diffusivity")
 
 
 reshaped <- reshaped %>% 
@@ -291,7 +291,7 @@ reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.05, paste0(temp, "*"), re
 reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.01, paste0(temp, "**"), reshaped$beta.Male)
 reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.001, paste0(temp, "***"), reshaped$beta.Male)
 
-cat_order <- c("Regional Subcortical Volume", "Regional Cortical Volume","Global and Lobal Cortical Area", "Regional Cortical Area", "Cortical Area Global and Lobal Measures", "Regional Cortical Thickness","Global and Lobal Cortical Thickness", "Fractional Anisotropy", "General Fractional Anisotropy", "Mean Diffusivity", "General Mean Diffusivity")
+cat_order <- c("Regional Subcortical Volume", "Regional Cortical Volume","Global and Lobal Cortical Volume", "Regional Cortical Area", "Global and Lobal Cortical Area", "Regional Cortical Thickness","Global and Lobal Cortical Thickness", "Fractional Anisotropy", "Mean Diffusivity","General Fractional Anisotropy", "General Mean Diffusivity")
 
 reshaped <- reshaped %>% 
   arrange(brain_phenotype_plot) %>%
@@ -334,7 +334,7 @@ reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.05, paste0(temp, "*"), re
 reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.01, paste0(temp, "**"), reshaped$beta.Male)
 reshaped$beta.Male = ifelse(reshaped$p.adjust.Male < 0.001, paste0(temp, "***"), reshaped$beta.Male)
 
-cat_order <- c("Regional Subcortical Volume", "Regional Cortical Volume","Global and Lobal Cortical Area", "Regional Cortical Area", "Cortical Area Global and Lobal Measures", "Regional Cortical Thickness","Global and Lobal Cortical Thickness", "Fractional Anisotropy", "General Fractional Anisotropy", "Mean Diffusivity", "General Mean Diffusivity")
+cat_order <- c("Regional Subcortical Volume", "Regional Cortical Volume","Global and Lobal Cortical Volume", "Regional Cortical Area", "Global and Lobal Cortical Area", "Regional Cortical Thickness","Global and Lobal Cortical Thickness", "Fractional Anisotropy", "Mean Diffusivity","General Fractional Anisotropy", "General Mean Diffusivity")
 
 reshaped <- reshaped %>% 
   arrange(brain_phenotype_plot) %>%
@@ -350,6 +350,20 @@ res_comobidity <- reshaped %>%
   select(`Brain Strucutre Phenotype`, `Full Sample Beta`, `Sex Interaction (Females - Males)`, `Female Sample Beta`, `Male Sample Beta`)
 
 ```
+```{r depression results, echo=F, warning=F}
+flextable(res_MDD) %>%
+  autofit() %>%
+  fit_to_width(7) %>%
+  bold(i = ~ grepl("\\*", res_MDD$`Full Sample Beta`), j = "Full Sample Beta") %>%
+  bold(i = ~ grepl("\\*", res_MDD$`Sex Interaction (Females - Males)`), j = "Sex Interaction (Females - Males)") %>%
+  bold(~ grepl("\\*", res_MDD$`Female Sample Beta`), j = "Female Sample Beta") %>%
+  bold(~ grepl("\\*", res_MDD$`Male Sample Beta`), j = "Male Sample Beta")
+
+```
+
+Supplementary Table 7 Full results for brain structure association analysis in current depression. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
+
+\newpage
 
 ```{r chronic pain results, echo=F, warning=F}
 
@@ -363,22 +377,7 @@ flextable(res_CP) %>%
 
 ```
 
-Supplementary Table 7 Full results for association and sex-interaction analysis between brain structure and chronic pain in full, female and male sample. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
-
-\newpage
-
-```{r depression results, echo=F, warning=F}
-flextable(res_MDD) %>%
-  autofit() %>%
-  fit_to_width(7) %>%
-  bold(i = ~ grepl("\\*", res_MDD$`Full Sample Beta`), j = "Full Sample Beta") %>%
-  bold(i = ~ grepl("\\*", res_MDD$`Sex Interaction (Females - Males)`), j = "Sex Interaction (Females - Males)") %>%
-  bold(~ grepl("\\*", res_MDD$`Female Sample Beta`), j = "Female Sample Beta") %>%
-  bold(~ grepl("\\*", res_MDD$`Male Sample Beta`), j = "Male Sample Beta")
-
-```
-
-Supplementary Table 8 Full results for chronic pain interaction and sex-chronic pain interaction analysis between brain structure and depression in full, female and male sample. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
+Supplementary Table 8 Full results for brain structure association analysis in current chronic pain. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
 
 \newpage
 
@@ -393,7 +392,7 @@ flextable(res_comobidity) %>%
 
 ```
 
-Supplementary Table 9 Full results for chronic pain interaction and sex-chronic pain interaction on the association of depression and brain structure in full, female and male sample. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
+Supplementary Table 9 Full results for chronic pain interaction and sex-chronic pain interaction on the association of depression and brain structure. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
 \newpage
 
 
