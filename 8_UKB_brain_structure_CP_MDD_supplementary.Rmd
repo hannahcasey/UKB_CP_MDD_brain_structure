@@ -39,9 +39,9 @@ Neurological disorder status was determined based on self-reported illnesses rec
 
 ```{r Neurological, echo=F}
 
-UKB_neurological <- data.frame(Disorder = c("Benign neuroma", "Brain abscess/intracranial abscess", "Brain haemorrhage", "Cerebral aneurysm", "Cerebral palsy", "Chronic/degenerative neurological problem", "dementia/alzheimers/cognitive impairment", "Encephalitis", "Epilepsy", "Fracture skull/head", "Head injury", "Ischaemic stroke", "Meningitis", "Motor Neurone Disease", "Multiple Sclerosis", "Nervous system infection", "Neurological injury/trauma", "Other demyelinating disease (not Multiple Sclerosis)", "Other neurological problem", "Parkinson’s Disease", "Spina Bifida", "Stroke", "Subarachnoid haemorrhage", "Subdural haemorrhage/haematoma", "Transient ischaemic attack", "Meningioma/benign meningeal tumour"), `Data field` = c("1683", 1245, 1491, 1425, 1433, 1258, 1263, 1246, 1264, 1626, 1266, 1583, 1247, 1259, 1261, 1244, 1240, 1397, 1434, 1262, 1524, 1081, 1086, 1083, 1082, 1659))
+UKB_neurological <- data.frame(Disorder = c("Benign neuroma", "Brain abscess/intracranial abscess", "Brain haemorrhage", "Cerebral aneurysm", "Cerebral palsy", "Chronic/degenerative neurological problem", "dementia/alzheimers/cognitive impairment", "Encephalitis", "Epilepsy", "Fracture skull/head", "Head injury", "Ischaemic stroke", "Meningitis", "Motor Neurone Disease", "Multiple Sclerosis", "Nervous system infection", "Neurological injury/trauma", "Other demyelinating disease (not Multiple Sclerosis)", "Other neurological problem", "Parkinson’s Disease", "Spina Bifida", "Stroke", "Subarachnoid haemorrhage", "Subdural haemorrhage/haematoma", "Transient ischaemic attack", "Meningioma/benign meningeal tumour"), `Coding` = c("1683", 1245, 1491, 1425, 1433, 1258, 1263, 1246, 1264, 1626, 1266, 1583, 1247, 1259, 1261, 1244, 1240, 1397, 1434, 1262, 1524, 1081, 1086, 1083, 1082, 1659))
 
-UKB_neurological_cancer <- data.frame(Disorder = c("Brain cancer/primary malignant brain tumour", "Meningeal cancer/malignant meningioma"), `Data field` = c("1032", 1031))
+UKB_neurological_cancer <- data.frame(Disorder = c("Brain cancer/primary malignant brain tumour", "Meningeal cancer/malignant meningioma"), `Coding` = c("1032", 1031))
 
 flextable(UKB_neurological) %>%
   autofit() %>%
@@ -50,7 +50,7 @@ flextable(UKB_neurological) %>%
   
 ```
 
-Supplementary Table 1 Non-cancer neurological conditions excluded for based on data field 20002.
+Table S1 Non-cancer neurological conditions excluded for based on data field 20002.
 
 \newpage
 
@@ -60,7 +60,7 @@ flextable(UKB_neurological_cancer) %>%
   fit_to_width(7)
 ```
 
-Supplementary Table 2 Cancer neurological conditions excluded for based on data field 20001.
+Table S2 Cancer neurological conditions excluded for based on data field 20001.
 
 \newpage
 
@@ -82,7 +82,7 @@ flextable(cortical_measures) %>%
   fit_to_width(7) 
 ```
 
-Supplementary Table 3 Cortical regions in UK Biobank and cortical lobes derived from "Desikan-Killiany-Tourville" atlas
+Table S3 Cortical regions in UK Biobank and cortical lobes derived from "Desikan-Killiany-Tourville" atlas
 
 \newpage
 
@@ -95,7 +95,7 @@ flextable(subcortical_volumes) %>%
   fit_to_width(7) 
 ```
 
-Supplementary Table 4 Regional Subcortical Volumes in UK Biobank derived using FIRST (FMRIB's Integrated Registration and Segmentation Tool)
+Table S4 Regional Subcortical Volumes in UK Biobank derived using FIRST (FMRIB's Integrated Registration and Segmentation Tool)
 
 \newpage
 
@@ -116,7 +116,7 @@ flextable(WM_measures) %>%
 
 ```
 
-Supplementary Table 5 White matter tracts in UK Biobank and general measures derived using AutoPtx.
+Table S5 White matter tracts in UK Biobank and general measures derived using AutoPtx.
 
 \newpage
 
@@ -136,7 +136,7 @@ flextable(PCA_DTI_VE) %>%
 
 
 ```
-Supplementary Table 6 Variance explained by the first principal component analysis (PCA) component for each global and general measure of white matter tracts.
+Table S6 Variance explained by the first principal component analysis (PCA) component for each global and general measure of white matter tracts.
 
 \newpage
 
@@ -361,7 +361,7 @@ flextable(res_MDD) %>%
 
 ```
 
-Supplementary Table 7 Full results for brain structure association analysis in current depression. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
+Table S7 Full results for brain structure association analysis in current depression. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
 
 \newpage
 
@@ -377,7 +377,7 @@ flextable(res_CP) %>%
 
 ```
 
-Supplementary Table 8 Full results for brain structure association analysis in current chronic pain. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
+Table S8 Full results for brain structure association analysis in current chronic pain. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
 
 \newpage
 
@@ -392,7 +392,7 @@ flextable(res_comobidity) %>%
 
 ```
 
-Supplementary Table 9 Full results for chronic pain interaction and sex-chronic pain interaction on the association of depression and brain structure. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
+Table S9 Full results for chronic pain interaction and sex-chronic pain interaction on the association of depression and brain structure. \*, \*\* and \*\*\* represent significant results at p~FDR~\<.05, p~FDR~\<.01 and p~FDR~\<.001, respectively, respectively (FDR correction not applied to p-values from sex-interaction analysis). Significant results are highlighted in bold.
 \newpage
 
 
