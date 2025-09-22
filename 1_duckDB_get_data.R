@@ -16,7 +16,7 @@ library(rebus)
 
 ## Connect to database
 con <- DBI::dbConnect(duckdb::duckdb(),
-                      dbdir="/exports/igmm/eddie/GenScotDepression/data/ukb/phenotypes/fields/2022-11-phenotypes-ukb670429-v0.7.1/ukb670429.duckdb",
+                      dbdir="/exports/igmm/eddie/GenScotDepression/data/ukb/phenotypes/fields/2023-12-olink-ukb676482/ukb670429.duckdb",
                       read_only=TRUE)
 ## List tables
 DBI::dbListTables(con)

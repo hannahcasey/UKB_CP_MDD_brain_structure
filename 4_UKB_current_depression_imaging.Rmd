@@ -79,7 +79,7 @@ UKB_touchscreen_lifetime_dep$recurrent_MD_moderate <- (UKB_touchscreen_lifetime_
   UKB_touchscreen_lifetime_dep$at_least_two & UKB_touchscreen_lifetime_dep$longest_period_2_weeks & UKB_touchscreen_lifetime_dep$GP
 
 ## Probable Recurrent MD (severe)
-# [(1) OR (2)] AND (4) AND (5) AND (6)
+# [(1) OR (2)] AND (4) AND (5) AND (7)
 UKB_touchscreen_lifetime_dep$recurrent_MD_severe <- (UKB_touchscreen_lifetime_dep$depressed_week | UKB_touchscreen_lifetime_dep$disinterested_week) & 
   UKB_touchscreen_lifetime_dep$at_least_two & UKB_touchscreen_lifetime_dep$longest_period_2_weeks & UKB_touchscreen_lifetime_dep$psychiatrist
 
