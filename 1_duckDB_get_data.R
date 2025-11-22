@@ -83,7 +83,6 @@ UKB_imaging_covariates <- left_join(UKB_imaging_covariates, Imaging_coords, by =
 UKB_imaging_covariates <- left_join(UKB_imaging_covariates, UKB_imaging_small, by = "f.eid")
 
 
-
 ## Rename columns, add age^2
 UKB_imaging_covariates <- UKB_imaging_covariates %>%
   rename(sex = f.31.0.0,
